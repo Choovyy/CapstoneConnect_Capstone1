@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   css: {
-    devSourcemap: true, // hehe for source map debugging for frontend editing <33
+    devSourcemap: true, // added source map debugging for frontend editing <33
   }
 })
