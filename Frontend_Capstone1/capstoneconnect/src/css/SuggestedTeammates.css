@@ -52,6 +52,7 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
+  margin-left: 140%;
   gap: 10px;
 }
 
@@ -92,9 +93,8 @@ body {
 .container {
   max-width: 1440px;
   padding: 0 32px;
-  margin-bottom: 120px;
-  margin-left: 32px;
-  margin-top: 100px;
+  margin: 100px auto 120px; /* Top: header height, Bottom: footer height */
+  min-height: calc(100vh - 220px); /* Account for header and footer */
 }
 
 /* Filter Section */

@@ -2,7 +2,7 @@ import React from 'react';
 import '../css/SuggestedTeamModal.css';
 import modalimage from '../assets/modalimage.png';
 
-const SuggestedTeamModal = () => {
+const SuggestedTeamModal = ({ onConfirm, onCancel }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-container">
@@ -16,10 +16,10 @@ const SuggestedTeamModal = () => {
             Are you sure you want to send a collaboration request?
           </div>
           <div className="modal-buttons">
-            <button className="button button--confirm">
+            <button className="button button--confirm" onClick={onConfirm}>
               Confirm
             </button>
-            <button className="button button--cancel">
+            <button className="button button--cancel" onClick={onCancel}>
               Cancel
             </button>
           </div>
