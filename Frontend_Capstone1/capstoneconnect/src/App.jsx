@@ -1,11 +1,11 @@
 import './App.css';
-//import LandingPage from './pages/LandingPage.jsx';
-import SuggestedTeammates from './pages/SuggestedTeammates.jsx';
+import LandingPage from './pages/LandingPage.jsx';
+
 
 function App() {
   return (
     <div className="App">
-      <SuggestedTeammates />
+      <LandingPage/>
     </div>
   );
 }
