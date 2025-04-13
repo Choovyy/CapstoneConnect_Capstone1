@@ -74,7 +74,7 @@ const SuggestedTeammates = () => {
         {/* Teammate Cards Section */}
         <section className="teammates-cards">
           {/* Example card (commented out like in original) */}
-          {/* <article className="card">
+           <article className="card">
             <div className="card__image">
               <img src="https://placehold.co/222x206" alt="Team Mate Photo" />
             </div>
@@ -90,7 +90,7 @@ const SuggestedTeammates = () => {
             <div className="card__action">
               <button className="btn btn--action">Send Request</button>
             </div>
-          </article> */}
+          </article>
         </section>
       </main>
 
