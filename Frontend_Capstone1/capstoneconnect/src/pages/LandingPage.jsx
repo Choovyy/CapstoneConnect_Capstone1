@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/LandingPage.css';
 import logo from '../assets/logo.png';
-import '../css/MicrosoftAuthModal.css'; // Adjust the path as necessary
+import '../css/MicrosoftAuthModal.css';
 import hero from '../assets/hero.png';
 import vyn from '../assets/vyn.jpg';
 import gerard from '../assets/gerard.png';
@@ -9,11 +9,22 @@ import david from '../assets/david.jpg';
 import harold from '../assets/harold.jpg';
 import tovi from '../assets/tovi.jpg';
 import { FaGithub, FaFigma, FaFacebook } from 'react-icons/fa';
+// Uncomment if using React Router
+// import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Force scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // If using React Router:
+  // const navigate = useNavigate();
   const handleLogoClick = () => {
-    window.location.reload();
+    // navigate('/'); // Uncomment if using router
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
   };
 
   // Microsoft Auth Modal Component
@@ -39,7 +50,6 @@ const LandingPage = () => {
 
           <div className="ms-auth-section">
             <h2 className="ms-sign-in-title">Sign In</h2>
-            
             <button className="ms-microsoft-auth-btn">
               <img 
                 src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
@@ -48,7 +58,6 @@ const LandingPage = () => {
               />
               <span className="ms-microsoft-text">Continue with Microsoft</span>
             </button>
-
             <div className="ms-alternative-options">
               Don't have an account? 
               <span className="ms-alternative-link">Sign up</span>
@@ -135,95 +144,14 @@ const LandingPage = () => {
         </div>
 
         <div className="TeamContainer">
-          <div className="TeamMember">
-            <div className="MemberImage">
-              <span className="MemberRole">Frontend</span>
-              <img src={vyn} alt="Team Member" />
-            </div>
-            <div className="MemberInfo">
-              <h3>Jhovynn Aldrich Apurado</h3>
-              <p className="Role">Frontend Developer</p>
-              <p className="Bio">Specializing in responsive design and user experience.</p>
-              <div className="SocialIcons">
-                <a href="https://www.figma.com/@jhovynnaldricha"><FaFigma /></a>
-                <a href="https://github.com/vyn23232"><FaGithub /></a>
-                <a href="https://web.facebook.com/jhovynnaldrich.apurado/"><FaFacebook /></a>
-              </div>
-            </div>
-          </div>
-
-          {/* Other team members */}
-          <div className="TeamMember">
-            <div className="MemberImage">
-              <span className="MemberRole">Frontend</span>
-              <img src={harold} alt="Team Member" />
-            </div>
-            <div className="MemberInfo">
-              <h3>Harold Destura</h3>
-              <p className="Role">Frontend Developer</p>
-              <p className="Bio">Expert in modern JavaScript frameworks.</p>
-              <div className="SocialIcons">
-              <a href="https://www.figma.com/@arutsedharold"><FaFigma /></a>
-                <a href="https://github.com/harold0t1"><FaGithub /></a>
-                <a href="https://www.facebook.com/harold.destura/"><FaFacebook /></a>
-              </div>
-            </div>
-          </div>
-
-          <div className="TeamMember">
-            <div className="MemberImage">
-              <span className="MemberRole">Database</span>
-              <img src={tovi} alt="Team Member" />
-            </div>
-            <div className="MemberInfo">
-              <h3>Tovi Joshua Hermosisima</h3>
-              <p className="Role">Backend Developer</p>
-              <p className="Bio">Building robust server-side architectures.</p>
-              <div className="SocialIcons">
-              <a href="https://www.figma.com/@tovijoshua"><FaFigma /></a>
-                <a href="https://github.com/Choovyy"><FaGithub /></a>
-                <a href="https://www.facebook.com/tobias.joshuu"><FaFacebook /></a>
-              </div>
-            </div>
-          </div>
-
-          <div className="TeamMember">
-            <div className="MemberImage">
-              <span className="MemberRole">Backend</span>
-              <img src={gerard} alt="Team Member" />
-            </div>
-            <div className="MemberInfo">
-              <h3>John Gerard Donaire</h3>
-              <p className="Role">Backend Developer</p>
-              <p className="Bio">Database expert ensuring optimized systems.</p>
-              <div className="SocialIcons">
-              <a href="https://www.figma. com/@johngerarddonai"><FaFigma /></a>
-                <a href="https://github.com/haloimnotcode"><FaGithub /></a>
-                <a href="https://www.facebook. com/gerarddonaire"><FaFacebook /></a>
-              </div>
-            </div>
-          </div>
-
-          <div className="TeamMember">
-            <div className="MemberImage">
-              <span className="MemberRole">Frontend</span>
-              <img src={david} alt="Team Member" />
-            </div>
-            <div className="MemberInfo">
-              <h3>John David Calimpong</h3>
-              <p className="Role">Frontend Developer</p>
-              <p className="Bio">Creating beautiful, accessible interfaces.</p>
-              <div className="SocialIcons">
-              <a href="https://www.figma.com/@johndavid4"><FaFigma /></a>
-                <a href="https://github.com/calimps115646"><FaGithub /></a>
-                <a href="https://www.facebook.com/johncalimps"><FaFacebook /></a>
-              </div>
-            </div>
-          </div>
+          <TeamMember name="Jhovynn Aldrich Apurado" role="Frontend Developer" bio="Specializing in responsive design and user experience." img={vyn} figma="https://www.figma.com/@jhovynnaldricha" github="https://github.com/vyn23232" fb="https://web.facebook.com/jhovynnaldrich.apurado/" />
+          <TeamMember name="Harold Destura" role="Frontend Developer" bio="Expert in modern JavaScript frameworks." img={harold} figma="https://www.figma.com/@arutsedharold" github="https://github.com/harold0t1" fb="https://www.facebook.com/harold.destura/" />
+          <TeamMember name="Tovi Joshua Hermosisima" role="Backend Developer" bio="Building robust server-side architectures." img={tovi} figma="https://www.figma.com/@tovijoshua" github="https://github.com/Choovyy" fb="https://www.facebook.com/tobias.joshuu" />
+          <TeamMember name="John Gerard Donaire" role="Backend Developer" bio="Database expert ensuring optimized systems." img={gerard} figma="https://www.figma.com/@johngerarddonai" github="https://github.com/haloimnotcode" fb="https://www.facebook.com/gerarddonaire" />
+          <TeamMember name="John David Calimpong" role="Frontend Developer" bio="Creating beautiful, accessible interfaces." img={david} figma="https://www.figma.com/@johndavid4" github="https://github.com/calimps115646" fb="https://www.facebook.com/johncalimps" />
         </div>
       </div>
 
-      {/* Microsoft Auth Modal */}
       <MicrosoftAuthModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -231,5 +159,25 @@ const LandingPage = () => {
     </div>
   );
 };
+
+// Reusable Team Member Component
+const TeamMember = ({ name, role, bio, img, figma, github, fb }) => (
+  <div className="TeamMember">
+    <div className="MemberImage">
+      <span className="MemberRole">{role.includes("Backend") ? "Backend" : "Frontend"}</span>
+      <img src={img} alt={name} />
+    </div>
+    <div className="MemberInfo">
+      <h3>{name}</h3>
+      <p className="Role">{role}</p>
+      <p className="Bio">{bio}</p>
+      <div className="SocialIcons">
+        <a href={figma}><FaFigma /></a>
+        <a href={github}><FaGithub /></a>
+        <a href={fb}><FaFacebook /></a>
+      </div>
+    </div>
+  </div>
+);
 
 export default LandingPage;
