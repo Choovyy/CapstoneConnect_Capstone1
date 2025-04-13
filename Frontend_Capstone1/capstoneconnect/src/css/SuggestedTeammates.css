@@ -1,0 +1,294 @@
+/* Import the Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* CSS Variables for easier theme management */
+:root {
+  --primary-color: #CA9F58;
+  --secondary-color: #267987;
+  --background-color: #ffffff;  /* White background for overall page */
+  --text-color: #040316;        /* Dark text for readability */
+  --nav-bg: #FBFBFE;
+  --nav-text: #333;
+  --nav-hover: #ff9800;
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* Navigation Styles – Following your JSX reference */
+.site-header {
+  background-color: var(--nav-bg);
+  padding: 15px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header__logo img {
+  width: 40px;
+  height: 35px;
+}
+
+.header__nav .nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.nav-item {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  padding: 8px;
+}
+
+.nav-item a {
+  text-decoration: none;
+  color: var(--nav-text);
+  transition: color 0.3s ease;
+}
+
+.nav-item a:hover {
+  color: var(--nav-hover);
+}
+
+.header__auth .btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: #333;
+  color: #fff;
+}
+
+.header__auth .btn:hover {
+  background-color: var(--nav-hover);
+  color: white;
+}
+
+/* Container for Main Content */
+.container {
+  max-width: 1440px;
+  padding: 0 32px;
+  margin-bottom: 120px;
+  margin-left: 32px;
+  margin-top: 100px;
+}
+
+/* Filter Section */
+
+.teammates-filter {
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align content to the left */
+}
+
+.section-title {
+    font-size: 35px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #040316;
+    text-align: left; /* Ensure the title aligns to the left */
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start; /* Align filters to the top */
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.filter-group label {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #040316;
+  text-align: left;
+}
+
+.filter-select {
+  padding: 8px;
+  border: 1px solid #D9D9D9;
+  border-radius: 8px;
+}
+
+.filter-apply {
+  align-self: flex-end;
+}
+
+.btn.btn--filter {
+  padding: 8px 16px;
+  background-color: #BABABA;
+  border: 0px;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn.btn--filter:hover {
+  background-color: #b08a4d;
+  transform: translateY(-2px);
+}
+
+/* Teammate Cards Section – Horizontal Scroll Mode */
+.teammates-cards {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  /* Optional: hide scrollbar in WebKit-based browsers */
+  -webkit-overflow-scrolling: touch;
+}
+
+.teammates-cards::-webkit-scrollbar {
+  height: 8px;
+}
+
+.teammates-cards::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: 4px;
+}
+
+/* Card Component */
+.card {
+  flex: 0 0 auto; /* Prevent cards from shrinking and keep them side-by-side */
+  background: #fff;
+  border: 0.5px solid var(--primary-color);
+  border-radius: 20px;
+  padding: 16px;
+  width: 280px; /* Fixed width for consistent card sizing */
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card__image img {
+  width: 222px;
+  height: 206px;
+  border-radius: 125px;
+  border: 3px solid var(--primary-color);
+  margin-bottom: 16px;
+}
+
+.card__details p {
+  margin: 4px 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: #040316;
+}
+
+.card__compatibility {
+  color: var(--secondary-color);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.card__action .btn.btn--action {
+  width: 178px;
+  padding: 8px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: 0px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card__action .btn.btn--action:hover {
+  background-color: #b08a4d;
+}
+
+/* Footer Section */
+.site-footer {
+  text-align: center;
+  padding: 16px;
+  background-color: var(--nav-bg);
+  border-top: 1px solid #D9D9D9;
+  font-size: 14px;
+  color: #040316;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .site-header, .container {
+    padding: 16px;
+  }
+
+  .nav-list {
+    gap: 8px;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-apply {
+    align-self: center;
+  }
+}
+
+
+
+
+.teammates-filter {
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align content to the left */
+}
+
+.section-title {
+    font-size: 35px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #040316;
+    text-align: left; /* Ensure the title aligns to the left */
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start; /* Align filters to the top */
+}
