@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import '../css/LandingPage.css';
 import logo from '../assets/logo.png';
 import '../css/MicrosoftAuthModal.css';
@@ -9,21 +10,16 @@ import david from '../assets/david.jpg';
 import harold from '../assets/harold.jpg';
 import tovi from '../assets/tovi.jpg';
 import { FaGithub, FaFigma, FaFacebook } from 'react-icons/fa';
-// Uncomment if using React Router
-// import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  // Force scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // If using React Router:
-  // const navigate = useNavigate();
   const handleLogoClick = () => {
-    // navigate('/'); // Uncomment if using router
     window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
   };
 
@@ -50,7 +46,10 @@ const LandingPage = () => {
 
           <div className="ms-auth-section">
             <h2 className="ms-sign-in-title">Sign In</h2>
-            <button className="ms-microsoft-auth-btn">
+            <button 
+              className="ms-microsoft-auth-btn"
+              onClick={() => navigate('/user-survey')} // Navigate to UserSurveyPage
+            >
               <img 
                 src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
                 alt="Microsoft" 

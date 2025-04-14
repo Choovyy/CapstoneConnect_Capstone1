@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, Typography, Button, Container } from '@mui/material';
-import groupImage from '../assets/group.jpg'; 
+import group from '../assets/group.jpg'; 
 
 const UserSurveyPage = () => {
   return (
@@ -26,7 +26,7 @@ const UserSurveyPage = () => {
           <Grid item xs={12} md={6}>
             <Box
               component="img"
-              src={groupImage}
+              src={group}
               alt="Team collaboration"
               sx={{ width: '100%', borderRadius: 2, boxShadow: 3 }}
             />

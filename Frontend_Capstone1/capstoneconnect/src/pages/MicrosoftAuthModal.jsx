@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import '../css/MicrosoftAuthModal.css';
 import logo from '../assets/logo.png';
 
 const MicrosoftAuthModal = ({ isOpen, onClose }) => {
+  const navigate = useNavigate(); // Initialize useNavigate
+
   if (!isOpen) return null;
 
   return (
@@ -25,7 +28,10 @@ const MicrosoftAuthModal = ({ isOpen, onClose }) => {
         <div className="ms-auth-section">
           <h2 className="ms-sign-in-title">Sign In</h2>
           
-          <button className="ms-microsoft-auth-btn">
+          <button 
+            className="ms-microsoft-auth-btn" 
+            onClick={() => navigate('/user-survey')} // Navigate to UserSurveyPage
+          >
             <img 
               src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
               alt="Microsoft" 
