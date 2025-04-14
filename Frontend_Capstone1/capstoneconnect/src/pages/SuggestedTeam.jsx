@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import '../css/SuggestedTeammates.css';
+import '../css/SuggestedTeam.css';
 import logo from '../assets/logo.png';
 import SuggestedTeamModal from './SuggestedTeamModal';
 
-const SuggestedTeammates = () => {
+const SuggestedTeam = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     role: "ui-ux-designer",
@@ -13,7 +13,7 @@ const SuggestedTeammates = () => {
   const [teammates, setTeammates] = useState([]);
   
   // Sample data for teammates
-  const sampleTeammates = [
+  const sampleTeam = [
     {
       id: 1,
       name: "John Doe",
@@ -45,7 +45,7 @@ const SuggestedTeammates = () => {
 
   useEffect(() => {
     // In a real app, this would be an API call
-    setTeammates(sampleTeammates);
+    setTeammates(sampleTeam);
   }, []);
 
   const handleSendRequest = () => {
@@ -195,4 +195,4 @@ const SuggestedTeammates = () => {
   );
 };
 
-export default SuggestedTeammates;
+export default SuggestedTeam;

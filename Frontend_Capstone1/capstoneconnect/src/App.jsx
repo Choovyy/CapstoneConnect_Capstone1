@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/LandingPage.jsx';
 import UserSurveyPage from './pages/UserSurveyPage.jsx';
+import LandingPage from './pages/LandingPage.jsx';
 
 function App() {
   return (
