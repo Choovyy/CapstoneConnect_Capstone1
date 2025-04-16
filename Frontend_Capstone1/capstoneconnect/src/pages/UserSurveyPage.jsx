@@ -10,9 +10,11 @@ const UserSurveyPage = () => {
           {/* Text Section */}
           <div className="survey-text">
             <div className="survey-heading-wrapper">
-              <p className="pre-title">Team Matchmaking</p>
               <h1>
-                FIND YOUR <span className="highlight-secondary">MATCH</span> HERE
+                <span className="find-your">FIND YOUR</span>
+                <span className="match-here">
+                  <span className="highlight-match">MATCH</span> HERE
+                </span>
               </h1>
               <p className="survey-description">
                 Whether you're looking to collaborate or need a team, we're here to connect you with your perfect match.
@@ -23,19 +25,12 @@ const UserSurveyPage = () => {
             </div>
           </div>
 
-          {/* Image Section */}
+          {/* Image Section with background rectangle */}
           <div className="survey-image-wrapper">
+            <div className="image-background-rectangle"></div>
             <img src={group} alt="Team collaboration in action" />
           </div>
         </div>
-
-        {/* Footer Branding */}
-        <footer className="survey-footer">
-          <p className="footer-branding">
-            <span className="capstone">Capstone</span>
-            <span className="connect">Connect</span>
-          </p>
-        </footer>
       </div>
     </section>
   );
