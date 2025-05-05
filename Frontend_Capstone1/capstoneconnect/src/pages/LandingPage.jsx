@@ -47,9 +47,11 @@ const LandingPage = () => {
           <div className="ms-auth-section">
             <h2 className="ms-sign-in-title">Sign In</h2>
             <button 
-              className="ms-microsoft-auth-btn"
-              onClick={() => navigate('/user-survey')} // Navigate to UserSurveyPage
-            >
+                className="ms-microsoft-auth-btn"
+                onClick={() => {
+                  window.location.href = 'http://localhost:8080/api/auth/microsoft';
+                }}
+              >
               <img 
                 src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
                 alt="Microsoft" 
