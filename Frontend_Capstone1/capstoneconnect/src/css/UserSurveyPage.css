@@ -35,7 +35,7 @@
   font-size: 48px;
   margin: 10px 0;
   color: #000;
-  text-align: left; /* Align the heading to the left */
+  text-align: left; 
 }
 
 .pre-title {
@@ -54,19 +54,19 @@
 /* For the updated heading */
 .find-your {
   display: block;
-  font-size: 70px; /* Same size for "FIND YOUR" */
+  font-size: 70px; 
   font-weight: 600;
-  color: #000; /* Keep it black */
+  color: #000; 
 }
 
 .match-here {
   display: block;
-  font-size: 70px; /* Same size for "MATCH HERE" */
+  font-size: 70px; 
   font-weight: 600;
 }
 
 .match-here .highlight-match {
-  color: #ca9f58; /* Only the "MATCH" part gets this color */
+  color: #ca9f58; 
 }
 
 .survey-description {
@@ -187,7 +187,7 @@
 }
 
 .survey-image-wrapper {
-  position: relative; /* Needed to place bg behind image */
+  position: relative; 
 }
 
 .image-background-rectangle {
@@ -196,7 +196,7 @@
   left: 60px;
   right: 0px;
   bottom: 9.9px;
-  background-color: #CA9F58; /* secondary color from your design */
+  background-color: #CA9F58; 
   border-radius: 12px;
   z-index: 0;
 }
@@ -204,5 +204,13 @@
 .survey-image-wrapper img {
   position: relative;
   z-index: 1;
+}
+
+input[type="text"]::placeholder {
+  color: #FFFFFF !important;
+}
+
+.white-placeholder::placeholder {
+  color: #FFFFFF !important;
 }
 

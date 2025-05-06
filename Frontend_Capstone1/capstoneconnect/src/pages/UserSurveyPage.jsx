@@ -1,8 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/UserSurveyPage.css';
 import group from '../assets/group.jpg';
 
 const UserSurveyPage = () => {
+  const navigate = useNavigate();
+
+  const handleMatchNowClick = () => {
+    navigate('/user-survey-form');
+  };
+
   return (
     <section className="survey-page">
       <div className="survey-container">
@@ -20,7 +27,7 @@ const UserSurveyPage = () => {
                 Whether you're looking to collaborate or need a team, we're here to connect you with your perfect match.
               </p>
               <div className="button-wrapper">
-                <button className="cta-button">Match Now</button>
+                <button className="cta-button" onClick={handleMatchNowClick}>Match Now</button>
               </div>
             </div>
           </div>
