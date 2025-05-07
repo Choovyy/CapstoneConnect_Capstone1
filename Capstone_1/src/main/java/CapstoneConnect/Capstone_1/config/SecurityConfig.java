@@ -60,7 +60,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
 
             if (isFirstTimeUser) {
-                response.sendRedirect("http://localhost:5173/user-survey");  // e.g. React route
+                response.sendRedirect("http://localhost:5173/user-survey-page");  // e.g. React route
             } else {
                 response.sendRedirect("/home");  // e.g. React route
             }
