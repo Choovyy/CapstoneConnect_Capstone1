@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../css/SuggestedTeam.css';
 import logo from '../assets/logo.png';
 import SuggestedTeamModal from './SuggestedTeamModal';
+
+// Placeholder profile image (you can replace this with your own placeholder asset)
+const placeholderImg = "https://via.placeholder.com/222x206.png?text=Profile+Image";
 
 const SuggestedTeam = () => {
   const [showModal, setShowModal] = useState(false);
@@ -10,53 +13,13 @@ const SuggestedTeam = () => {
     skill: "c-language",
     preference: "web-app-dev"
   });
-  const [teammates, setTeammates] = useState([]);
-  
-  // Sample data for teammates
-  const sampleTeam = [
-    {
-      id: 1,
-      name: "John Doe",
-      role: "Frontend Developer",
-      skills: "HTML/CSS, JavaScript",
-      reference: "Web App Dev",
-      compatibility: 89,
-      image: "https://placehold.co/222x206"
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      role: "UI/UX Designer",
-      skills: "Figma, Adobe XD",
-      reference: "Mobile App Dev",
-      compatibility: 92,
-      image: "https://placehold.co/222x206"
-    },
-    {
-      id: 3,
-      name: "Alex Johnson",
-      role: "Backend Developer",
-      skills: "Python, Java",
-      reference: "E-Commerce Systems",
-      compatibility: 78,
-      image: "https://placehold.co/222x206"
-    }
-  ];
-
-  useEffect(() => {
-    // In a real app, this would be an API call
-    setTeammates(sampleTeam);
-  }, []);
 
   const handleSendRequest = () => {
     setShowModal(true);
   };
   
   const handleConfirm = () => {
-    // Logic for when request is confirmed
-    console.log("Request confirmed");
     setShowModal(false);
-    // Could add notification or update UI
   };
   
   const handleCancel = () => {
@@ -72,9 +35,8 @@ const SuggestedTeam = () => {
   };
 
   const applyFilter = () => {
-    console.log("Applying filters:", selectedFilters);
-    // In a real app, this would filter data based on selected filters
-    // For now, we'll just log the filters
+    // BACKEND INTEGRATION POINT:
+    // Use selectedFilters to fetch filtered teammates from backend
   };
 
   return (
@@ -89,7 +51,6 @@ const SuggestedTeam = () => {
         <nav className="header__nav">
           <ul className="nav-list">
             <li className="nav-item nav-item--active"><a href="#">Home</a></li>
-            <li className="nav-item"><a href="#">Dashboard</a></li>
             <li className="nav-item"><a href="#">Profile</a></li>
             <li className="nav-item"><a href="#">Projects</a></li>
           </ul>
@@ -162,25 +123,25 @@ const SuggestedTeam = () => {
 
         {/* Teammate Cards Section */}
         <section className="teammates-cards">
-          {teammates.map(teammate => (
-            <article className="card" key={teammate.id}>
-              <div className="card__image">
-                <img src={teammate.image} alt={`${teammate.name} profile`} />
-              </div>
-              <div className="card__details">
-                <p className="card__name">Name: {teammate.name}</p>
-                <p className="card__role">Project Roles: {teammate.role}</p>
-                <p className="card__skills">Technical Skills: {teammate.skills}</p>
-                <p className="card__reference">Project Reference: {teammate.reference}</p>
-                <p className="card__compatibility">
-                  Compatibility: <span>{teammate.compatibility}%</span>
-                </p>
-              </div>
-              <div className="card__action">
-                <button className="btn btn--action" onClick={handleSendRequest}>Send Request</button>
-              </div>
-            </article>
-          ))}
+          {/* 
+            BACKEND INTEGRATION POINT:
+            Map teammates array from backend here.
+            Replace the placeholder card below with dynamic mapping.
+          */}
+          <article className="card">
+            <div className="card__image">
+              <img src={placeholderImg} alt="Profile Placeholder" />
+            </div>
+            <div className="card__details">
+              <p className="card__name">Name:</p>
+              <p className="card__role">Project Roles:</p>
+              <p className="card__skills">Technical Skills:</p>
+              <p className="card__reference">Project Interest:</p>
+            </div>
+            <div className="card__action">
+              <button className="btn btn--action" onClick={handleSendRequest}>Send Request</button>
+            </div>
+          </article>
         </section>
       </main>
 
