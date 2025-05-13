@@ -4,9 +4,9 @@ import UserSurveyPage from './pages/UserSurveyPage.jsx';
 import UserSurveyForm from './pages/UserSurveyForm.jsx';
 import UserSurveyForm2 from './pages/UserSurveyForm2.jsx';
 import UserSurveyForm3 from './pages/UserSurveyForm3.jsx';
+import Project from './pages/Project.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import SuggestedTeam from './pages/SuggestedTeam.jsx';
-
 
 function App() {
   return (
@@ -18,6 +18,7 @@ function App() {
           <Route path="/user-survey-form" element={<UserSurveyForm />} />
           <Route path="/user-survey-form2" element={<UserSurveyForm2 />} />
           <Route path="/user-survey-form3" element={<UserSurveyForm3 />} />
+          <Route path="/project" element={<Project />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </div>

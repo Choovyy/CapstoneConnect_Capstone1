@@ -162,7 +162,7 @@ const UserSurveyForm2 = () => {
     buttonContainer: {
         display: 'flex',
         justifyContent: 'space-between',
-        marginTop: '-1px',
+        marginTop: '-10px',
     },
     backButton: {
         backgroundColor: '#CA9F58',

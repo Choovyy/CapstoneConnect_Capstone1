@@ -166,7 +166,7 @@ const UserSurveyForm = () => {
       borderRadius: '4px',
       cursor: isNextDisabled ? 'not-allowed' : 'pointer',
       fontSize: '16px',
-      marginTop: '33px',
+      marginTop: '23px',
       fontFamily: 'Poppins, sans-serif',
       alignSelf: 'flex-end',
     },

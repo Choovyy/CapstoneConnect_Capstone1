@@ -38,7 +38,7 @@ const UserSurveyForm3 = () => {
       return;
     }
     if (!isSubmitDisabled) {
-      navigate('/dashboard');
+      navigate('/suggested-team');
     }
   };
 
@@ -171,7 +171,7 @@ const UserSurveyForm3 = () => {
     buttonContainer: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginTop: '-1px',
+      marginTop: '-10px',
     },
     backButton: {
       backgroundColor: '#CA9F58',
