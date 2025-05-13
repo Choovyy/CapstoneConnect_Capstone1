@@ -14,16 +14,31 @@ const UserSurveyForm = () => {
     other: false,
   });
   const [otherSkill, setOtherSkill] = useState('');
+  const [otherError, setOtherError] = useState('');
 
   const handleSkillChange = (skill) => {
     setSkills(prev => ({
       ...prev,
       [skill]: !prev[skill]
     }));
+    if (skill === 'other') {
+      setOtherError(''); 
+    }
   };
 
+  const selectedSkillCount = Object.values(skills).filter(Boolean).length;
+  const isOtherInvalid = skills.other && otherSkill.trim() === '';
+  const isNextDisabled = selectedSkillCount < 2 || isOtherInvalid;
+
   const handleNext = () => {
-    navigate('/user-survey-form2');
+    if (isOtherInvalid) {
+      setOtherError('Please input this field.');
+      return;
+    }
+
+    if (!isNextDisabled) {
+      navigate('/user-survey-form2');
+    }
   };
 
   const checkboxWrapper = {
@@ -109,7 +124,7 @@ const UserSurveyForm = () => {
     checkboxLabel: {
       color: '#FFFFFF',
       fontFamily: 'Poppins, sans-serif',
-      pointerEvents: 'none', 
+      pointerEvents: 'none',
     },
     checkbox: {
       width: '20px',
@@ -122,9 +137,6 @@ const UserSurveyForm = () => {
       borderRadius: '3px',
       backgroundColor: 'transparent',
       position: 'relative',
-      '&[type="checkbox"]:checked': {
-        backgroundColor: '#514BC3 !important'
-      }
     },
     otherInput: {
       marginLeft: '8px',
@@ -135,18 +147,6 @@ const UserSurveyForm = () => {
       color: '#FFFFFF',
       pointerEvents: 'none',
       opacity: '0.5',
-      '&::-webkit-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::-moz-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&:-ms-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::placeholder': {
-        color: '#FFFFFF',
-      }
     },
     otherInputActive: {
       marginLeft: '8px',
@@ -157,26 +157,14 @@ const UserSurveyForm = () => {
       color: '#FFFFFF',
       pointerEvents: 'auto',
       opacity: '1',
-      '&::-webkit-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::-moz-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&:-ms-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::placeholder': {
-        color: '#FFFFFF',
-      }
     },
     nextButton: {
-      backgroundColor: '#267987',
+      backgroundColor: isNextDisabled ? '#999' : '#267987',
       color: 'white',
       padding: '5px 32px',
       border: 'none',
       borderRadius: '4px',
-      cursor: 'pointer',
+      cursor: isNextDisabled ? 'not-allowed' : 'pointer',
       fontSize: '16px',
       marginTop: '33px',
       fontFamily: 'Poppins, sans-serif',
@@ -190,6 +178,12 @@ const UserSurveyForm = () => {
     connectText: {
       color: '#267987',
       fontWeight: 'bold',
+      fontFamily: 'Poppins, sans-serif',
+    },
+    errorText: {
+      color: '#FFCCCC',
+      fontSize: '12px',
+      marginLeft: '8px',
       fontFamily: 'Poppins, sans-serif',
     }
   };
@@ -207,175 +201,61 @@ const UserSurveyForm = () => {
             <p style={styles.subtitle}>Select your top skills</p>
 
             <div style={styles.checkboxGroup}>
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.cLanguage}
-                  onChange={() => handleSkillChange('cLanguage')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.cLanguage ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>C Language</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.php}
-                  onChange={() => handleSkillChange('php')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.php ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>PHP</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.htmlCss}
-                  onChange={() => handleSkillChange('htmlCss')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.htmlCss ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>HTML and CSS</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.javascript}
-                  onChange={() => handleSkillChange('javascript')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.javascript ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>JavaScript</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.java}
-                  onChange={() => handleSkillChange('java')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.java ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Java</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.python}
-                  onChange={() => handleSkillChange('python')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.python ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Python</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.other}
-                  onChange={() => handleSkillChange('other')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.other ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Others:</span>
-                <input
-                  type="text"
-                  value={otherSkill}
-                  onChange={(e) => setOtherSkill(e.target.value)}
-                  style={{
-                    marginLeft: '8px',
-                    padding: '4px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                    backgroundColor: '#CA9F58',
-                    color: '#FFFFFF',
-                    pointerEvents: skills.other ? 'auto' : 'none',
-                    opacity: skills.other ? '1' : '0.5'
-                  }}
-                  placeholder="Specify other skills"
-                  disabled={!skills.other}
-                />
-              </div>
+              {Object.entries(skills).map(([key, checked]) => (
+                <div key={key} style={checkboxWrapper}>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => handleSkillChange(key)}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      cursor: 'pointer',
+                      appearance: 'none',
+                      WebkitAppearance: 'none',
+                      MozAppearance: 'none',
+                      border: '2px solid #FFFFFF',
+                      borderRadius: '3px',
+                      backgroundColor: checked ? '#514BC3' : 'transparent',
+                      position: 'relative',
+                    }}
+                  />
+                  <span style={styles.checkboxLabel}>
+                    {{
+                      cLanguage: 'C Language',
+                      php: 'PHP',
+                      htmlCss: 'HTML and CSS',
+                      javascript: 'JavaScript',
+                      java: 'Java',
+                      python: 'Python',
+                      other: 'Others:',
+                    }[key]}
+                  </span>
+                  {key === 'other' && (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <input
+                        type="text"
+                        value={otherSkill}
+                        onChange={(e) => {
+                          setOtherSkill(e.target.value);
+                          setOtherError('');
+                        }}
+                        style={skills.other ? styles.otherInputActive : styles.otherInput}
+                        placeholder="Specify other skills"
+                        disabled={!skills.other}
+                      />
+                      {otherError && <span style={styles.errorText}>{otherError}</span>}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
-          <button 
-            type="button" 
+          <button
+            type="button"
             style={styles.nextButton}
             onClick={handleNext}
+            disabled={isNextDisabled}
           >
             Next
           </button>

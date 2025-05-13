@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
-const UserSurveyForm = () => {
+const UserSurveyForm3 = () => {
   const navigate = useNavigate();
   const [skills, setSkills] = useState({
     cLanguage: false,
@@ -14,20 +14,32 @@ const UserSurveyForm = () => {
     other: false,
   });
   const [otherSkill, setOtherSkill] = useState('');
+  const [otherError, setOtherError] = useState('');
 
   const handleSkillChange = (skill) => {
     setSkills(prev => ({
       ...prev,
       [skill]: !prev[skill]
     }));
+    if (skill === 'other') setOtherError('');
   };
+
+  const selectedSkillCount = Object.values(skills).filter(Boolean).length;
+  const isOtherInvalid = skills.other && otherSkill.trim() === '';
+  const isSubmitDisabled = selectedSkillCount < 2 || isOtherInvalid;
 
   const handleBack = () => {
     navigate('/user-survey-form2'); 
   };
 
   const handleSubmit = () => {
-    navigate('/dashboard');
+    if (isOtherInvalid) {
+      setOtherError('Please input this field.');
+      return;
+    }
+    if (!isSubmitDisabled) {
+      navigate('/dashboard');
+    }
   };
 
   const checkboxWrapper = {
@@ -139,18 +151,6 @@ const UserSurveyForm = () => {
       color: '#FFFFFF',
       pointerEvents: 'none',
       opacity: '0.5',
-      '&::-webkit-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::-moz-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&:-ms-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::placeholder': {
-        color: '#FFFFFF',
-      }
     },
     otherInputActive: {
       marginLeft: '8px',
@@ -161,43 +161,37 @@ const UserSurveyForm = () => {
       color: '#FFFFFF',
       pointerEvents: 'auto',
       opacity: '1',
-      '&::-webkit-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::-moz-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&:-ms-input-placeholder': {
-        color: '#FFFFFF',
-      },
-      '&::placeholder': {
-        color: '#FFFFFF',
-      }
+    },
+    errorText: {
+      color: '#FFCCCC',
+      fontSize: '12px',
+      marginLeft: '8px',
+      fontFamily: 'Poppins, sans-serif',
     },
     buttonContainer: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginTop: '-1px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: '-1px',
     },
     backButton: {
-        backgroundColor: '#CA9F58',
-        color: 'white',
-        padding: '5px 32px',
-        border: '1px solid #FFFFFF',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontSize: '16px',
-        marginTop: '32px',
-        fontFamily: 'Poppins, sans-serif',
-        alignSelf: 'flex-end',
+      backgroundColor: '#CA9F58',
+      color: 'white',
+      padding: '5px 32px',
+      border: '1px solid #FFFFFF',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontSize: '16px',
+      marginTop: '32px',
+      fontFamily: 'Poppins, sans-serif',
+      alignSelf: 'flex-end',
     },
     submitButton: {
-      backgroundColor: '#267987',
+      backgroundColor: isSubmitDisabled ? '#999' : '#267987',
       color: 'white',
       padding: '5px 21px',
       border: 'none',
       borderRadius: '4px',
-      cursor: 'pointer',
+      cursor: isSubmitDisabled ? 'not-allowed' : 'pointer',
       fontSize: '16px',
       marginTop: '32px',
       fontFamily: 'Poppins, sans-serif',
@@ -228,188 +222,75 @@ const UserSurveyForm = () => {
             <p style={styles.subtitle}>Select your preferred roles</p>
 
             <div style={styles.checkboxGroup}>
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.cLanguage}
-                  onChange={() => handleSkillChange('cLanguage')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.cLanguage ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>UI/UX Developer</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.php}
-                  onChange={() => handleSkillChange('php')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.php ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Game Developer</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.htmlCss}
-                  onChange={() => handleSkillChange('htmlCss')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.htmlCss ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Frontend Developer</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.javascript}
-                  onChange={() => handleSkillChange('javascript')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.javascript ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Team Leader</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.java}
-                  onChange={() => handleSkillChange('java')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.java ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Backend Developer</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.python}
-                  onChange={() => handleSkillChange('python')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.python ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Technical Writer</span>
-              </div>
-
-              <div style={checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  checked={skills.other}
-                  onChange={() => handleSkillChange('other')}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.other ? '#514BC3' : 'transparent',
-                    position: 'relative',
-                  }}
-                />
-                <span style={styles.checkboxLabel}>Others:</span>
-                <input
-                  type="text"
-                  value={otherSkill}
-                  onChange={(e) => setOtherSkill(e.target.value)}
-                  style={{
-                    marginLeft: '8px',
-                    padding: '4px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                    backgroundColor: '#CA9F58',
-                    color: '#FFFFFF',
-                    pointerEvents: skills.other ? 'auto' : 'none',
-                    opacity: skills.other ? '1' : '0.5'
-                  }}
-                  placeholder="Specify other skills"
-                  disabled={!skills.other}
-                />
-              </div>
+              {Object.entries(skills).map(([key, checked]) => (
+                <div key={key} style={checkboxWrapper}>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => handleSkillChange(key)}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      cursor: 'pointer',
+                      appearance: 'none',
+                      WebkitAppearance: 'none',
+                      MozAppearance: 'none',
+                      border: '2px solid #FFFFFF',
+                      borderRadius: '3px',
+                      backgroundColor: checked ? '#514BC3' : 'transparent',
+                      position: 'relative',
+                    }}
+                  />
+                  <span style={styles.checkboxLabel}>
+                    {{
+                      cLanguage: 'UI/UX Developer',
+                      php: 'Game Developer',
+                      htmlCss: 'Frontend Developer',
+                      javascript: 'Team Leader',
+                      java: 'Backend Developer',
+                      python: 'Technical Writer',
+                      other: 'Others:',
+                    }[key]}
+                  </span>
+                  {key === 'other' && (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <input
+                        type="text"
+                        value={otherSkill}
+                        onChange={(e) => {
+                          setOtherSkill(e.target.value);
+                          setOtherError('');
+                        }}
+                        style={skills.other ? styles.otherInputActive : styles.otherInput}
+                        placeholder="Specify other roles"
+                        disabled={!skills.other}
+                      />
+                      {otherError && <span style={styles.errorText}>{otherError}</span>}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
-            <div style={styles.buttonContainer}>
-                <button 
-                    type="button" 
-                    style={styles.backButton}
-                    onClick={handleBack}
-                >
-                    Back
-                </button>
 
-                <button 
-                    type="button" 
-                    style={styles.submitButton}
-                    onClick={handleSubmit}
-                >
-                    Submit
-                </button>
-            </div>
+          <div style={styles.buttonContainer}>
+            <button 
+              type="button" 
+              style={styles.backButton}
+              onClick={handleBack}
+            >
+              Back
+            </button>
+
+            <button 
+              type="button" 
+              style={styles.submitButton}
+              onClick={handleSubmit}
+              disabled={isSubmitDisabled}
+            >
+              Submit
+            </button>
+          </div>
         </form>
       </main>
 
@@ -432,4 +313,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-export default UserSurveyForm;
+export default UserSurveyForm3;
