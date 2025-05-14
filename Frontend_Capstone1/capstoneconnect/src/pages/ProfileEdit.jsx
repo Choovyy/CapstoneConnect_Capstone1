@@ -1,3 +1,4 @@
+import '../css/Navigation.css';
 import '../css/ProfileEdit.css'; // Assuming you have a CSS file for styling
 import logo from '../assets/logo.png'; // Placeholder for your logo
 import vyn from '../assets/vyn.jpg'; // Placeholder for your profile picture

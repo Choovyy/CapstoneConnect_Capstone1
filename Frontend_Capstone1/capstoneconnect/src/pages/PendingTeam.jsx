@@ -1,6 +1,7 @@
 import React from 'react';
-import '../css/PendingTeam.css'; // Assuming you have a CSS file for styling
-import logo from '../assets/logo.png'; // Placeholder for your logo
+import '../css/Navigation.css';
+import '../css/PendingTeam.css';
+import logo from '../assets/logo.png';
 
 const PendingTeam = () => {
   return (
@@ -57,18 +58,7 @@ const PendingTeam = () => {
             </div>
           </div>
           
-          <div className="card">
-            <div className="compatibility">Compatibility: <span>92%</span></div>
-            <img src="https://placehold.co/144x142" alt="Profile" />
-            <h2>Maria Garcia</h2>
-            <p>UI/UX Designer</p>
-            <div className="skills">Skills: Figma, Adobe XD</div>
-            <div className="interests">Interests: User Research</div>
-            <div className="actions">
-              <button className="btn approve">Approve</button>
-              <button className="btn reject">Reject</button>
-            </div>
-          </div>
+          
         </div>
       </div>
     </>

@@ -12,44 +12,6 @@ body, .profile-page {
   color: #040316;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background-color: #FBFBFE;
-  border-bottom: 1px solid #D9D9D9;
-}
-
-.logo img {
-  height: 35px;
-}
-
-nav {
-  display: flex;
-  gap: 50px;
-}
-
-.nav-item {
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.nav-item:hover{
-  background-color: #eaeaea;
-}
-
-.logout-btn {
-  background-color: #2C2C2C;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
 .profile-container {
   max-width: 1000px;
   margin: 40px auto;

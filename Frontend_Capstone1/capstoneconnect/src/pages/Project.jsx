@@ -1,4 +1,5 @@
 import React from 'react';
+import '../css/Navigation.css';
 import logo from '../assets/logo.png';
 
 const Project = () => {
@@ -50,31 +51,24 @@ const Project = () => {
   return (
     <div>
       {/* Navbar */}
-      <header style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        padding: '12px 24px', 
-        borderBottom: '2px solid #ccc' 
-      }}>
-        <div className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo} alt="Logo" style={{ height: '35px' }} />
+      <header className="site-header">
+        <div className="header__logo">
+          <a href="#">
+            <img src={logo} alt="Logo" />
+          </a>
         </div>
-        <nav style={{ display: 'flex', gap: '16px' }}>
-          <div className="nav-item" style={{ padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.3s' }}>Home</div>
-          <div className="nav-item" style={{ padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.3s' }}>Profile</div>
-          <div className="nav-item" style={{ padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.3s' }}>Projects</div>
+        <nav className="header__nav">
+          <ul className="nav-list">
+            <li className="nav-item"><a href="#">Home</a></li>
+            <li className="nav-item"><a href="#">Profile</a></li>
+            <li className="nav-item"><a href="#">Projects</a></li>
+            <li className="nav-item"><a href="#">Team</a></li>
+            <li className="nav-item"><a href="#">More</a></li>
+          </ul>
         </nav>
-        <button className="logout-btn" style={{
-          backgroundColor: '#2C2C2C',
-          color: 'white',
-          padding: '8px 16px',
-          borderRadius: '8px',
-          fontSize: '16px',
-          cursor: 'pointer'
-        }}>
-          Logout
-        </button>
+        <div className="header__auth">
+          <button className="btn btn--primary">Logout</button>
+        </div>
       </header>
 
       {/* Project Section Header */}

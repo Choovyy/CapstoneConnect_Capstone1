@@ -86,14 +86,14 @@ body {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  margin-top: 7%;
 }
 
 .sidebar {
-  background: #fbfbfe;
-  width: 340px;
-  padding: 40px 20px;
-  text-align: center;
-  border-right: 1px solid var(--primary-color);
+    width: 340px;
+    padding: 40px 20px;
+    text-align: center;
+    border-right: 1px solid var(--primary-color);
 }
 
 .sidebar img {
@@ -118,7 +118,6 @@ body {
 .profile-content {
   flex: 1;
   padding: 40px;
-  background: #fbfbfe;
 }
 
 form {

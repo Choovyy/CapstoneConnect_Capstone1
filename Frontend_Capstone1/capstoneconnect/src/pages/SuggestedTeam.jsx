@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../css/Navigation.css';
 import '../css/SuggestedTeam.css';
 import logo from '../assets/logo.png';
 import SuggestedTeamModal from './SuggestedTeamModal';
