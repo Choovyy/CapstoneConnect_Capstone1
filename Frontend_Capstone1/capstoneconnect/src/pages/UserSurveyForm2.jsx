@@ -215,17 +215,17 @@ const UserSurveyForm2 = () => {
       <main style={styles.main}>
         <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
           <div style={styles.skillsSection}>
-            <h2 style={styles.sectionTitle}>Project Interests</h2>
-            <p style={styles.subtitle}>Select your project interests</p>
+            <h2 style={styles.sectionTitle}>Technical Skills</h2>
+            <p style={styles.subtitle}>Select your top skills</p>
 
             <div style={styles.checkboxGroup}>
               {[
-                { key: 'cLanguage', label: 'Web App Development' },
-                { key: 'php', label: 'E-Commerce Systems' },
-                { key: 'htmlCss', label: 'Mobile App Development' },
-                { key: 'javascript', label: 'Game Development' },
-                { key: 'java', label: 'Task Management Systems' },
-                { key: 'python', label: 'AI Development' },
+                { key: 'cLanguage', label: 'C Language' },
+                { key: 'php', label: 'PHP' },
+                { key: 'htmlCss', label: 'HTML and CSS' },
+                { key: 'javascript', label: 'JavaScript' },
+                { key: 'java', label: 'Java' },
+                { key: 'python', label: 'Python' },
                 { key: 'other', label: 'Others:' },
               ].map(({ key, label }) => (
                 <div key={key} style={checkboxWrapper}>
@@ -257,7 +257,7 @@ const UserSurveyForm2 = () => {
                           setOtherError('');
                         }}
                         style={skills.other ? styles.otherInputActive : styles.otherInput}
-                        placeholder="Specify other interests"
+                        placeholder="Specify other skills"
                         disabled={!skills.other}
                       />
                       {otherError && <span style={styles.errorText}>{otherError}</span>}
