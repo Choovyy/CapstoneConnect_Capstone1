@@ -56,5 +56,10 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<Long> getUserIdByOauthId(String oauthId) {
+        return userRepository.findByOauthId(oauthId).map(UserEntity::getId);
+    }
+
+
 }
 

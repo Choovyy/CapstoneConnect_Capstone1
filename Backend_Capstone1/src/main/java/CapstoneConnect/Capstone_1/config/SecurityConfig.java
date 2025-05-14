@@ -1,23 +1,24 @@
 package CapstoneConnect.Capstone_1.config;
 
+import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.service.UserService;
 import CapstoneConnect.Capstone_1.jwt.JwtUtil;
 import CapstoneConnect.Capstone_1.jwt.JwtAuthenticationFilter;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseCookie;
 
 @Configuration
 @EnableWebSecurity
@@ -38,7 +39,12 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/user", "/api/auth/microsoft").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/survey/**").permitAll()
+                        .requestMatchers("/api/survey/save/**").authenticated()
+                        .requestMatchers("/api/auth/userId").authenticated() // ✅ Add this line
+                        .requestMatchers("/api/survey/update/**").authenticated()
                         .requestMatchers("/api/test/protected").authenticated()
+                        .requestMatchers("/api/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -74,7 +80,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public AuthenticationSuccessHandler oAuthSuccessHandler() {
-        return ((request, response, authentication) -> {
+        return (request, response, authentication) -> {
             OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
 
             String oauthId = oauth2User.getAttribute("oid");
@@ -85,8 +91,11 @@ public class SecurityConfig implements WebMvcConfigurer {
                 userService.saveUserIfNotExists(oauthId, email, name);
             }
 
-            boolean isFirstTimeUser = userService.isFirstTimeUser(email);
-            String token = jwtUtil.generateToken(email);
+            UserEntity user = userService.getUserByEmail(email).orElseThrow();
+            boolean isFirstTimeUser = user.isFirstTimeUser();
+
+            // Generate token with both email and userId
+            String token = jwtUtil.generateToken(email, user.getId());
 
             // Allow secure cookie only if not on localhost
             boolean isSecure = !request.getServerName().equals("localhost");
@@ -106,14 +115,14 @@ public class SecurityConfig implements WebMvcConfigurer {
             } else {
                 response.sendRedirect("http://localhost:5173/home");
             }
-        });
+        };
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:5173")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }

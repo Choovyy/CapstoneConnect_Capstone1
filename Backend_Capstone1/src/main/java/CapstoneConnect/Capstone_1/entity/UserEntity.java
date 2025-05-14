@@ -1,6 +1,8 @@
 package CapstoneConnect.Capstone_1.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 @Entity
 @Table(name = "users")
@@ -22,6 +24,12 @@ public class UserEntity {
     // Flag to track if it's the user's first time
     @Column(nullable = false)
     private boolean firstTimeUser;
+
+
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference  // Manages the circular reference on the user side
+    private ProfileEntity profile;
+
 
     public UserEntity() {
         // Default constructor
@@ -71,4 +79,14 @@ public class UserEntity {
     public void setFirstTimeUser(boolean firstTimeUser) {
         this.firstTimeUser = firstTimeUser;
     }
+
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
+    }
+
+
 }
