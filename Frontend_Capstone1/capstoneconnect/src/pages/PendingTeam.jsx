@@ -14,9 +14,10 @@ const PendingTeam = () => {
         <nav className="header__nav">
           <ul className="nav-list">
             <li className="nav-item"><a href="#">Home</a></li>
-            <li className="nav-item"><a href="#">Dashboard</a></li>
             <li className="nav-item"><a href="#">Profile</a></li>
             <li className="nav-item"><a href="#">Projects</a></li>
+            <li className="nav-item"><a href="#">Teams</a></li>
+            <li className="nav-item"><a href="#">More</a></li>
           </ul>
         </nav>
         <div className="header__auth">

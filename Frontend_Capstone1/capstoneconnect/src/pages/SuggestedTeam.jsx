@@ -53,6 +53,8 @@ const SuggestedTeam = () => {
             <li className="nav-item nav-item--active"><a href="#">Home</a></li>
             <li className="nav-item"><a href="#">Profile</a></li>
             <li className="nav-item"><a href="#">Projects</a></li>
+            <li className="nav-item"><a href="#">Team</a></li>
+            <li className="nav-item"><a href="#">More</a></li>
           </ul>
         </nav>
         <div className="header__auth">

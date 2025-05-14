@@ -6,14 +6,14 @@ import UserSurveyForm2 from './pages/UserSurveyForm2.jsx';
 import UserSurveyForm3 from './pages/UserSurveyForm3.jsx';
 import Project from './pages/Project.jsx';
 import Dashboard from './pages/Dashboard.jsx';
-import SuggestedTeam from './pages/SuggestedTeam.jsx';
+import PendingTeam from './pages/PendingTeam.jsx';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<SuggestedTeam />} />
+          <Route path="/" element={<PendingTeam />} />
           <Route path="/user-survey-page" element={<UserSurveyPage />} />
           <Route path="/user-survey-form" element={<UserSurveyForm />} />
           <Route path="/user-survey-form2" element={<UserSurveyForm2 />} />
