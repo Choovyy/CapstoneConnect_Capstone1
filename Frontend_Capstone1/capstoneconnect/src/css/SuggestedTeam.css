@@ -12,14 +12,6 @@
   --nav-hover: #ff9800;
 }
 
-/* Reset and Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-
 body {
   font-family: 'Poppins', sans-serif;
   background-color: var(--background-color);
@@ -28,7 +20,7 @@ body {
 }
 
 /* Container for Main Content */
-.container {
+.suggested-team-container {
   max-width: 1440px;
   padding: 0 32px;
   margin: 100px auto 120px; /* Top: header height, Bottom: footer height */
@@ -37,48 +29,48 @@ body {
 
 /* Filter Section */
 
-.teammates-filter {
-    margin-bottom: 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Align content to the left */
+.suggested-team-filter {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align content to the left */
 }
 
-.section-title {
-    font-size: 35px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    color: #040316;
-    text-align: left; /* Ensure the title aligns to the left */
+.suggested-team-title {
+  font-size: 35px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #040316;
+  text-align: left; /* Ensure the title aligns to the left */
 }
 
-.filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: flex-start; /* Align filters to the top */
+.suggested-team-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start; /* Align filters to the top */
 }
 
-.filter-group {
+.suggested-team-filter-group {
   display: flex;
   flex-direction: column;
   min-width: 200px;
 }
 
-.filter-group label {
+.suggested-team-filter-group label {
   font-size: 16px;
   margin-bottom: 5px;
   color: #040316;
   text-align: left;
 }
 
-.filter-select {
+.suggested-team-filter-select {
   padding: 8px;
   border: 1px solid #D9D9D9;
   border-radius: 8px;
 }
 
-.filter-apply {
+.suggested-team-filter-apply {
   align-self: flex-end;
 }
 
@@ -98,7 +90,7 @@ body {
 }
 
 /* Teammate Cards Section – Horizontal Scroll Mode */
-.teammates-cards {
+.suggested-team-cards {
   display: flex;
   gap: 24px;
   overflow-x: auto;
@@ -107,17 +99,17 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-.teammates-cards::-webkit-scrollbar {
+.suggested-team-cards::-webkit-scrollbar {
   height: 8px;
 }
 
-.teammates-cards::-webkit-scrollbar-thumb {
+.suggested-team-cards::-webkit-scrollbar-thumb {
   background-color: var(--primary-color);
   border-radius: 4px;
 }
 
 /* Card Component */
-.card {
+.suggested-team-card {
   flex: 0 0 auto; /* Prevent cards from shrinking and keep them side-by-side */
   background: #fff;
   border: 0.5px solid var(--primary-color);
@@ -130,11 +122,11 @@ body {
   transition: transform 0.3s ease;
 }
 
-.card:hover {
+.suggested-team-card:hover {
   transform: translateY(-5px);
 }
 
-.card__image img {
+.suggested-team-card-image img {
   width: 120px;
   height: 120px;
   object-fit: cover;
@@ -145,22 +137,15 @@ body {
   border: 2px solid var(--primary-color);
 }
 
-.card__details p {
+.suggested-team-card-details p {
   margin: 4px 0;
-    font-size: 16px;
-    font-weight: 400;
-    color: #040316;
-    text-align: left;
-    -webkit-text-stroke: thin;
-}
-
-.card__compatibility {
-  color: var(--secondary-color);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 400;
+  color: #040316;
+  text-align: left;
 }
 
-.card__action .btn.btn--action {
+.suggested-team-card-action .btn.btn--action {
   width: 178px;
   padding: 8px;
   background-color: var(--primary-color);
@@ -171,7 +156,7 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.card__action .btn.btn--action:hover {
+.suggested-team-card-action .btn.btn--action:hover {
   background-color: #b08a4d;
 }
 
@@ -201,37 +186,12 @@ body {
     margin-left: 0;
   }
 
-  .filters {
+  .suggested-team-filters {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .filter-apply {
+  .suggested-team-filter-apply {
     align-self: center;
   }
-}
-
-
-
-
-.teammates-filter {
-    margin-bottom: 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Align content to the left */
-}
-
-.section-title {
-    font-size: 35px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    color: #040316;
-    text-align: left; /* Ensure the title aligns to the left */
-}
-
-.filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: flex-start; /* Align filters to the top */
 }
