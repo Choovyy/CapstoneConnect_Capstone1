@@ -127,7 +127,7 @@ label {
   text-align: left;
 }
 
-input,
+.profile-input,
 select,
 textarea {
   width: 100%;
