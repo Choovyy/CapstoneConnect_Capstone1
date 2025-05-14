@@ -10,6 +10,7 @@ import Project from './pages/Project.jsx';
 import PendingTeam from './pages/PendingTeam.jsx';
 import Profile from './pages/Profile.jsx';
 import ProfileEdit from './pages/ProfileEdit.jsx';
+import Matching from './pages/Matching.jsx';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/pending-team" element={<PendingTeam />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile-edit" element={<ProfileEdit />} />
+          <Route path="/matching" element={<Matching />} />
         </Routes>
       </div>
     </Router>
