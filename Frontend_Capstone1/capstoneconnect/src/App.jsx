@@ -5,15 +5,15 @@ import UserSurveyForm from './pages/UserSurveyForm.jsx';
 import UserSurveyForm2 from './pages/UserSurveyForm2.jsx';
 import UserSurveyForm3 from './pages/UserSurveyForm3.jsx';
 import Project from './pages/Project.jsx';
-import PendingTeam from './pages/PendingTeam.jsx';
 import Profile from './pages/Profile.jsx';
+import ProfileEdit from './pages/ProfileEdit.jsx';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<PendingTeam />} />
+          <Route path="/" element={<ProfileEdit />} />
           <Route path="/user-survey-page" element={<UserSurveyPage />} />
           <Route path="/user-survey-form" element={<UserSurveyForm />} />
           <Route path="/user-survey-form2" element={<UserSurveyForm2 />} />

@@ -8,7 +8,9 @@ const ProfileEdit = () => {
       {/* Navigation */}
       <header className="site-header">
         <div className="header__logo">
-          <img src={logo} alt="Logo" />
+          <a href="#">
+            <img src={logo} alt="Logo" />
+          </a>
         </div>
         <nav className="header__nav">
           <ul className="nav-list">
@@ -22,7 +24,7 @@ const ProfileEdit = () => {
               <a href="#">Projects</a>
             </li>
             <li className="nav-item">
-              <a href="#">Teams</a>
+              <a href="#">Team</a>
             </li>
             <li className="nav-item">
               <a href="#">More</a>
@@ -30,7 +32,7 @@ const ProfileEdit = () => {
           </ul>
         </nav>
         <div className="header__auth">
-          <button className="btn">Logout</button>
+          <button className="btn btn--primary">Logout</button>
         </div>
       </header>
 

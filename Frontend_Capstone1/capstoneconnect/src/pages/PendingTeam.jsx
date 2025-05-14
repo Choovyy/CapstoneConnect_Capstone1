@@ -16,7 +16,7 @@ const PendingTeam = () => {
             <li className="nav-item"><a href="#">Home</a></li>
             <li className="nav-item"><a href="#">Profile</a></li>
             <li className="nav-item"><a href="#">Projects</a></li>
-            <li className="nav-item"><a href="#">Teams</a></li>
+            <li className="nav-item"><a href="#">Team</a></li>
             <li className="nav-item"><a href="#">More</a></li>
           </ul>
         </nav>
@@ -71,10 +71,6 @@ const PendingTeam = () => {
           </div>
         </div>
       </div>
-
-      <footer className="site-footer">
-        <p>&copy; 2025 Your Company. All rights reserved.</p>
-      </footer>
     </>
   );
 };
