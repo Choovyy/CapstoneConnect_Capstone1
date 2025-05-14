@@ -18,6 +18,7 @@
   background-color: var(--background-color);
   min-height: 100vh;
   box-sizing: border-box;
+  background: black;
 }
 
 /* Full Background Body Section */
@@ -91,7 +92,7 @@
 .description {
   font-family: 'Poppins', sans-serif;
   font-size: 24px;
-  color: var(--text-color);
+  color: #ffffff;
   margin: 0;
 }
 
@@ -156,9 +157,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  padding-left: 79%;
   display: flex;
-  gap: 10px;
+  gap: 50px;
 }
 
 .nav-pill-list li {

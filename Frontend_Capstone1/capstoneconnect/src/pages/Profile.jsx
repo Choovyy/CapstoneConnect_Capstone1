@@ -1,22 +1,29 @@
 import '../css/Profile.css'; // Assuming you have a CSS file for styling
 import logo from '../assets/logo.png'; // Placeholder for your logo
 import vyn from '../assets/vyn.jpg'; // Placeholder for your profile picture
+import '../css/Navigation.css'; // Assuming you have a CSS file for navigation styling
 
 const Profile = () => {
   return (
     <div className="profile-page">
-      <header>
-        <div className="logo">
-          <img src={logo} alt="Logo" />
+      <header className="site-header">
+        <div className="header__logo">
+          <a href="#">
+            <img src={logo} alt="CapstoneConnect Logo" />
+          </a>
         </div>
-        <nav>
-          <div className="nav-item active">Home</div>
-          <div className="nav-item">Profile</div>
-          <div className="nav-item">Projects</div>
-          <div className="nav-item">Team</div>
-          <div className="nav-item">More</div>
+        <nav className="header__nav">
+          <ul className="nav-list">
+            <li className="nav-item nav-item--active"><a href="#">Home</a></li>
+            <li className="nav-item"><a href="#">Profile</a></li>
+            <li className="nav-item"><a href="#">Projects</a></li>
+            <li className="nav-item"><a href="#">Team</a></li>
+            <li className="nav-item"><a href="#">More</a></li>
+          </ul>
         </nav>
-        <div className="logout-btn">Logout</div>
+        <div className="header__auth">
+          <button className="btn btn--primary">Logout</button>
+        </div>
       </header>
 
       <main className="profile-container">

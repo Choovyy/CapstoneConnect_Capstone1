@@ -1,0 +1,96 @@
+:root {
+  --primary-color: #CA9F58;
+  --secondary-color: #267987;
+  --background-color: #ffffff;
+  --text-color: #040316;
+  --nav-bg: #FBFBFE;
+  --nav-text: #333;
+  --nav-hover: #ff9800;
+}
+
+.site-header {
+  background-color: var(--nav-bg);
+  padding: 15px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header__logo img {
+  width: 40px;
+  height: 35px;
+}
+
+.header__nav .nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 50px;
+}
+
+.nav-item {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  padding: 8px;
+}
+
+.nav-item a {
+  text-decoration: none;
+  color: var(--nav-text);
+  transition: color 0.3s ease;
+}
+
+.nav-item a:hover {
+  color: var(--nav-hover);
+}
+
+.header__auth .btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: #333;
+  color: #fff;
+}
+
+.header__auth .btn:hover {
+  background-color: var(--nav-hover);
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .site-header, .container {
+    padding: 16px;
+  }
+
+  .nav-list {
+    gap: 8px;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .site-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header__nav {
+    order: 3;
+    width: 100%;
+  }
+
+  .header__nav .nav-list {
+    justify-content: center;
+  }
+}
