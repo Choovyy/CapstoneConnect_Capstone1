@@ -4,7 +4,6 @@ import '../css/SuggestedTeam.css';
 import logo from '../assets/logo.png';
 import SuggestedTeamModal from './SuggestedTeamModal';
 
-// Placeholder profile image (you can replace this with your own placeholder asset)
 const placeholderImg = "https://via.placeholder.com/222x206.png?text=Profile+Image";
 
 const SuggestedTeam = () => {
@@ -64,16 +63,16 @@ const SuggestedTeam = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container">
+      <main className="suggested-team-container">
         {/* Filter Section */}
-        <section className="teammates-filter">
-          <h1 className="section-title">Suggested Teammates</h1>
-          <div className="filters">
-            <div className="filter-group">
+        <section className="suggested-team-filter">
+          <h1 className="suggested-team-title">Suggested Teammates</h1>
+          <div className="suggested-team-filters">
+            <div className="suggested-team-filter-group">
               <label htmlFor="roles">Capstone Project Roles:</label>
               <select 
                 id="roles" 
-                className="filter-select"
+                className="suggested-team-filter-select"
                 value={selectedFilters.role}
                 onChange={handleFilterChange}
               >
@@ -86,11 +85,11 @@ const SuggestedTeam = () => {
                 <option value="technical-writer">Technical Writer</option>
               </select>
             </div>
-            <div className="filter-group">
+            <div className="suggested-team-filter-group">
               <label htmlFor="skills">Technical Skills:</label>
               <select 
                 id="skills" 
-                className="filter-select"
+                className="suggested-team-filter-select"
                 value={selectedFilters.skill}
                 onChange={handleFilterChange}
               >
@@ -102,11 +101,11 @@ const SuggestedTeam = () => {
                 <option value="python">Python</option>
               </select>
             </div>
-            <div className="filter-group">
+            <div className="suggested-team-filter-group">
               <label htmlFor="preferences">Project Preferences:</label>
               <select 
                 id="preferences" 
-                className="filter-select"
+                className="suggested-team-filter-select"
                 value={selectedFilters.preference}
                 onChange={handleFilterChange}
               >
@@ -118,36 +117,30 @@ const SuggestedTeam = () => {
                 <option value="ai-dev">AI Dev</option>
               </select>
             </div>
-            <div className="filter-group filter-apply">
+            <div className="suggested-team-filter-apply">
               <button className="btn btn--filter" onClick={applyFilter}>Apply Filter</button>
             </div>
           </div>
         </section>
 
         {/* Teammate Cards Section */}
-        <section className="teammates-cards">
-          {/* 
-            BACKEND INTEGRATION POINT:
-            Map teammates array from backend here.
-            Replace the placeholder card below with dynamic mapping.
-          */}
-          <article className="card">
-            <div className="card__image">
+        <section className="suggested-team-cards">
+          <article className="suggested-team-card">
+            <div className="suggested-team-card-image">
               <img src={placeholderImg} alt="Profile Placeholder" />
             </div>
-            <div className="card__details">
-              <p className="card__name">Name:</p>
-              <p className="card__role">Project Roles:</p>
-              <p className="card__skills">Technical Skills:</p>
-              <p className="card__reference">Project Interest:</p>
+            <div className="suggested-team-card-details">
+              <p className="suggested-team-card-name">Name:</p>
+              <p className="suggested-team-card-role">Project Roles:</p>
+              <p className="suggested-team-card-skills">Technical Skills:</p>
+              <p className="suggested-team-card-reference">Project Interest:</p>
             </div>
-            <div className="card__action">
+            <div className="suggested-team-card-action">
               <button className="btn btn--action" onClick={handleSendRequest}>Send Request</button>
             </div>
           </article>
         </section>
       </main>
-      {/* Render Modal conditionally */}
       {showModal && <SuggestedTeamModal onConfirm={handleConfirm} onCancel={handleCancel} />}
     </div>
   );
