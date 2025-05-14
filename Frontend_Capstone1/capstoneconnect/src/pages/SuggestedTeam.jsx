@@ -146,12 +146,6 @@ const SuggestedTeam = () => {
           </article>
         </section>
       </main>
-
-      {/* Footer Section */}
-      <footer className="site-footer">
-        <p>&copy; 2025 CapstoneConnect. All rights reserved.</p>
-      </footer>
-
       {/* Render Modal conditionally */}
       {showModal && <SuggestedTeamModal onConfirm={handleConfirm} onCancel={handleCancel} />}
     </div>

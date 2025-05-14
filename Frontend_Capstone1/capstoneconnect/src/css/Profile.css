@@ -27,7 +27,7 @@ header {
 
 nav {
   display: flex;
-  gap: 16px;
+  gap: 50px;
 }
 
 .nav-item {
