@@ -1,53 +1,52 @@
-import '../css/Navigation.css';
-import '../css/ProfileEdit.css'; // Assuming you have a CSS file for styling
-import logo from '../assets/logo.png'; // Placeholder for your logo
-import vyn from '../assets/vyn.jpg'; // Placeholder for your profile picture
+import '../css/ProfileEdit.css';
+import logo from '../assets/logo.png';
+import vyn from '../assets/vyn.jpg';
 
 const ProfileEdit = () => {
   return (
     <div>
       {/* Navigation */}
-      <header className="site-header">
-        <div className="header__logo">
+      <header className="profile-edit-header">
+        <div className="profile-edit-header__logo">
           <a href="#">
             <img src={logo} alt="Logo" />
           </a>
         </div>
-        <nav className="header__nav">
-          <ul className="nav-list">
-            <li className="nav-item">
+        <nav className="profile-edit-header__nav">
+          <ul className="profile-edit-nav-list">
+            <li className="profile-edit-nav-item">
               <a href="#">Home</a>
             </li>
-            <li className="nav-item">
+            <li className="profile-edit-nav-item">
               <a href="#">Profile</a>
             </li>
-            <li className="nav-item">
+            <li className="profile-edit-nav-item">
               <a href="#">Projects</a>
             </li>
-            <li className="nav-item">
+            <li className="profile-edit-nav-item">
               <a href="#">Team</a>
             </li>
-            <li className="nav-item">
+            <li className="profile-edit-nav-item">
               <a href="#">More</a>
             </li>
           </ul>
         </nav>
-        <div className="header__auth">
-          <button className="btn btn--primary">Logout</button>
+        <div className="profile-edit-header__auth">
+          <button className="profile-edit-btn profile-edit-btn--primary">Logout</button>
         </div>
       </header>
 
       {/* Main Profile Section */}
-      <main className="container">
+      <main className="profile-edit-container">
         {/* Sidebar */}
-        <aside className="sidebar">
+        <aside className="profile-edit-sidebar">
           <img src={vyn} alt="Profile Picture" />
           <h2>John Doe</h2>
           <p>john.doe@cit-university.edu</p>
         </aside>
 
         {/* Profile Content */}
-        <section className="profile-content">
+        <section className="profile-edit-content">
           <form>
             <div>
               <label htmlFor="fullName">Full Name</label>
@@ -78,8 +77,8 @@ const ProfileEdit = () => {
 
             <div>
               <label>Project Interest</label>
-              <div className="radio-group">
-                <div className="radio-item">
+              <div className="profile-edit-radio-group">
+                <div className="profile-edit-radio-item">
                   <input
                     type="radio"
                     id="interest1"
@@ -89,11 +88,11 @@ const ProfileEdit = () => {
                   />
                   <label htmlFor="interest1">Project Manager</label>
                 </div>
-                <div className="radio-item">
+                <div className="profile-edit-radio-item">
                   <input type="radio" id="interest2" name="interest" value="dev" />
                   <label htmlFor="interest2">Developer</label>
                 </div>
-                <div className="radio-item">
+                <div className="profile-edit-radio-item">
                   <input type="radio" id="interest3" name="interest" value="qa" />
                   <label htmlFor="interest3">QA Tester</label>
                 </div>
@@ -111,11 +110,11 @@ const ProfileEdit = () => {
             </div>
 
             {/* Buttons */}
-            <div className="button-group">
-              <button type="submit" className="btn-save">
+            <div className="profile-edit-button-group">
+              <button type="submit" className="profile-edit-btn-save">
                 Save
               </button>
-              <button type="button" className="btn-cancel">
+              <button type="button" className="profile-edit-btn-cancel">
                 Cancel
               </button>
             </div>
