@@ -26,4 +26,6 @@ public class SurveyController {
     public SurveyDTO updateSurvey(@PathVariable Long profileId, @RequestBody SurveyDTO surveyDTO) {
         return surveyService.updateSurvey(profileId, surveyDTO);
     }
+
+    
 }
