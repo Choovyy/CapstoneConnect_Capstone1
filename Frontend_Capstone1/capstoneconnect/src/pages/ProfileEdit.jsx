@@ -50,7 +50,7 @@ const ProfileEdit = () => {
           <form>
             <div>
               <label htmlFor="fullName">Full Name</label>
-              <input type="text" id="fullName" name="fullName" value="John Doe" />
+              <input type="text" id="fullName" name="fullName" value="John Doe" className="profile-input" />
             </div>
 
             <div>
@@ -106,6 +106,7 @@ const ProfileEdit = () => {
                 id="github"
                 name="github"
                 placeholder="https://github.com/username"
+                className="profile-input"
               />
             </div>
 
