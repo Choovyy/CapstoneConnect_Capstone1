@@ -46,8 +46,7 @@
     margin: 0;
     padding: 0;
     display: flex;
-    margin-left: 140%;
-    gap: 10px;
+    gap: 50px;
   }
   
   .nav-item {

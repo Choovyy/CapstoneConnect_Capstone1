@@ -13,6 +13,8 @@ const Profile = () => {
           <div className="nav-item active">Home</div>
           <div className="nav-item">Profile</div>
           <div className="nav-item">Projects</div>
+          <div className="nav-item">Teams</div>
+          <div className="nav-item">More</div>
         </nav>
         <div className="logout-btn">Logout</div>
       </header>

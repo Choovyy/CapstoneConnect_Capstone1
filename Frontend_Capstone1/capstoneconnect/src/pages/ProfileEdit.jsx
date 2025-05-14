@@ -16,10 +16,16 @@ const ProfileEdit = () => {
               <a href="#">Home</a>
             </li>
             <li className="nav-item">
-              <a href="#profile">Profile</a>
+              <a href="#">Profile</a>
             </li>
             <li className="nav-item">
-              <a href="#settings">Projects</a>
+              <a href="#">Projects</a>
+            </li>
+            <li className="nav-item">
+              <a href="#">Teams</a>
+            </li>
+            <li className="nav-item">
+              <a href="#">More</a>
             </li>
           </ul>
         </nav>
