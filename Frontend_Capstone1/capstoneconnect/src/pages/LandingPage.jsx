@@ -1,40 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import '../css/LandingPage.css';
-import logo from '../assets/logo.png';
-import '../css/MicrosoftAuthModal.css';
-import hero from '../assets/hero.png';
-import vyn from '../assets/vyn.jpg';
-import gerard from '../assets/gerard.png';
-import david from '../assets/david.jpg';
-import harold from '../assets/harold.jpg';
-import tovi from '../assets/tovi.jpg';
-import { FaGithub, FaFigma, FaFacebook } from 'react-icons/fa';
+"use client"
+
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import "../css/LandingPage.css"
+import logo from "../assets/logo.png"
+import "../css/MicrosoftAuthModal.css"
+import hero from "../assets/hero.png"
+import vyn from "../assets/vyn.jpg"
+import gerard from "../assets/gerard.png"
+import david from "../assets/david.jpg"
+import harold from "../assets/harold.jpg"
+import tovi from "../assets/tovi.jpg"
+import { FaGithub, FaFigma, FaFacebook } from "react-icons/fa"
 
 const LandingPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [userId, setUserId] = useState(null) // Add userId state
+  const navigate = useNavigate()
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    window.scrollTo(0, 0)
+
+    // Check for userId in URL parameters (for when returning from auth)
+    const params = new URLSearchParams(window.location.search)
+    const userIdParam = params.get("userId")
+
+    if (userIdParam) {
+      // Set the userId from URL parameter
+      setUserId(userIdParam)
+
+      // Store in localStorage for persistence across page refreshes
+      localStorage.setItem("userId", userIdParam)
+
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname)
+
+      // Optionally redirect to another page
+      // navigate('/dashboard');
+    } else {
+      // Check if we have a userId in localStorage (returning user)
+      const storedUserId = localStorage.getItem("userId")
+      if (storedUserId) {
+        setUserId(storedUserId)
+      }
+    }
+  }, [navigate])
 
   const handleLogoClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
-  };
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  // Handle logout
+  const handleLogout = () => {
+    setUserId(null)
+    localStorage.removeItem("userId")
+    // You might want to call your backend logout endpoint here
+  }
 
   // Microsoft Auth Modal Component
   const MicrosoftAuthModal = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
+    if (!isOpen) return null
 
     return (
       <div className="ms-modal-overlay">
         <div className="ms-modal-container">
-          <button className="ms-close-btn" onClick={onClose}>✕</button>
-          
+          <button className="ms-close-btn" onClick={onClose}>
+            ✕
+          </button>
+
           <div className="ms-brand-section">
             <div className="ms-brand-logo">
-              <img src={logo} alt="Capstone Connect Logo" />
+              <img src={logo || "/placeholder.svg"} alt="Capstone Connect Logo" />
             </div>
             <div className="ms-brand-title">
               <div className="ms-title capstone">Capstone</div>
@@ -46,49 +82,60 @@ const LandingPage = () => {
 
           <div className="ms-auth-section">
             <h2 className="ms-sign-in-title">Sign In</h2>
-            <button 
-                className="ms-microsoft-auth-btn"
-                onClick={() => {
-                  window.location.href = 'http://localhost:8080/api/auth/microsoft';
-                }}
-              >
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
-                alt="Microsoft" 
-                className="ms-microsoft-icon" 
+            <button
+              className="ms-microsoft-auth-btn"
+              onClick={() => {
+                // Your backend should redirect back with userId parameter
+                window.location.href = "http://localhost:8080/api/auth/microsoft"
+              }}
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+                alt="Microsoft"
+                className="ms-microsoft-icon"
               />
               <span className="ms-microsoft-text">Continue with Microsoft</span>
             </button>
             <div className="ms-alternative-options">
-              Don't have an account? 
+              Don't have an account?
               <span className="ms-alternative-link">Sign up</span>
             </div>
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className="landing-page">
       <nav className="navbar">
-        <div className="logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
-          <img src={logo} alt="Capstone Connect Logo" />
+        <div className="logo" onClick={handleLogoClick} style={{ cursor: "pointer" }}>
+          <img src={logo || "/placeholder.svg"} alt="Capstone Connect Logo" />
         </div>
         <ul className="nav-pill-list">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
+          <li>
+            <a href="#home">Home</a>
+          </li>
+          <li>
+            <a href="#about">About</a>
+          </li>
         </ul>
         <div className="nav-buttons">
-          <button 
-            className="nav-button" 
-            onClick={() => setIsModalOpen(true)}
-          >
-            Sign In
-          </button>
+          {userId ? (
+            // Show user info or logout if signed in
+            <button className="nav-button" onClick={handleLogout}>
+              Sign Out
+            </button>
+          ) : (
+            // Show sign in button if not signed in
+            <button className="nav-button" onClick={() => setIsModalOpen(true)}>
+              Sign In
+            </button>
+          )}
         </div>
       </nav>
 
+      {/* Rest of your component remains the same */}
       <div className="landing-body" id="home">
         <div className="text-wrapper">
           <div className="heading-wrapper">
@@ -98,25 +145,29 @@ const LandingPage = () => {
               <span className="connect">Connect</span>
             </h1>
           </div>
-          <p className="description">
-            Find your perfect match for your capstone project in a swipe
-          </p>
+          <p className="description">Find your perfect match for your capstone project in a swipe</p>
           <div className="button-wrapper">
-            <button 
-              className="cta-button"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Get Started
-            </button>
+            {userId ? (
+              // If user is signed in, show a different button
+              <button className="cta-button" onClick={() => navigate("/dashboard")}>
+                Go to Dashboard
+              </button>
+            ) : (
+              // If user is not signed in, show the get started button
+              <button className="cta-button" onClick={() => setIsModalOpen(true)}>
+                Get Started
+              </button>
+            )}
           </div>
         </div>
 
         <div className="map-wrapper">
-          <img src={hero} alt="Map" />
+          <img src={hero || "/placeholder.svg"} alt="Map" />
         </div>
       </div>
 
       <div className="MidPage" id="dashboard">
+        {/* Your existing MidPage content */}
         <div className="HeadingWrapper">
           <h1>Matching Algorithm</h1>
           <p>Discover your perfect match on CapstoneConnect with our innovative matching algorithm.</p>
@@ -138,46 +189,94 @@ const LandingPage = () => {
       </div>
 
       <div className="AboutPage" id="about">
+        {/* Your existing AboutPage content */}
         <div className="AboutHeader">
           <h1>Our Team</h1>
-          <p>Meet the talented developers behind our success. We're a passionate team dedicated to creating exceptional digital experiences.</p>
+          <p>
+            Meet the talented developers behind our success. We're a passionate team dedicated to creating exceptional
+            digital experiences.
+          </p>
         </div>
 
         <div className="TeamContainer">
-          <TeamMember name="Jhovynn Aldrich Apurado" role="Frontend Developer" bio="Specializing in responsive design and user experience." img={vyn} figma="https://www.figma.com/@jhovynnaldricha" github="https://github.com/vyn23232" fb="https://web.facebook.com/jhovynnaldrich.apurado/" />
-          <TeamMember name="Harold Destura" role="Frontend Developer" bio="Expert in modern JavaScript frameworks." img={harold} figma="https://www.figma.com/@arutsedharold" github="https://github.com/harold0t1" fb="https://www.facebook.com/harold.destura/" />
-          <TeamMember name="Tovi Joshua Hermosisima" role="Backend Developer" bio="Building robust server-side architectures." img={tovi} figma="https://www.figma.com/@tovijoshua" github="https://github.com/Choovyy" fb="https://www.facebook.com/tobias.joshuu" />
-          <TeamMember name="John Gerard Donaire" role="Backend Developer" bio="Database expert ensuring optimized systems." img={gerard} figma="https://www.figma.com/@johngerarddonai" github="https://github.com/haloimnotcode" fb="https://www.facebook.com/gerarddonaire" />
-          <TeamMember name="John David Calimpong" role="Frontend Developer" bio="Creating beautiful, accessible interfaces." img={david} figma="https://www.figma.com/@johndavid4" github="https://github.com/calimps115646" fb="https://www.facebook.com/johncalimps" />
+          <TeamMember
+            name="Jhovynn Aldrich Apurado"
+            role="Frontend Developer"
+            bio="Specializing in responsive design and user experience."
+            img={vyn}
+            figma="https://www.figma.com/@jhovynnaldricha"
+            github="https://github.com/vyn23232"
+            fb="https://web.facebook.com/jhovynnaldrich.apurado/"
+          />
+          <TeamMember
+            name="Harold Destura"
+            role="Frontend Developer"
+            bio="Expert in modern JavaScript frameworks."
+            img={harold}
+            figma="https://www.figma.com/@arutsedharold"
+            github="https://github.com/harold0t1"
+            fb="https://www.facebook.com/harold.destura/"
+          />
+          <TeamMember
+            name="Tovi Joshua Hermosisima"
+            role="Backend Developer"
+            bio="Building robust server-side architectures."
+            img={tovi}
+            figma="https://www.figma.com/@tovijoshua"
+            github="https://github.com/Choovyy"
+            fb="https://www.facebook.com/tobias.joshuu"
+          />
+          <TeamMember
+            name="John Gerard Donaire"
+            role="Backend Developer"
+            bio="Database expert ensuring optimized systems."
+            img={gerard}
+            figma="https://www.figma.com/@johngerarddonai"
+            github="https://github.com/haloimnotcode"
+            fb="https://www.facebook.com/gerarddonaire"
+          />
+          <TeamMember
+            name="John David Calimpong"
+            role="Frontend Developer"
+            bio="Creating beautiful, accessible interfaces."
+            img={david}
+            figma="https://www.figma.com/@johndavid4"
+            github="https://github.com/calimps115646"
+            fb="https://www.facebook.com/johncalimps"
+          />
         </div>
       </div>
 
-      <MicrosoftAuthModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {/* Only show the modal if user is not signed in */}
+      {!userId && <MicrosoftAuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
     </div>
-  );
-};
+  )
+}
 
 // Reusable Team Member Component
 const TeamMember = ({ name, role, bio, img, figma, github, fb }) => (
   <div className="TeamMember">
     <div className="MemberImage">
       <span className="MemberRole">{role.includes("Backend") ? "Backend" : "Frontend"}</span>
-      <img src={img} alt={name} />
+      <img src={img || "/placeholder.svg"} alt={name} />
     </div>
     <div className="MemberInfo">
       <h3>{name}</h3>
       <p className="Role">{role}</p>
       <p className="Bio">{bio}</p>
       <div className="SocialIcons">
-        <a href={figma}><FaFigma /></a>
-        <a href={github}><FaGithub /></a>
-        <a href={fb}><FaFacebook /></a>
+        <a href={figma}>
+          <FaFigma />
+        </a>
+        <a href={github}>
+          <FaGithub />
+        </a>
+        <a href={fb}>
+          <FaFacebook />
+        </a>
       </div>
     </div>
   </div>
-);
+)
 
-export default LandingPage;
+export default LandingPage

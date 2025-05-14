@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png';
+"use client"
+
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import logo from "../assets/logo.png"
 
 const UserSurveyForm = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [skills, setSkills] = useState({
     cLanguage: false,
     php: false,
@@ -12,187 +14,235 @@ const UserSurveyForm = () => {
     java: false,
     python: false,
     other: false,
-  });
-  const [otherSkill, setOtherSkill] = useState('');
+  })
+  const [otherSkill, setOtherSkill] = useState("")
+
+  // Load existing data if available
+  useEffect(() => {
+    const savedData = localStorage.getItem("surveyData")
+    if (savedData) {
+      const surveyData = JSON.parse(savedData)
+      if (surveyData.technicalSkills && surveyData.technicalSkills.length > 0) {
+        const newSkills = { ...skills }
+
+        surveyData.technicalSkills.forEach((skill) => {
+          if (skill === "C Language") newSkills.cLanguage = true
+          else if (skill === "PHP") newSkills.php = true
+          else if (skill === "HTML and CSS") newSkills.htmlCss = true
+          else if (skill === "JavaScript") newSkills.javascript = true
+          else if (skill === "Java") newSkills.java = true
+          else if (skill === "Python") newSkills.python = true
+          else {
+            newSkills.other = true
+            setOtherSkill(skill)
+          }
+        })
+
+        setSkills(newSkills)
+      }
+    }
+  }, [])
 
   const handleSkillChange = (skill) => {
-    setSkills(prev => ({
+    setSkills((prev) => ({
       ...prev,
-      [skill]: !prev[skill]
-    }));
-  };
+      [skill]: !prev[skill],
+    }))
+  }
 
   const handleNext = () => {
-    navigate('/user-survey-form2');
-  };
+    // Convert selected skills to array format for the backend
+    const selectedSkills = []
+    if (skills.cLanguage) selectedSkills.push("C Language")
+    if (skills.php) selectedSkills.push("PHP")
+    if (skills.htmlCss) selectedSkills.push("HTML and CSS")
+    if (skills.javascript) selectedSkills.push("JavaScript")
+    if (skills.java) selectedSkills.push("Java")
+    if (skills.python) selectedSkills.push("Python")
+    if (skills.other && otherSkill.trim()) selectedSkills.push(otherSkill.trim())
+
+    // Save to localStorage for use in other pages
+    const existingData = localStorage.getItem("surveyData")
+    const surveyData = existingData ? JSON.parse(existingData) : {}
+
+    localStorage.setItem(
+      "surveyData",
+      JSON.stringify({
+        ...surveyData,
+        technicalSkills: selectedSkills,
+      }),
+    )
+
+    navigate("/user-survey-form2")
+  }
 
   const checkboxWrapper = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '8px',
-    color: '#FFFFFF',
-    fontFamily: 'Poppins, sans-serif',
-    marginLeft: '48px',
-    marginBottom: '4px',
-  };
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "8px",
+    color: "#FFFFFF",
+    fontFamily: "Poppins, sans-serif",
+    marginLeft: "48px",
+    marginBottom: "4px",
+  }
 
   const styles = {
     container: {
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-      backgroundColor: '#CA9F58',
-      fontFamily: 'Poppins, sans-serif',
+      display: "flex",
+      flexDirection: "column",
+      minHeight: "100vh",
+      backgroundColor: "#CA9F58",
+      fontFamily: "Poppins, sans-serif",
     },
     header: {
-      backgroundColor: '#FFFFFF',
-      padding: '20px',
-      textAlign: 'center',
-      color: '#267987',
+      backgroundColor: "#FFFFFF",
+      padding: "20px",
+      textAlign: "center",
+      color: "#267987",
     },
     title: {
-      fontSize: '32px',
-      margin: '0',
-      fontWeight: 'bold',
-      fontFamily: 'Poppins, sans-serif',
+      fontSize: "32px",
+      margin: "0",
+      fontWeight: "bold",
+      fontFamily: "Poppins, sans-serif",
     },
     main: {
       flex: 1,
-      maxWidth: '800px',
-      margin: '32px auto',
-      padding: '32px',
-      backgroundColor: '#CA9F58',
-      borderRadius: '8px',
+      maxWidth: "800px",
+      margin: "32px auto",
+      padding: "32px",
+      backgroundColor: "#CA9F58",
+      borderRadius: "8px",
     },
     form: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '20px',
+      display: "flex",
+      flexDirection: "column",
+      gap: "20px",
     },
     footer: {
-      backgroundColor: '#FFFFFF',
-      padding: '16px',
-      textAlign: 'center',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '10px',
+      backgroundColor: "#FFFFFF",
+      padding: "16px",
+      textAlign: "center",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "10px",
     },
     logo: {
-      height: '30px',
-      width: 'auto',
+      height: "30px",
+      width: "auto",
     },
     skillsSection: {
-      marginBottom: '32px',
+      marginBottom: "32px",
     },
     sectionTitle: {
-      color: '#FFFFFF',
-      fontSize: '24px',
-      marginBottom: '16px',
-      textAlign: 'center',
-      fontFamily: 'Poppins, sans-serif',
+      color: "#FFFFFF",
+      fontSize: "24px",
+      marginBottom: "16px",
+      textAlign: "center",
+      fontFamily: "Poppins, sans-serif",
     },
     subtitle: {
-      textAlign: 'center',
-      color: '#FFFFFF',
-      marginBottom: '64px',
-      fontFamily: 'Poppins, sans-serif',
+      textAlign: "center",
+      color: "#FFFFFF",
+      marginBottom: "64px",
+      fontFamily: "Poppins, sans-serif",
     },
     checkboxGroup: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      gap: '16px',
-      maxWidth: '600px',
-      margin: '0 auto',
+      display: "grid",
+      gridTemplateColumns: "repeat(2, 1fr)",
+      gap: "16px",
+      maxWidth: "600px",
+      margin: "0 auto",
     },
     checkboxLabel: {
-      color: '#FFFFFF',
-      fontFamily: 'Poppins, sans-serif',
-      pointerEvents: 'none', 
+      color: "#FFFFFF",
+      fontFamily: "Poppins, sans-serif",
+      pointerEvents: "none",
     },
     checkbox: {
-      width: '20px',
-      height: '20px',
-      cursor: 'pointer',
-      appearance: 'none !important',
-      '-webkit-appearance': 'none !important',
-      '-moz-appearance': 'none !important',
-      border: '2px solid #FFFFFF',
-      borderRadius: '3px',
-      backgroundColor: 'transparent',
-      position: 'relative',
+      width: "20px",
+      height: "20px",
+      cursor: "pointer",
+      appearance: "none !important",
+      "-webkit-appearance": "none !important",
+      "-moz-appearance": "none !important",
+      border: "2px solid #FFFFFF",
+      borderRadius: "3px",
+      backgroundColor: "transparent",
+      position: "relative",
       '&[type="checkbox"]:checked': {
-        backgroundColor: '#514BC3 !important'
-      }
+        backgroundColor: "#514BC3 !important",
+      },
     },
     otherInput: {
-      marginLeft: '8px',
-      padding: '4px',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      backgroundColor: '#CA9F58',
-      color: '#FFFFFF',
-      pointerEvents: 'none',
-      opacity: '0.5',
-      '&::-webkit-input-placeholder': {
-        color: '#FFFFFF',
+      marginLeft: "8px",
+      padding: "4px",
+      border: "1px solid #ccc",
+      borderRadius: "4px",
+      backgroundColor: "#CA9F58",
+      color: "#FFFFFF",
+      pointerEvents: "none",
+      opacity: "0.5",
+      "&::-webkit-input-placeholder": {
+        color: "#FFFFFF",
       },
-      '&::-moz-placeholder': {
-        color: '#FFFFFF',
+      "&::-moz-placeholder": {
+        color: "#FFFFFF",
       },
-      '&:-ms-input-placeholder': {
-        color: '#FFFFFF',
+      "&:-ms-input-placeholder": {
+        color: "#FFFFFF",
       },
-      '&::placeholder': {
-        color: '#FFFFFF',
-      }
+      "&::placeholder": {
+        color: "#FFFFFF",
+      },
     },
     otherInputActive: {
-      marginLeft: '8px',
-      padding: '4px',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      backgroundColor: '#CA9F58',
-      color: '#FFFFFF',
-      pointerEvents: 'auto',
-      opacity: '1',
-      '&::-webkit-input-placeholder': {
-        color: '#FFFFFF',
+      marginLeft: "8px",
+      padding: "4px",
+      border: "1px solid #ccc",
+      borderRadius: "4px",
+      backgroundColor: "#CA9F58",
+      color: "#FFFFFF",
+      pointerEvents: "auto",
+      opacity: "1",
+      "&::-webkit-input-placeholder": {
+        color: "#FFFFFF",
       },
-      '&::-moz-placeholder': {
-        color: '#FFFFFF',
+      "&::-moz-placeholder": {
+        color: "#FFFFFF",
       },
-      '&:-ms-input-placeholder': {
-        color: '#FFFFFF',
+      "&:-ms-input-placeholder": {
+        color: "#FFFFFF",
       },
-      '&::placeholder': {
-        color: '#FFFFFF',
-      }
+      "&::placeholder": {
+        color: "#FFFFFF",
+      },
     },
     nextButton: {
-      backgroundColor: '#267987',
-      color: 'white',
-      padding: '5px 32px',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '16px',
-      marginTop: '33px',
-      fontFamily: 'Poppins, sans-serif',
-      alignSelf: 'flex-end',
+      backgroundColor: "#267987",
+      color: "white",
+      padding: "5px 32px",
+      border: "none",
+      borderRadius: "4px",
+      cursor: "pointer",
+      fontSize: "16px",
+      marginTop: "33px",
+      fontFamily: "Poppins, sans-serif",
+      alignSelf: "flex-end",
     },
     capstoneText: {
-      color: '#CA9F58',
-      fontWeight: 'bold',
-      fontFamily: 'Poppins, sans-serif',
+      color: "#CA9F58",
+      fontWeight: "bold",
+      fontFamily: "Poppins, sans-serif",
     },
     connectText: {
-      color: '#267987',
-      fontWeight: 'bold',
-      fontFamily: 'Poppins, sans-serif',
-    }
-  };
+      color: "#267987",
+      fontWeight: "bold",
+      fontFamily: "Poppins, sans-serif",
+    },
+  }
 
   return (
     <div style={styles.container}>
@@ -211,18 +261,18 @@ const UserSurveyForm = () => {
                 <input
                   type="checkbox"
                   checked={skills.cLanguage}
-                  onChange={() => handleSkillChange('cLanguage')}
+                  onChange={() => handleSkillChange("cLanguage")}
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.cLanguage ? '#514BC3' : 'transparent',
-                    position: 'relative',
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    border: "2px solid #FFFFFF",
+                    borderRadius: "3px",
+                    backgroundColor: skills.cLanguage ? "#514BC3" : "transparent",
+                    position: "relative",
                   }}
                 />
                 <span style={styles.checkboxLabel}>C Language</span>
@@ -232,18 +282,18 @@ const UserSurveyForm = () => {
                 <input
                   type="checkbox"
                   checked={skills.php}
-                  onChange={() => handleSkillChange('php')}
+                  onChange={() => handleSkillChange("php")}
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.php ? '#514BC3' : 'transparent',
-                    position: 'relative',
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    border: "2px solid #FFFFFF",
+                    borderRadius: "3px",
+                    backgroundColor: skills.php ? "#514BC3" : "transparent",
+                    position: "relative",
                   }}
                 />
                 <span style={styles.checkboxLabel}>PHP</span>
@@ -253,18 +303,18 @@ const UserSurveyForm = () => {
                 <input
                   type="checkbox"
                   checked={skills.htmlCss}
-                  onChange={() => handleSkillChange('htmlCss')}
+                  onChange={() => handleSkillChange("htmlCss")}
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.htmlCss ? '#514BC3' : 'transparent',
-                    position: 'relative',
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    border: "2px solid #FFFFFF",
+                    borderRadius: "3px",
+                    backgroundColor: skills.htmlCss ? "#514BC3" : "transparent",
+                    position: "relative",
                   }}
                 />
                 <span style={styles.checkboxLabel}>HTML and CSS</span>
@@ -274,18 +324,18 @@ const UserSurveyForm = () => {
                 <input
                   type="checkbox"
                   checked={skills.javascript}
-                  onChange={() => handleSkillChange('javascript')}
+                  onChange={() => handleSkillChange("javascript")}
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.javascript ? '#514BC3' : 'transparent',
-                    position: 'relative',
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    border: "2px solid #FFFFFF",
+                    borderRadius: "3px",
+                    backgroundColor: skills.javascript ? "#514BC3" : "transparent",
+                    position: "relative",
                   }}
                 />
                 <span style={styles.checkboxLabel}>JavaScript</span>
@@ -295,18 +345,18 @@ const UserSurveyForm = () => {
                 <input
                   type="checkbox"
                   checked={skills.java}
-                  onChange={() => handleSkillChange('java')}
+                  onChange={() => handleSkillChange("java")}
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.java ? '#514BC3' : 'transparent',
-                    position: 'relative',
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    border: "2px solid #FFFFFF",
+                    borderRadius: "3px",
+                    backgroundColor: skills.java ? "#514BC3" : "transparent",
+                    position: "relative",
                   }}
                 />
                 <span style={styles.checkboxLabel}>Java</span>
@@ -316,18 +366,18 @@ const UserSurveyForm = () => {
                 <input
                   type="checkbox"
                   checked={skills.python}
-                  onChange={() => handleSkillChange('python')}
+                  onChange={() => handleSkillChange("python")}
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.python ? '#514BC3' : 'transparent',
-                    position: 'relative',
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    border: "2px solid #FFFFFF",
+                    borderRadius: "3px",
+                    backgroundColor: skills.python ? "#514BC3" : "transparent",
+                    position: "relative",
                   }}
                 />
                 <span style={styles.checkboxLabel}>Python</span>
@@ -337,18 +387,18 @@ const UserSurveyForm = () => {
                 <input
                   type="checkbox"
                   checked={skills.other}
-                  onChange={() => handleSkillChange('other')}
+                  onChange={() => handleSkillChange("other")}
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    border: '2px solid #FFFFFF',
-                    borderRadius: '3px',
-                    backgroundColor: skills.other ? '#514BC3' : 'transparent',
-                    position: 'relative',
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    border: "2px solid #FFFFFF",
+                    borderRadius: "3px",
+                    backgroundColor: skills.other ? "#514BC3" : "transparent",
+                    position: "relative",
                   }}
                 />
                 <span style={styles.checkboxLabel}>Others:</span>
@@ -357,14 +407,14 @@ const UserSurveyForm = () => {
                   value={otherSkill}
                   onChange={(e) => setOtherSkill(e.target.value)}
                   style={{
-                    marginLeft: '8px',
-                    padding: '4px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                    backgroundColor: '#CA9F58',
-                    color: '#FFFFFF',
-                    pointerEvents: skills.other ? 'auto' : 'none',
-                    opacity: skills.other ? '1' : '0.5'
+                    marginLeft: "8px",
+                    padding: "4px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    backgroundColor: "#CA9F58",
+                    color: "#FFFFFF",
+                    pointerEvents: skills.other ? "auto" : "none",
+                    opacity: skills.other ? "1" : "0.5",
                   }}
                   placeholder="Specify other skills"
                   disabled={!skills.other}
@@ -372,33 +422,31 @@ const UserSurveyForm = () => {
               </div>
             </div>
           </div>
-          <button 
-            type="button" 
-            style={styles.nextButton}
-            onClick={handleNext}
-          >
+          <button type="button" style={styles.nextButton} onClick={handleNext}>
             Next
           </button>
         </form>
       </main>
 
       <footer style={styles.footer}>
+       
         <img src={logo} alt="CapstoneConnect Logo" style={styles.logo} />
+
         <span>
           <span style={styles.capstoneText}>Capstone</span>
           <span style={styles.connectText}>Connect</span>
         </span>
       </footer>
     </div>
-  );
-};
+  )
+}
 
-const style = document.createElement('style');
+const style = document.createElement("style")
 style.textContent = `
   .white-placeholder::placeholder {
     color: white !important;
   }
-`;
-document.head.appendChild(style);
+`
+document.head.appendChild(style)
 
-export default UserSurveyForm;
+export default UserSurveyForm
