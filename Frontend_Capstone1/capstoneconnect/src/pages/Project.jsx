@@ -1,11 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../css/Navigation.css';
 import '../css/Project.css'; 
 import '../css/Matching.css';
 import logo from '../assets/logo.png';
+import CreateProjectModal from './CreateProjectModal';
 
 const Project = () => {
   const scrollContainerRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -111,6 +113,21 @@ const Project = () => {
     </div>
   );
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitProject = (formData) => {
+    console.log('New project data:', formData);
+    // Here you would typically send this data to your backend API
+    // For now, we'll just close the modal
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
       {/* Navbar (unchanged) */}
@@ -140,7 +157,7 @@ const Project = () => {
           <h1 className="matching-title">Project Needs</h1>
         </div>
         <div className="pj-create-btn-container">
-          <button className="pj-create-btn">Create Project</button>
+          <button className="pj-create-btn" onClick={handleOpenModal}>Create Project</button>
         </div>
       </div>
 
@@ -152,6 +169,13 @@ const Project = () => {
           </div>
         </div>
       </main>
+
+      {/* Create Project Modal */}
+      <CreateProjectModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitProject}
+      />
     </div>
   );
 };

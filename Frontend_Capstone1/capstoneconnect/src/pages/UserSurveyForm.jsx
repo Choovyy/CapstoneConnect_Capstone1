@@ -197,8 +197,8 @@ const UserSurveyForm = () => {
       <main style={styles.main}>
         <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
           <div style={styles.skillsSection}>
-            <h2 style={styles.sectionTitle}>Technical Skills</h2>
-            <p style={styles.subtitle}>Select your top skills</p>
+            <h2 style={styles.sectionTitle}>Preferred Roles</h2>
+            <p style={styles.subtitle}>Select your preferred roles</p>
 
             <div style={styles.checkboxGroup}>
               {Object.entries(skills).map(([key, checked]) => (
@@ -222,12 +222,12 @@ const UserSurveyForm = () => {
                   />
                   <span style={styles.checkboxLabel}>
                     {{
-                      cLanguage: 'C Language',
-                      php: 'PHP',
-                      htmlCss: 'HTML and CSS',
-                      javascript: 'JavaScript',
-                      java: 'Java',
-                      python: 'Python',
+                      cLanguage: 'UI/UX Developer',
+                      php: 'Game Developer',
+                      htmlCss: 'Frontend Developer',
+                      javascript: 'Team Leader',
+                      java: 'Backend Developer',
+                      python: 'Technical Writer',
                       other: 'Others:',
                     }[key]}
                   </span>
@@ -241,7 +241,7 @@ const UserSurveyForm = () => {
                           setOtherError('');
                         }}
                         style={skills.other ? styles.otherInputActive : styles.otherInput}
-                        placeholder="Specify other skills"
+                        placeholder="Specify other roles"
                         disabled={!skills.other}
                       />
                       {otherError && <span style={styles.errorText}>{otherError}</span>}

@@ -1,0 +1,263 @@
+/* Import the Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f8f8f8;
+  color: #040316;
+}
+
+/* Modal Overlay */
+.cp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.cp-modal-container {
+  width: 1340px;
+  max-width: 90%;
+  position: relative;
+  transform: translateY(20px);
+  animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Content */
+.cp-modal-content {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #CA9F58 #f1f1f1;
+  padding-right: 20px;
+}
+
+/* Custom scrollbar for WebKit browsers */
+.cp-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cp-modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+  margin: 5px 0;
+}
+
+.cp-modal-content::-webkit-scrollbar-thumb {
+  background: #CA9F58;
+  border-radius: 10px;
+  border: 2px solid white;
+}
+
+.cp-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #b38d4e;
+}
+
+/* Form Styling */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cp-form-label {
+  color: #000000;
+  font-weight: 500;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.cp-form-label::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background-color: #CA9F58;
+  margin-right: 8px;
+}
+
+.cp-form-input, .cp-form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.cp-form-textarea {
+  min-height: 60px;
+}
+
+.cp-form-input:focus, .cp-form-textarea:focus {
+  outline: none;
+  border-color: #CA9F58;
+}
+
+/* Modal Buttons */
+.cp-modal-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.cp-button {
+  padding: 10px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  transition: opacity 0.2s ease;
+}
+
+.cp-button-cancel:hover {
+  opacity: 0.9;
+}
+
+.cp-button-confirm:hover {
+  background-color: #b78d49;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cp-button-confirm {
+  background: #CA9F58;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.cp-button-cancel {
+  background: white;
+  color: #CA9F58;
+  border: 1px solid #CA9F58;
+}
+
+/* Option Buttons */
+.cp-options-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cp-option-button {
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.cp-option-selected {
+  background-color: #CA9F58;
+  color: white;
+  border-color: #CA9F58;
+}
+
+/* Error Styling */
+.cp-error-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  background-color: #fff9f9;
+  border-radius: 4px;
+  padding: 8px 12px;
+  border-left: 4px solid #CA9F58;
+}
+
+.cp-error-icon {
+  background-color: #CA9F58;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.cp-error-message {
+  color: #333;
+  font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .cp-modal-container {
+    width: 95%;
+  }
+  
+  .cp-modal-content {
+    padding: 20px;
+  }
+  
+  .cp-modal-buttons {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  
+  .cp-button {
+    width: 100%;
+  }
+}
