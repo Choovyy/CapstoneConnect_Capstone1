@@ -7,16 +7,26 @@ import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.repository.ProfileRepository;
 import CapstoneConnect.Capstone_1.repository.SurveyRepository;
 import CapstoneConnect.Capstone_1.repository.UserRepository;
+
+import org.springframework.beans.factory.annotation.Value;
+
+import java.net.http.HttpHeaders;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
-public class SurveyService {
-
-    @Autowired
+public class SurveyService {    @Autowired
     private SurveyRepository surveyRepository;
 
     @Autowired
@@ -24,6 +34,9 @@ public class SurveyService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Value("${matching.service.url}")
+    private String matchingServiceUrl;
 
     public SurveyDTO getSurveyByProfileId(Long profileId) {
         ProfileEntity profile = profileRepository.findById(profileId)
@@ -55,11 +68,14 @@ public class SurveyService {
         SurveyEntity survey = new SurveyEntity();
         applySurveyDTOToEntity(surveyDTO, survey);
 
-        SurveyEntity savedSurvey = surveyRepository.save(survey);
-        profile.setSurvey(savedSurvey);
+        SurveyEntity savedSurvey = surveyRepository.save(survey);        profile.setSurvey(savedSurvey);
         profileRepository.save(profile);
 
         updateUserFirstTimeFlag(user);
+        
+        // Send survey data to matching service
+        sendSurveyToMatchingService(user, savedSurvey.toDTO());
+        
         return savedSurvey.toDTO();
     }
 
@@ -76,10 +92,13 @@ public class SurveyService {
         applySurveyDTOToEntity(surveyDTO, survey);
         SurveyEntity savedSurvey = surveyRepository.save(survey);
 
-        profile.setSurvey(savedSurvey);
-        profileRepository.save(profile);
+        profile.setSurvey(savedSurvey);        profileRepository.save(profile);
 
         updateUserFirstTimeFlag(profile.getUser());
+        
+        // Send updated survey data to matching service
+        sendSurveyToMatchingService(profile.getUser(), savedSurvey.toDTO());
+        
         return savedSurvey.toDTO();
     }
 
@@ -87,12 +106,62 @@ public class SurveyService {
         entity.setTechnicalSkills(dto.getTechnicalSkills());
         entity.setProjectInterests(dto.getProjectInterests());
         entity.setPreferredRoles(dto.getPreferredRoles());
-    }
-
-    private void updateUserFirstTimeFlag(UserEntity user) {
+    }    private void updateUserFirstTimeFlag(UserEntity user) {
         if (user != null && user.isFirstTimeUser()) {
             user.setFirstTimeUser(false);
             userRepository.save(user);
         }
     }
+    
+    private void sendSurveyToMatchingService(UserEntity user, SurveyDTO survey) {
+    RestTemplate restTemplate = new RestTemplate();
+    String fastApiUrl = matchingServiceUrl + "/add_profile";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    Map<String, Object> payload = new HashMap<>();
+    payload.put("email", user.getEmail());
+    payload.put("name", user.getName());
+    payload.put("skills", survey.getTechnicalSkills());
+    payload.put("roles", survey.getPreferredRoles());
+    payload.put("interests", survey.getProjectInterests());
+
+    try {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonPayload = mapper.writeValueAsString(payload);
+        HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(fastApiUrl, request, String.class);
+        System.out.println("✅ Sent to matching service: " + response.getBody());
+    } catch (Exception e) {
+        System.err.println("❌ Error calling matching service: " + e.getMessage());
+    }
+  }
+
+  public List<Map<String, Object>> getMatchesFromAISystem(SurveyDTO surveyDTO) {
+    RestTemplate restTemplate = new RestTemplate();
+    String url = matchingServiceUrl + "/match";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    Map<String, String> requestBody = new HashMap<>();
+    requestBody.put("skills", surveyDTO.getTechnicalSkills());
+    requestBody.put("roles", surveyDTO.getPreferredRoles());
+    requestBody.put("interests", surveyDTO.getProjectInterests());
+    // Optional: requestBody.put("email", yourUserEmail); ← to exclude self
+
+    HttpEntity<Map<String, String>> request = new HttpEntity<>(requestBody, headers);
+
+    try {
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+        return (List<Map<String, Object>>) response.getBody().get("matches");
+    } catch (Exception e) {
+        System.err.println("❌ Error calling /match: " + e.getMessage());
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Matching service unavailable");
+    }
 }
+
+
+}
+
