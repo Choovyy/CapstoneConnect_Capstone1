@@ -27,5 +27,10 @@ public class SurveyController {
         return surveyService.updateSurvey(profileId, surveyDTO);
     }
 
+    @PostMapping("/match")
+    public ResponseEntity<?> getMatches(@RequestBody SurveyDTO surveyDTO) {
+        return ResponseEntity.ok(surveyService.getMatchesFromAISystem(surveyDTO));
+}
+
     
 }
