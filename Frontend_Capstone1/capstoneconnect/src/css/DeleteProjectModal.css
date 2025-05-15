@@ -1,0 +1,141 @@
+/* Import the Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+
+/* Modal Overlay */
+.dpm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.dpm-modal-container {
+  width: 500px;
+  max-width: 90%;
+  position: relative;
+  transform: translateY(20px);
+  animation: slideUp 0.3s ease forwards;
+}
+
+.dpm-delete-modal {
+  width: 450px;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Content */
+.dpm-modal-content {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  position: relative;
+}
+
+.dpm-delete-content {
+  text-align: center;
+}
+
+.dpm-delete-title {
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.dpm-delete-message {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+/* Modal Buttons */
+.dpm-modal-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.dpm-button {
+  padding: 10px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  transition: opacity 0.2s ease;
+  min-width: 100px;
+}
+
+.dpm-button-cancel:hover {
+  opacity: 0.9;
+}
+
+.dpm-button-confirm:hover {
+  background-color: #b78d49;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dpm-button-confirm {
+  background: #CA9F58;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.dpm-button-cancel {
+  background: white;
+  color: #CA9F58;
+  border: 1px solid #CA9F58;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .dpm-modal-container {
+    width: 95%;
+  }
+
+  .dpm-modal-content {
+    padding: 20px;
+  }
+
+  .dpm-modal-buttons {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .dpm-button {
+    min-width: 80px;
+  }
+}

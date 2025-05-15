@@ -1,0 +1,218 @@
+:root {
+    --primary-color: #CA9F58;
+    --secondary-color: #267987;
+    --background-color: #ffffff;
+    --text-color: #040316;
+    --nav-bg: #FBFBFE;
+    --nav-text: #333;
+    --nav-hover: #ff9800;
+}
+
+
+/* Hide scrollbars for all browsers */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+    display: none;
+}
+
+body, html {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
+.sentrequest-container {
+    max-width: 1440px;
+    padding: 0 32px;
+    margin-left: 32px;
+    margin-top: 100px;
+}
+
+.sentrequest-filter {
+    margin-bottom: 32px;
+}
+
+.sentrequest-title {
+    text-align: left;
+    font-size: 35px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #040316;
+}
+
+.sentrequest-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+/* Card Flip Styles */
+.sentrequest-card-flip {
+    perspective: 1000px;
+    width: 300px;
+    height: 410px; /* Adjust as needed for card content */
+    margin-bottom: 24px;
+}
+
+.sentrequest-card-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(.4,2,.6,1);
+    transform-style: preserve-3d;
+}
+
+.sentrequest-card-flip.flipped .sentrequest-card-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.sentrequest-card-front,
+.sentrequest-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    backface-visibility: hidden;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.sentrequest-card-back {
+    transform: rotateY(180deg);
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
+.sentrequest-card-front {
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
+.sentrequest-card {
+    background: #fff;
+    border: 1px solid var(--primary-color);
+    border-radius: 24px;
+    padding: 24px 16px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    align-items: center;
+}
+
+.sentrequest-card:hover {
+    /* Remove translate and shadow on hover */
+    transform: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.sentrequest-card img {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+}
+
+.sentrequest-card h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.sentrequest-card p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.sentrequest-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: center;
+    width: 100%;
+}
+
+.sentrequest-data {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    text-align: center;
+    width: 100%;
+}
+
+/* Remove or comment out .sentrequest-skills and .sentrequest-interests if not used anymore */
+
+.sentrequest-status {
+    font-size: 16px;
+    font-weight: 600;
+    color: #267987;
+    margin-bottom: 8px;
+    margin-top: 4px;
+    text-align: center;
+}
+
+.sentrequest-compatibility {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 12px;
+}
+
+.sentrequest-compatibility span {
+    display: block;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.sentrequest-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.sentrequest-actions .btn {
+    padding: 8px 50px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.sentrequest-cancel {
+    background-color: #D62728;
+    color: #fff;
+}
+
+.sentrequest-cancel:hover {
+    background-color: #b71c1c;
+}
+
+.sentrequest-noscroll {
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sentrequest-container {
+        padding: 16px;
+    }
+
+    .sentrequest-cards {
+        justify-content: center;
+    }
+}
