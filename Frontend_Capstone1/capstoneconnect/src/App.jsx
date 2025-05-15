@@ -11,6 +11,7 @@ import PendingTeam from './pages/PendingTeam.jsx';
 import Profile from './pages/Profile.jsx';
 import ProfileEdit from './pages/ProfileEdit.jsx';
 import Matching from './pages/Matching.jsx';
+import SentRequest from './pages/SentRequest.jsx';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile-edit" element={<ProfileEdit />} />
           <Route path="/matching" element={<Matching />} />
+          <Route path="/sent-request" element={<SentRequest />} />
         </Routes>
       </div>
     </Router>

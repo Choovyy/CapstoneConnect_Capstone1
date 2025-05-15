@@ -8,32 +8,35 @@
     --nav-hover: #ff9800;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Prevent all scrolling on the page */
+html, body {
+    overflow: hidden !important;
+    height: 100%;
 }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    line-height: 1.6;
+/* Hide scrollbars for all browsers */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+    display: none;
 }
 
-.pending-team-container {
+body, html {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
+.sentrequest-container {
     max-width: 1440px;
     padding: 0 32px;
-    
     margin-left: 32px;
     margin-top: 100px;
 }
 
-.pending-team-filter {
+.sentrequest-filter {
     margin-bottom: 32px;
 }
 
-.pending-team-title {
+.sentrequest-title {
     text-align: left;
     font-size: 35px;
     font-weight: 500;
@@ -41,13 +44,13 @@ body {
     color: #040316;
 }
 
-.pending-team-cards {
+.sentrequest-cards {
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
 }
 
-.pending-team-card {
+.sentrequest-card {
     background: #fff;
     border: 1px solid var(--primary-color);
     border-radius: 24px;
@@ -59,55 +62,73 @@ body {
     align-items: center;
 }
 
-.pending-team-card:hover {
+.sentrequest-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
 }
 
-.pending-team-card img {
+.sentrequest-card img {
     width: 130px;
     height: 130px;
     object-fit: cover;
     border-radius: 50%;
     border: 3px solid var(--primary-color);
-    margin-bottom: 12px;
 }
 
-.pending-team-card h2 {
+.sentrequest-card h2 {
     font-size: 18px;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 4px;
 }
 
-.pending-team-card p {
+.sentrequest-card p {
     font-size: 14px;
     color: #555;
     margin-bottom: 8px;
 }
 
-.pending-team-skills,
-.pending-team-interests {
+.sentrequest-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: center;
+    width: 100%;
+}
+
+.sentrequest-data {
     font-size: 13px;
     color: #666;
     margin-bottom: 8px;
+    text-align: center;
+    width: 100%;
 }
 
-.pending-team-compatibility {
+/* Remove or comment out .sentrequest-skills and .sentrequest-interests if not used anymore */
+
+.sentrequest-status {
+    font-size: 16px;
+    font-weight: 600;
+    color: #267987;
+    margin-bottom: 8px;
+    margin-top: 4px;
+    text-align: center;
+}
+
+.sentrequest-compatibility {
     font-size: 14px;
     font-weight: 600;
     color: var(--secondary-color);
     margin-bottom: 12px;
 }
 
-.pending-team-compatibility span {
+.sentrequest-compatibility span {
     display: block;
     font-size: 36px;
     font-weight: bold;
     margin-top: 4px;
 }
 
-.pending-team-actions {
+.sentrequest-actions {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -115,7 +136,7 @@ body {
     margin-top: 16px;
 }
 
-.pending-team-actions .btn {
+.sentrequest-actions .btn {
     padding: 8px 50px;
     border-radius: 20px;
     font-size: 14px;
@@ -126,66 +147,22 @@ body {
     width: 100%;
 }
 
-.pending-team-approve {
-    background-color: var(--secondary-color);
+.sentrequest-cancel {
+    background-color: #D62728;
     color: #fff;
 }
 
-.pending-team-approve:hover {
-    background-color: #1e5f6a;
-}
-
-.pending-team-reject {
-    background-color: transparent;
-    border: 2px solid #EC221F;
-    color: #D62728;
-}
-
-.pending-team-reject:hover {
-    background-color: #f8d7da;
-}
-
-/* Footer Section */
-.site-footer {
-    text-align: center;
-    padding: 16px;
-    background-color: var(--nav-bg);
-    border-top: 1px solid #D9D9D9;
-    font-size: 14px;
-    color: #040316;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+.sentrequest-cancel:hover {
+    background-color: #b71c1c;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .site-header, .pending-team-container {
+    .sentrequest-container {
         padding: 16px;
     }
 
-    .nav-list {
-        gap: 8px;
-        padding-left: 0;
-        margin-left: 0;
-    }
-
-    .pending-team-cards {
-        justify-content: center;
-    }
-    
-    .site-header {
-        flex-direction: column;
-        gap: 16px;
-    }
-    
-    .header__nav {
-        order: 3;
-        width: 100%;
-    }
-    
-    .header__nav .nav-list {
+    .sentrequest-cards {
         justify-content: center;
     }
 }
