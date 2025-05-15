@@ -8,11 +8,6 @@
     --nav-hover: #ff9800;
 }
 
-/* Prevent all scrolling on the page */
-html, body {
-    overflow: hidden !important;
-    height: 100%;
-}
 
 /* Hide scrollbars for all browsers */
 body::-webkit-scrollbar,
@@ -204,6 +199,11 @@ body, html {
 
 .sentrequest-cancel:hover {
     background-color: #b71c1c;
+}
+
+.sentrequest-noscroll {
+    overflow: hidden;
+    height: 100vh;
 }
 
 /* Responsive Design */

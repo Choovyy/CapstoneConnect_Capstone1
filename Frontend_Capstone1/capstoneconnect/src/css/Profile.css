@@ -73,12 +73,32 @@ body, .profile-page {
     cursor: pointer;
     font-size: 16px;
     transition: background 0.3s;
-    margin-left: 83%;
-
 }
 
 .edit-btn:hover {
   background-color: #b88e4f;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.projects-btn {
+  background-color: #267987;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.projects-btn:hover {
+  background-color: #195a63;
 }
 
 .profile-section {
