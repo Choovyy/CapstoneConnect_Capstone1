@@ -50,6 +50,55 @@ body, html {
     gap: 24px;
 }
 
+/* Card Flip Styles */
+.sentrequest-card-flip {
+    perspective: 1000px;
+    width: 300px;
+    height: 410px; /* Adjust as needed for card content */
+    margin-bottom: 24px;
+}
+
+.sentrequest-card-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(.4,2,.6,1);
+    transform-style: preserve-3d;
+}
+
+.sentrequest-card-flip.flipped .sentrequest-card-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.sentrequest-card-front,
+.sentrequest-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    backface-visibility: hidden;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.sentrequest-card-back {
+    transform: rotateY(180deg);
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
+.sentrequest-card-front {
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
 .sentrequest-card {
     background: #fff;
     border: 1px solid var(--primary-color);
@@ -63,8 +112,9 @@ body, html {
 }
 
 .sentrequest-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    /* Remove translate and shadow on hover */
+    transform: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
 .sentrequest-card img {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../css/Navigation.css';
 import '../css/SentRequest.css';
 import logo from '../assets/logo.png';
@@ -8,6 +8,15 @@ const SentRequest = () => {
   // Example: Fetch sent requests from API and map over them to render cards
   // const sentRequests = props.sentRequests || [];
   // sentRequests.map((request) => ( ... ))
+
+  // For demo, using a single card. For dynamic, use state for each card's flip.
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  // TODO: For multiple cards, use an array of flip states or card IDs.
+
+  const handleCardClick = () => {
+    setIsFlipped((prev) => !prev);
+  };
 
   return (
     <>
@@ -39,28 +48,46 @@ const SentRequest = () => {
           {/* 
             TODO: Replace this static card with a .map() over sent requests from backend.
             Example:
-            {sentRequests.map((req) => (
-              <div className="sentrequest-card" key={req.id}>
+            {sentRequests.map((req, idx) => (
+              <div className={`sentrequest-card-flip${isFlipped[idx] ? ' flipped' : ''}`} onClick={() => handleCardClick(idx)} key={req.id}>
                 ...
               </div>
             ))}
           */}
-          <div className="sentrequest-card">
-            <div className="sentrequest-compatibility">Compatibility: <span>88%</span></div>
-            <img src="https://placehold.co/144x142" alt="Profile" />
-            <h2>Emily Carter</h2>
-            <p>UI/UX Designer</p>
-            <div className="sentrequest-label">Skills</div>
-            <div className="sentrequest-data">Figma, Adobe XD</div>
-            <div className="sentrequest-label">Interests</div>
-            <div className="sentrequest-data">User Research</div>
-            <div className="sentrequest-status">Request Sent!</div>
-            <div className="sentrequest-actions">
-              {/* 
-                TODO: Attach onClick handler to call backend API to cancel the request.
-                Example: <button onClick={() => handleCancel(req.id)} ...>
-              */}
-              <button className="btn sentrequest-cancel">Cancel</button>
+          <div
+            className={`sentrequest-card-flip${isFlipped ? ' flipped' : ''}`}
+            onClick={handleCardClick}
+            tabIndex={0}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className="sentrequest-card-flip-inner">
+              {/* Front Side */}
+              <div className="sentrequest-card sentrequest-card-front">
+                <div className="sentrequest-compatibility">Compatibility: <span>88%</span></div>
+                <img src="https://placehold.co/144x142" alt="Profile" />
+                <h2>Emily Carter</h2>
+                <p>UI/UX Designer</p>
+                <div className="sentrequest-status">Request Sent!</div>
+                <div className="sentrequest-actions">
+                  {/* 
+                    TODO: Attach onClick handler to call backend API to cancel the request.
+                    Example: <button onClick={e => {e.stopPropagation(); handleCancel(req.id);}} ...>
+                  */}
+                  <button
+                    className="btn sentrequest-cancel"
+                    onClick={e => { e.stopPropagation(); /* handleCancel() */ }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              {/* Back Side */}
+              <div className="sentrequest-card sentrequest-card-back">
+                <div className="sentrequest-label">Skills</div>
+                <div className="sentrequest-data">Figma, Adobe XD</div>
+                <div className="sentrequest-label">Interests</div>
+                <div className="sentrequest-data">User Research</div>
+              </div>
             </div>
           </div>
           {/* End of static card */}
