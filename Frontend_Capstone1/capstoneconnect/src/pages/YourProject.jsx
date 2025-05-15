@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../css/Navigation.css';
-import '../css/Project.css'; 
+import '../css/YourProject.css'; 
 import '../css/Matching.css';
 import logo from '../assets/logo.png';
-import CreateProjectModal from './CreateProjectModal';
-import ApplyProjectModal from './ApplyProjectModal';
+import editIcon from '../assets/edit.png';
+import deleteIcon from '../assets/delete.png';
+import EditProjectModal from './EditProjectModal';
+import DeleteProjectModal from './DeleteProjectModal';
 
-const Project = () => {
+const YourProject = () => {
   const scrollContainerRef = useRef(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   
   useEffect(() => {
@@ -85,33 +87,39 @@ const Project = () => {
     description: 'An application to analyze social media engagement and trends',
     roles: ['Data Analyst', 'Frontend Developer', 'Backend Developer'],
     skills: ['React', 'Python', 'Data Visualization', 'API Development'],
-    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engage Metrics'],
-    creator: 'John Doe'
+    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engage Metrics']
   };
 
-  const handleApplyClick = () => {
-    setSelectedProject(projectDetails);
-    setIsApplyModalOpen(true);
+  const handleEditClick = (project) => {
+    setSelectedProject(project);
+    setIsEditModalOpen(true);
   };
 
-  const handleApplyClose = () => {
-    setIsApplyModalOpen(false);
+  const handleDeleteClick = (project) => {
+    setSelectedProject(project);
+    setIsDeleteModalOpen(true);
   };
 
-  const handleApplyConfirm = () => {
-    console.log('Applied for project:', selectedProject?.title);
-    // Here you would typically send this application to your backend API
-    setIsApplyModalOpen(false);
+  const handleEditSubmit = (updatedProject) => {
+    // Handle the updated project data here
+    console.log('Updated project:', updatedProject);
+    setIsEditModalOpen(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    // Handle project deletion here
+    console.log('Deleting project:', selectedProject);
+    setIsDeleteModalOpen(false);
   };
 
   const renderCard = (_, index) => (
-    <div className="pj-card" key={index}>
-      <div className="pj-header">
+    <div className="yp-card" key={index}>
+      <div className="yp-header">
         <h3><strong>{projectDetails.title}</strong></h3>
         <p>{projectDetails.description}</p>
       </div>
 
-      <div className="pj-body">
+      <div className="yp-body">
         <p><strong>Roles Needed:</strong></p>
         <ul>
           {projectDetails.roles.map((role, i) => <li key={i}>{role}</li>)}
@@ -128,28 +136,20 @@ const Project = () => {
         </ul>
       </div>
 
-      <button className="pj-apply-btn" onClick={handleApplyClick}>Apply for Project</button>
+      <div className="yp-actions">
+        <button className="yp-edit-btn" onClick={() => handleEditClick(projectDetails)}>
+          <img src={editIcon} alt="Edit" className="yp-icon" />
+        </button>
+        <button className="yp-delete-btn" onClick={() => handleDeleteClick(projectDetails)}>
+          <img src={deleteIcon} alt="Delete" className="yp-icon" />
+        </button>
+      </div>
     </div>
   );
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleSubmitProject = (formData) => {
-    console.log('New project data:', formData);
-    // Here you would typically send this data to your backend API
-    // For now, we'll just close the modal
-    setIsModalOpen(false);
-  };
-
   return (
     <div>
-      {/* Navbar (unchanged) */}
+      {/* Navbar */}
       <header className="site-header">
         <div className="header__logo">
           <a href="#">
@@ -170,41 +170,39 @@ const Project = () => {
         </div>
       </header>
 
-      {/* Section Header - Updated to match Matching.jsx style */}
+      {/* Section Header */}
       <div className="matching-container" style={{ marginBottom: '-20px' }}>
         <div className="matching-filter">
-          <h1 className="matching-title">Project Needs</h1>
-        </div>
-        <div className="pj-create-btn-container">
-          <button className="pj-create-btn" onClick={handleOpenModal}>Create Project</button>
+          <h1 className="matching-title">Your Projects</h1>
         </div>
       </div>
 
       {/* Project Cards */}
-      <main className="pj-main">
-        <div className="pj-scroll-container" ref={scrollContainerRef}>
-          <div className="pj-grid">
+      <main className="yp-main">
+        <div className="yp-scroll-container" ref={scrollContainerRef}>
+          <div className="yp-grid">
             {Array(10).fill(null).map(renderCard)}
           </div>
         </div>
       </main>
 
-      {/* Create Project Modal */}
-      <CreateProjectModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleSubmitProject}
+      {/* Edit Project Modal */}
+      <EditProjectModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleEditSubmit}
+        project={selectedProject}
       />
 
-      {/* Apply Project Modal */}
-      <ApplyProjectModal 
-        isOpen={isApplyModalOpen}
-        onClose={handleApplyClose}
-        onConfirm={handleApplyConfirm}
-        projectCreator={selectedProject?.creator}
+      {/* Delete Project Modal */}
+      <DeleteProjectModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        projectTitle={selectedProject?.title}
       />
     </div>
   );
 };
 
-export default Project;
+export default YourProject;
