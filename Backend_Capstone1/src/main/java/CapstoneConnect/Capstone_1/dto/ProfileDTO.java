@@ -7,6 +7,7 @@ public class ProfileDTO {
     private Long id;
     private Long userId; // ✅ Add this field
     private String name;
+    private String email;
     private String profilePicture;
     private List<String> technicalSkills;
     private List<String> projectInterests;
@@ -14,11 +15,12 @@ public class ProfileDTO {
 
     public ProfileDTO() {}
 
-    public ProfileDTO(Long id, Long userId, String name, String profilePicture, List<String> technicalSkills,
+    public ProfileDTO(Long id, Long userId, String name, String email, String profilePicture, List<String> technicalSkills,
                       List<String> projectInterests, List<String> preferredRoles) {
         this.id = id;
         this.userId = userId;
         this.name = name;
+        this.email = email;
         this.profilePicture = profilePicture;
         this.technicalSkills = technicalSkills;
         this.projectInterests = projectInterests;
@@ -48,6 +50,14 @@ public class ProfileDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getProfilePicture() {

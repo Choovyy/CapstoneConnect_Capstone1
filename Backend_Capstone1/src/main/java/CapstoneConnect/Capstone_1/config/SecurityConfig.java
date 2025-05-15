@@ -1,9 +1,9 @@
 package CapstoneConnect.Capstone_1.config;
 
+import CapstoneConnect.Capstone_1.jwt.JwtAuthenticationFilter;
+import CapstoneConnect.Capstone_1.jwt.JwtUtil;
 import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.service.UserService;
-import CapstoneConnect.Capstone_1.jwt.JwtUtil;
-import CapstoneConnect.Capstone_1.jwt.JwtAuthenticationFilter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +36,13 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(request -> new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/user", "/api/auth/microsoft").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/survey/**").permitAll()
                         .requestMatchers("/api/survey/save/**").authenticated()
-                        .requestMatchers("/api/auth/userId").authenticated() // ✅ Add this line
+                        .requestMatchers("/api/auth/userId").authenticated()
                         .requestMatchers("/api/survey/update/**").authenticated()
                         .requestMatchers("/api/test/protected").authenticated()
                         .requestMatchers("/api/profile/**").authenticated()
@@ -69,10 +70,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                         })
                 )
                 .headers(headers -> headers
-                        .frameOptions(options -> options.sameOrigin())
+                        .frameOptions(frame -> frame.sameOrigin())
                 );
 
-        // Register JWT filter before the UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -110,11 +110,14 @@ public class SecurityConfig implements WebMvcConfigurer {
 
             response.addHeader("Set-Cookie", cookie.toString());
 
+            // Append JWT as a query parameter for frontend to extract
+            String redirectUrl;
             if (isFirstTimeUser) {
-                response.sendRedirect("http://localhost:5173/user-survey-page");
+                redirectUrl = "http://localhost:5173/user-survey-page?token=" + token;
             } else {
-                response.sendRedirect("http://localhost:5173/home");
+                redirectUrl = "http://localhost:5173/home?token=" + token;
             }
+            response.sendRedirect(redirectUrl);
         };
     }
 

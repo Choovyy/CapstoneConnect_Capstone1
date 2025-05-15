@@ -1,6 +1,7 @@
 package CapstoneConnect.Capstone_1.entity;
 
 import CapstoneConnect.Capstone_1.dto.ProfileDTO;
+import CapstoneConnect.Capstone_1.entity.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
@@ -64,10 +65,11 @@ public class ProfileEntity {
         profileDTO.setId(this.id);
         profileDTO.setProfilePicture(this.profilePicture);
 
-        // ✅ Set the user's ID and name if available
+        // ✅ Set the user's ID, name, and email if available
         if (this.user != null) {
             profileDTO.setUserId(this.user.getId());
             profileDTO.setName(this.user.getName());
+            profileDTO.setEmail(this.user.getEmail());
         }
 
         if (this.survey != null) {

@@ -33,6 +33,7 @@ const UserSurveyForm2 = () => {
   const isNextDisabled = selectedSkillCount < 2 || isOtherInvalid;
 
   const handleNext = () => {
+    sessionStorage.setItem('surveyStep2', JSON.stringify(formData)); // Save this step's answers
     if (isOtherInvalid) {
       setOtherError('Please input this field.');
       return;

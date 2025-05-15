@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUserId, saveSurvey } from '../api';
 import logo from '../assets/logo.png';
 
 const UserSurveyForm3 = () => {
@@ -32,14 +33,31 @@ const UserSurveyForm3 = () => {
     navigate('/user-survey-form2'); 
   };
 
-  const handleSubmit = () => {
-    if (isOtherInvalid) {
-      setOtherError('Please input this field.');
-      return;
-    }
-    if (!isSubmitDisabled) {
-      navigate('/suggested-team');
-    }
+  const handleSubmit = async () => {
+    // Retrieve all answers from sessionStorage
+    const step1 = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
+    const step2 = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
+    const step3 = formData; // This step's answers
+
+    // Combine all answers
+    const surveyData = {
+      ...step1,
+      ...step2,
+      ...step3,
+    };
+
+    // Get JWT and userId as before
+    const token = sessionStorage.getItem('jwtToken');
+    const { userId } = await getUserId(token); // Or your existing method to get userId
+
+    // Submit to backend
+    await saveSurvey(userId, surveyData);
+
+    // Optionally clear survey data from sessionStorage
+    sessionStorage.removeItem('surveyStep1');
+    sessionStorage.removeItem('surveyStep2');
+    // ...navigate to home or next page...
+    navigate('/home');
   };
 
   const checkboxWrapper = {

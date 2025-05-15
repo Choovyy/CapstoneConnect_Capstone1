@@ -1,9 +1,34 @@
+import React, { useEffect, useState } from 'react';
 import '../css/Profile.css';
 import logo from '../assets/logo.png';
 import vyn from '../assets/vyn.jpg';
 import '../css/Navigation.css';
+import { getUserId, getProfile } from '../api';
 
 const Profile = () => {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const { userId } = await getUserId();
+        const profileData = await getProfile(userId);
+        setProfile(profileData);
+      } catch (err) {
+        setError('Failed to load profile');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!profile) return <div>No profile data found.</div>;
+
   return (
     <>
       <header className="site-header">
@@ -31,36 +56,36 @@ const Profile = () => {
         <main className="profile-container">
           <div className="profile-header">
             <div className="profile-pic">
-              <img src={vyn} alt="Profile" />
+              <img src={profile.profilePictureUrl || vyn} alt="Profile" />
             </div>
             <div className="profile-info">
               <div className="profile-actions">
                 <button className="projects-btn">Your Projects</button>
                 <button className="edit-btn">Edit Profile</button>
               </div>
-              <h1>John Doe</h1>
-              <p>john.doe@cit-university.edu</p>
+              <h1>{profile.fullName || profile.name || 'No Name'}</h1>
+              <p>{profile.email || 'No Email'}</p>
             </div>
           </div>
 
           <div className="profile-section">
             <h2>Role</h2>
-            <p>Software Developer / Frontend Engineer</p>
+            <p>{Array.isArray(profile.preferredRoles) ? profile.preferredRoles.join(', ') : (profile.role || 'No role set')}</p>
           </div>
 
           <div className="profile-section">
             <h2>Technical Skills</h2>
-            <p>HTML, CSS, JavaScript, React, Java, Spring Boot</p>
+            <p>{Array.isArray(profile.technicalSkills) ? profile.technicalSkills.join(', ') : (profile.technicalSkills || 'No skills set')}</p>
           </div>
 
           <div className="profile-section">
             <h2>Project Interests</h2>
-            <p>Web Development, AI Projects, Open Source Contributions</p>
+            <p>{Array.isArray(profile.projectInterests) ? profile.projectInterests.join(', ') : (profile.projectInterests || 'No interests set')}</p>
           </div>
 
           <div className="profile-section">
             <h2>GitHub</h2>
-            <p>https://github.com/johndoe</p>
+            <p>{profile.github || 'No GitHub set'}</p>
           </div>
         </main>
       </div>

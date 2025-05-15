@@ -1,7 +1,6 @@
 package CapstoneConnect.Capstone_1.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 @Entity
@@ -29,7 +28,6 @@ public class UserEntity {
     @OneToOne(mappedBy = "user")
     @JsonManagedReference  // Manages the circular reference on the user side
     private ProfileEntity profile;
-
 
     public UserEntity() {
         // Default constructor

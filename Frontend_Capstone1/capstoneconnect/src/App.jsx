@@ -34,6 +34,7 @@ function App() {
           <Route path="/your-project" element={<YourProject />} />
           <Route path="/matching" element={<Matching />} />
           <Route path="/sent-request" element={<SentRequest />} />
+          <Route path="/home" element={<SuggestedTeam />} />
         </Routes>
       </div>
     </Router>

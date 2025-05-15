@@ -1,10 +1,38 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getCurrentUser } from '../api';
 import '../css/UserSurveyPage.css';
 import group from '../assets/group.jpg';
 
 const UserSurveyPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [user, setUser] = useState(null);
+
+  // Extract JWT from URL and store in sessionStorage
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    if (token) {
+      sessionStorage.setItem('jwtToken', token);
+      // Remove token from URL for cleanliness
+      const url = new URL(window.location.href);
+      url.searchParams.delete('token');
+      window.history.replaceState({}, document.title, url.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+      } catch (err) {
+        setUser(null);
+      }
+    }
+    fetchUser();
+  }, []);
 
   const handleMatchNowClick = () => {
     navigate('/user-survey-form');

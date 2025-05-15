@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import '../css/Navigation.css';
 import '../css/SuggestedTeam.css';
 import logo from '../assets/logo.png';
@@ -13,6 +14,20 @@ const SuggestedTeam = () => {
     skill: "c-language",
     preference: "web-app-dev"
   });
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    if (token) {
+      sessionStorage.setItem('jwtToken', token);
+      // Remove token from URL for cleanliness
+      const url = new URL(window.location.href);
+      url.searchParams.delete('token');
+      window.history.replaceState({}, document.title, url.pathname);
+    }
+  }, [location]);
 
   const handleSendRequest = () => {
     setShowModal(true);
