@@ -34,9 +34,12 @@ const Profile = () => {
               <img src={vyn} alt="Profile" />
             </div>
             <div className="profile-info">
+              <div className="profile-actions">
+                <button className="projects-btn">Your Projects</button>
+                <button className="edit-btn">Edit Profile</button>
+              </div>
               <h1>John Doe</h1>
               <p>john.doe@cit-university.edu</p>
-              <button className="edit-btn">Edit Profile</button>
             </div>
           </div>
 
