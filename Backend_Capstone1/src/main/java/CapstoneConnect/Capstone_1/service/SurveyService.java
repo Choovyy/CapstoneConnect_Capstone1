@@ -10,7 +10,6 @@ import CapstoneConnect.Capstone_1.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import java.net.http.HttpHeaders;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+//import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 
 @Service
@@ -137,7 +137,6 @@ public class SurveyService {    @Autowired
         System.err.println("❌ Error calling matching service: " + e.getMessage());
     }
   }
-
   public List<Map<String, Object>> getMatchesFromAISystem(SurveyDTO surveyDTO) {
     RestTemplate restTemplate = new RestTemplate();
     String url = matchingServiceUrl + "/match";
@@ -145,17 +144,22 @@ public class SurveyService {    @Autowired
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    Map<String, String> requestBody = new HashMap<>();
+    Map<String, Object> requestBody = new HashMap<>();
     requestBody.put("skills", surveyDTO.getTechnicalSkills());
     requestBody.put("roles", surveyDTO.getPreferredRoles());
     requestBody.put("interests", surveyDTO.getProjectInterests());
     // Optional: requestBody.put("email", yourUserEmail); ← to exclude self
 
-    HttpEntity<Map<String, String>> request = new HttpEntity<>(requestBody, headers);
+    HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
     try {
-        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
-        return (List<Map<String, Object>>) response.getBody().get("matches");
+        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, List<Map<String, Object>>> responseMap = mapper.readValue(
+            response.getBody(), 
+            new TypeReference<Map<String, List<Map<String, Object>>>>() {}
+        );
+        return responseMap.get("matches");
     } catch (Exception e) {
         System.err.println("❌ Error calling /match: " + e.getMessage());
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Matching service unavailable");
