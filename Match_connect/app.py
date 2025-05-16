@@ -4,6 +4,7 @@ from ai.faiss_index import add_user_profile, get_top_matches
 
 #venv\Scripts\activate
 # uvicorn app:app --reload // to run the server
+# if first time running, install the dependencies using pip install -r requirements.txt
 
 app = FastAPI()
 @app.get("/")
