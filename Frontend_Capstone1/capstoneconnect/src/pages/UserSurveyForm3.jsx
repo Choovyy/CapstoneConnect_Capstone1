@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserId, saveSurvey } from '../api';
 import logo from '../assets/logo.png';
@@ -17,6 +17,13 @@ const UserSurveyForm3 = () => {
   const [otherSkill, setOtherSkill] = useState('');
   const [otherError, setOtherError] = useState('');
 
+  // Restore state from sessionStorage on mount
+  useEffect(() => {
+    const saved = JSON.parse(sessionStorage.getItem('surveyStep3') || '{}');
+    if (saved.skills) setSkills(saved.skills);
+    if (saved.otherSkill) setOtherSkill(saved.otherSkill);
+  }, []);
+
   const handleSkillChange = (skill) => {
     setSkills(prev => ({
       ...prev,
@@ -30,32 +37,69 @@ const UserSurveyForm3 = () => {
   const isSubmitDisabled = selectedSkillCount < 2 || isOtherInvalid;
 
   const handleBack = () => {
+    sessionStorage.setItem('surveyStep3', JSON.stringify({ skills, otherSkill }));
     navigate('/user-survey-form2'); 
   };
+
+  // Helper to map skills object to array of selected strings for each step
+  function extractSelectedSkills(skillsObj, otherSkill, mapping) {
+    return Object.entries(skillsObj)
+      .filter(([key, checked]) => checked && mapping[key])
+      .map(([key]) => mapping[key] === '__OTHER__' ? (otherSkill && otherSkill.trim() ? otherSkill.trim() : null) : mapping[key])
+      .filter(Boolean);
+  }
 
   const handleSubmit = async () => {
     // Retrieve all answers from sessionStorage
     const step1 = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
     const step2 = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
-    const step3 = formData; // This step's answers
-
-    // Combine all answers
-    const surveyData = {
-      ...step1,
-      ...step2,
-      ...step3,
+    // Step 1: Preferred Roles
+    const preferredRolesMapping = {
+      cLanguage: 'UI/UX Developer',
+      php: 'Game Developer',
+      htmlCss: 'Frontend Developer',
+      javascript: 'Team Leader',
+      java: 'Backend Developer',
+      python: 'Technical Writer',
+      other: '__OTHER__',
     };
-
+    // Step 2: Technical Skills
+    const technicalSkillsMapping = {
+      cLanguage: 'C Language',
+      php: 'PHP',
+      htmlCss: 'HTML and CSS',
+      javascript: 'JavaScript',
+      java: 'Java',
+      python: 'Python',
+      other: '__OTHER__',
+    };
+    // Step 3: Project Interests
+    const projectInterestsMapping = {
+      cLanguage: 'Web App Development',
+      php: 'E-Commerce Systems',
+      htmlCss: 'Mobile App Development',
+      javascript: 'Game Development',
+      java: 'Task Management Systems',
+      python: 'AI Development',
+      other: '__OTHER__',
+    };
+    const preferredRoles = extractSelectedSkills(step1.skills || {}, step1.otherSkill, preferredRolesMapping);
+    const technicalSkills = extractSelectedSkills(step2.skills || {}, step2.otherSkill, technicalSkillsMapping);
+    const projectInterests = extractSelectedSkills(skills, otherSkill, projectInterestsMapping);
+    const surveyData = {
+      preferredRoles,
+      technicalSkills,
+      projectInterests,
+    };
     // Get JWT and userId as before
     const token = sessionStorage.getItem('jwtToken');
     const { userId } = await getUserId(token); // Or your existing method to get userId
-
     // Submit to backend
     await saveSurvey(userId, surveyData);
-
     // Optionally clear survey data from sessionStorage
     sessionStorage.removeItem('surveyStep1');
     sessionStorage.removeItem('surveyStep2');
+    sessionStorage.removeItem('surveyStep3');
     // ...navigate to home or next page...
     navigate('/home');
   };

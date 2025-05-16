@@ -4,11 +4,13 @@ import logo from '../assets/logo.png';
 import vyn from '../assets/vyn.jpg';
 import '../css/Navigation.css';
 import { getUserId, getProfile } from '../api';
+import { useNavigate } from 'react-router-dom'; // Add this import
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     async function fetchProfile() {
@@ -54,17 +56,22 @@ const Profile = () => {
       {/* Only the profile-page is flex-centered */}
       <div className="profile-page">
         <main className="profile-container">
-          <div className="profile-header">
-            <div className="profile-pic">
+          <div className="profile-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px' }}>
+            <div className="profile-pic" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: '0 0 auto' }}>
               <img src={profile.profilePictureUrl || vyn} alt="Profile" />
             </div>
             <div className="profile-info">
               <div className="profile-actions">
-                <button className="projects-btn">Your Projects</button>
-                <button className="edit-btn">Edit Profile</button>
+                <button className="projects-btn" onClick={() => navigate('/your-project')}>Your Projects</button>
+                <button className="edit-btn" onClick={() => navigate('/profile-edit')}>Edit Profile</button>
               </div>
               <h1>{profile.fullName || profile.name || 'No Name'}</h1>
-              <p>{profile.email || 'No Email'}</p>
+              <div style={{display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0'}}>
+                <span style={{display: 'flex', alignItems: 'center'}}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#267987" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <span>{profile.email || 'No Email'}</span>
+              </div>
             </div>
           </div>
 
@@ -85,7 +92,13 @@ const Profile = () => {
 
           <div className="profile-section">
             <h2>GitHub</h2>
-            <p>{profile.github || 'No GitHub set'}</p>
+            {profile.github &&
+              /^https:\/\/(www\.)?github\.com\/[A-Za-z0-9_-]+\/?$/.test(profile.github.trim()) ? (
+                <p><a href={profile.github} target="_blank" rel="noopener noreferrer" style={{ color: '#222', fontWeight: 400, textDecoration: 'underline' }}>{profile.github}</a></p>
+              ) : (
+                <p style={{ color: 'red' }}>{profile.github}</p>
+              )
+            }
           </div>
         </main>
       </div>

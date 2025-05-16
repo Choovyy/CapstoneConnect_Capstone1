@@ -4,48 +4,49 @@ import logo from '../assets/logo.png';
 import vyn from '../assets/vyn.jpg';
 import { getUserId, getProfile, updateProfile } from '../api';
 
+// Match survey page options
 const technicalSkillOptions = [
-  'C Language',
-  'HTML and CSS',
-  'Java',
-  'PHP',
-  'JavaScript',
-  'Python',
-  'Database Administration',
-  'Dev Ops',
-  'Automation',
-  'Software Testing',
+  { key: 'cLanguage', label: 'C Language' },
+  { key: 'php', label: 'PHP' },
+  { key: 'htmlCss', label: 'HTML and CSS' },
+  { key: 'javascript', label: 'JavaScript' },
+  { key: 'java', label: 'Java' },
+  { key: 'python', label: 'Python' },
+  { key: 'other', label: 'Others' },
 ];
-
-const projectInterestOptions = [
-  'Web App Development',
-  'Mobile App Development',
-  'Task Management Systems',
-  'E-Commerce Systems',
-  'Game Development',
-  'AI Development',
-];
-
 const roleOptions = [
-  'UI/UX Developer',
-  'Frontend Developer',
-  'Backend Developer',
-  'Game Developer',
-  'Team Leader',
-  'Technical Writer',
+  { key: 'uiux', label: 'UI/UX Developer' },
+  { key: 'frontend', label: 'Frontend Developer' },
+  { key: 'backend', label: 'Backend Developer' },
+  { key: 'game', label: 'Game Developer' },
+  { key: 'leader', label: 'Team Leader' },
+  { key: 'writer', label: 'Technical Writer' },
+];
+const projectInterestOptions = [
+  { key: 'web', label: 'Web App Development' },
+  { key: 'mobile', label: 'Mobile App Development' },
+  { key: 'task', label: 'Task Management Systems' },
+  { key: 'ecommerce', label: 'E-Commerce Systems' },
+  { key: 'game', label: 'Game Development' },
+  { key: 'ai', label: 'AI Development' },
 ];
 
 const ProfileEdit = () => {
   const [form, setForm] = useState({
     name: '',
     github: '',
-    role: '',
-    technicalSkill: '',
-    projectInterest: '',
+    preferredRole: '',
+    technicalSkills: [],
+    projectInterests: [],
+    otherSkill: '',
+    otherInterest: '',
   });
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [githubError, setGithubError] = useState('');
+  const [profilePicFile, setProfilePicFile] = useState(null);
+  const [profilePicError, setProfilePicError] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -56,9 +57,11 @@ const ProfileEdit = () => {
         setForm({
           name: profile.name || '',
           github: profile.github || '',
-          role: (profile.preferredRoles && profile.preferredRoles[0]) || '',
-          technicalSkill: (profile.technicalSkills && profile.technicalSkills[0]) || '',
-          projectInterest: (profile.projectInterests && profile.projectInterests[0]) || '',
+          preferredRole: (profile.preferredRoles && profile.preferredRoles[0]) || '',
+          technicalSkills: profile.technicalSkills || [],
+          projectInterests: profile.projectInterests || [],
+          otherSkill: profile.otherSkill || '',
+          otherInterest: profile.otherInterest || '',
         });
       } catch (err) {
         setError('Failed to load profile');
@@ -69,21 +72,55 @@ const ProfileEdit = () => {
     fetchData();
   }, []);
 
-  const handleChange = (e) => {
+  // Checkbox handlers
+  const handleCheckboxChange = (field, value) => {
+    setForm((prev) => {
+      const arr = prev[field] || [];
+      if (arr.includes(value)) {
+        return { ...prev, [field]: arr.filter((v) => v !== value) };
+      } else {
+        return { ...prev, [field]: [...arr, value] };
+      }
+    });
+  };
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleProfilePicChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setProfilePicFile(file);
+      setProfilePicError('');
+      // Show preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm(prev => ({ ...prev, profilePicture: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setProfilePicError('Please select a valid image file.');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userId) return;
+    // Validate GitHub URL
+    const githubUrl = form.github.trim();
+    if (githubUrl && !/^https:\/\/(www\.)?github\.com\/[A-Za-z0-9_-]+\/?$/.test(githubUrl)) {
+      setGithubError('Please enter a valid GitHub profile URL (e.g., https://github.com/username)');
+      return;
+    }
     try {
       await updateProfile(userId, {
         name: form.name,
-        github: form.github,
-        preferredRoles: [form.role],
-        technicalSkills: [form.technicalSkill],
-        projectInterests: [form.projectInterest],
+        github: githubUrl,
+        preferredRoles: form.preferredRole ? [form.preferredRole] : [],
+        technicalSkills: form.technicalSkills.concat(form.otherSkill ? [form.otherSkill] : []),
+        projectInterests: form.projectInterests.concat(form.otherInterest ? [form.otherInterest] : []),
       });
       window.location.href = '/profile';
     } catch (err) {
@@ -130,92 +167,168 @@ const ProfileEdit = () => {
       {/* Main Profile Section */}
       <main className="profile-edit-container">
         {/* Sidebar */}
-        <aside className="profile-edit-sidebar">
-          <img src={vyn} alt="Profile Picture" />
-          <h2>{form.name || 'Name'}</h2>
-          <p>{form.github || 'GitHub'}</p>
+        <aside className="profile-edit-sidebar" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '40px' }}>
+          <label htmlFor="profilePicUpload" style={{ cursor: 'pointer', display: 'block' }}>
+            <img src={form.profilePicture || vyn} alt="Profile Picture" style={{ width: '168px', height: '168px', borderRadius: '50%', border: '3px solid var(--primary-color)', objectFit: 'cover', display: 'block', margin: '0 auto' }} />
+            <input
+              type="file"
+              id="profilePicUpload"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleProfilePicChange}
+            />
+          </label>
+          {profilePicError && <span style={{ color: 'red', fontSize: '13px' }}>{profilePicError}</span>}
+          <h2 style={{ textAlign: 'center', width: '100%', marginTop: '18px' }}>{form.name || 'Name'}</h2>
+          {form.github &&
+            /^https:\/\/(www\.)?github\.com\/[A-Za-z0-9_-]+\/?$/.test(form.github.trim()) ? (
+              <p style={{ textAlign: 'center', width: '100%', marginTop: '8px' }}><a href={form.github} target="_blank" rel="noopener noreferrer" style={{ color: '#222', fontWeight: 400, textDecoration: 'underline' }}>{form.github}</a></p>
+            ) : (
+              <p style={{ color: 'red', textAlign: 'center', width: '100%', marginTop: '8px' }}>{form.github}</p>
+            )
+          }
         </aside>
 
         {/* Profile Content */}
         <section className="profile-edit-content">
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="name" style={{ fontWeight: 'bold' }}>Full Name</label>
               <input
                 type="text"
                 id="name"
                 name="name"
                 value={form.name}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 className="profile-input"
               />
             </div>
 
             <div>
-              <label htmlFor="role">Role</label>
+              <label htmlFor="role" style={{ fontWeight: 'bold' }}>Role</label>
               <select
                 id="role"
                 name="role"
-                value={form.role}
-                onChange={handleChange}
+                value={form.preferredRole || ''}
+                onChange={e => setForm(prev => ({ ...prev, preferredRole: e.target.value }))}
                 className="profile-input"
               >
                 <option value="">Select a role</option>
-                {roleOptions.map((role) => (
-                  <option key={role} value={role}>{role}</option>
+                {roleOptions.map(({ key, label }) => (
+                  <option key={key} value={label}>{label}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label>Technical Skills</label>
+              <label style={{ fontWeight: 'bold' }}>Technical Skills</label>
               <div className="profile-edit-radio-group">
-                {technicalSkillOptions.map((skill) => (
-                  <div className="profile-edit-radio-item" key={skill}>
+                {technicalSkillOptions.map(({ key, label }) => (
+                  <div className="profile-edit-radio-item" key={key}>
                     <input
-                      type="radio"
-                      id={`skill-${skill}`}
-                      name="technicalSkill"
-                      value={skill}
-                      checked={form.technicalSkill === skill}
-                      onChange={handleChange}
+                      type="checkbox"
+                      id={`skill-${key}`}
+                      checked={form.technicalSkills?.includes(label)}
+                      onChange={() => {
+                        setForm(prev => {
+                          const arr = prev.technicalSkills || [];
+                          if (arr.includes(label)) {
+                            return { ...prev, technicalSkills: arr.filter(l => l !== label) };
+                          } else {
+                            return { ...prev, technicalSkills: [...arr, label] };
+                          }
+                        });
+                      }}
                     />
-                    <label htmlFor={`skill-${skill}`}>{skill}</label>
+                    <label htmlFor={`skill-${key}`}>{label}</label>
+                    {key === 'other' && (
+                      <input
+                        type="text"
+                        name="otherSkill"
+                        value={form.otherSkill}
+                        onChange={handleInputChange}
+                        placeholder="Specify other skills"
+                        className="profile-input"
+                        style={{ marginLeft: '8px', width: '180px' }}
+                        disabled={!form.technicalSkills?.includes('Others')}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <label>Project Interest</label>
+              <label style={{ fontWeight: 'bold' }}>Project Interests</label>
               <div className="profile-edit-radio-group">
-                {projectInterestOptions.map((interest) => (
-                  <div className="profile-edit-radio-item" key={interest}>
+                {projectInterestOptions.map(({ key, label }) => (
+                  <div className="profile-edit-radio-item" key={key}>
                     <input
-                      type="radio"
-                      id={`interest-${interest}`}
-                      name="projectInterest"
-                      value={interest}
-                      checked={form.projectInterest === interest}
-                      onChange={handleChange}
+                      type="checkbox"
+                      id={`interest-${key}`}
+                      checked={form.projectInterests?.includes(label)}
+                      onChange={() => {
+                        setForm(prev => {
+                          const arr = prev.projectInterests || [];
+                          if (arr.includes(label)) {
+                            return { ...prev, projectInterests: arr.filter(l => l !== label) };
+                          } else {
+                            return { ...prev, projectInterests: [...arr, label] };
+                          }
+                        });
+                      }}
                     />
-                    <label htmlFor={`interest-${interest}`}>{interest}</label>
+                    <label htmlFor={`interest-${key}`}>{label}</label>
                   </div>
                 ))}
+                {/* Only one 'Others' field below, not after AI Development */}
+                <div className="profile-edit-radio-item" key="otherInterest">
+                  <input
+                    type="checkbox"
+                    id="interest-other"
+                    checked={form.projectInterests?.includes('Other')}
+                    onChange={() => {
+                      setForm(prev => {
+                        const arr = prev.projectInterests || [];
+                        if (arr.includes('Other')) {
+                          return { ...prev, projectInterests: arr.filter(l => l !== 'Other'), otherInterest: '' };
+                        } else {
+                          return { ...prev, projectInterests: [...arr, 'Other'] };
+                        }
+                      });
+                    }}
+                  />
+                  <label htmlFor="interest-other">Others:</label>
+                  <input
+                    type="text"
+                    name="otherInterest"
+                    value={form.otherInterest}
+                    onChange={handleInputChange}
+                    placeholder="Specify other interests"
+                    className="profile-input"
+                    style={{ marginLeft: '8px', width: '180px' }}
+                    disabled={!form.projectInterests?.includes('Other')}
+                  />
+                </div>
               </div>
             </div>
 
             <div>
-              <label htmlFor="github">GitHub</label>
+              <label htmlFor="github" style={{ fontWeight: 'bold' }}>GitHub</label>
               <input
                 type="text"
                 id="github"
                 name="github"
                 value={form.github}
-                onChange={handleChange}
+                onChange={e => {
+                  handleInputChange(e);
+                  setGithubError('');
+                }}
                 placeholder="https://github.com/username"
                 className="profile-input"
+                style={githubError ? { borderColor: 'red' } : {}}
               />
+              {githubError && <span style={{ color: 'red', fontSize: '13px' }}>{githubError}</span>}
             </div>
 
             {/* Buttons */}

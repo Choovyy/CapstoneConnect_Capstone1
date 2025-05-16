@@ -31,23 +31,29 @@ public class ProfileService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        ProfileEntity profileEntity = new ProfileEntity();
-        profileEntity.setUser(user);
-        profileEntity.setProfilePicture(profileDTO.getProfilePicture());
+        // Try to find existing profile for this user
+        ProfileEntity profileEntity = profileRepository.findByUserId(userId).orElseGet(() -> {
+            ProfileEntity newProfile = new ProfileEntity();
+            newProfile.setUser(user);
+            return newProfile;
+        });
 
-        SurveyEntity surveyEntity = new SurveyEntity();
+        profileEntity.setProfilePicture(profileDTO.getProfilePicture());
+        profileEntity.setGithub(profileDTO.getGithub());
+
+        // Update survey or create if missing
+        SurveyEntity surveyEntity = profileEntity.getSurvey();
+        if (surveyEntity == null) {
+            surveyEntity = new SurveyEntity();
+        }
         surveyEntity.setTechnicalSkills(profileDTO.getTechnicalSkills());
         surveyEntity.setProjectInterests(profileDTO.getProjectInterests());
         surveyEntity.setPreferredRoles(profileDTO.getPreferredRoles());
 
-// 🔽 Save the SurveyEntity first to generate the ID
         SurveyEntity savedSurvey = surveyRepository.save(surveyEntity);
-
         profileEntity.setSurvey(savedSurvey);
 
-// ✅ Then save the ProfileEntity
         return profileRepository.save(profileEntity);
-
     }
 
 }

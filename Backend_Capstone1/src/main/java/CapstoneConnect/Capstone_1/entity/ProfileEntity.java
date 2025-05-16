@@ -16,6 +16,9 @@ public class ProfileEntity {
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    @Column(name = "github")
+    private String github;
+
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonBackReference
@@ -43,6 +46,14 @@ public class ProfileEntity {
         this.profilePicture = profilePicture;
     }
 
+    public String getGithub() {
+        return github;
+    }
+
+    public void setGithub(String github) {
+        this.github = github;
+    }
+
     public UserEntity getUser() {
         return user;
     }
@@ -64,6 +75,7 @@ public class ProfileEntity {
         ProfileDTO profileDTO = new ProfileDTO();
         profileDTO.setId(this.id);
         profileDTO.setProfilePicture(this.profilePicture);
+        profileDTO.setGithub(this.github);
 
         // ✅ Set the user's ID, name, and email if available
         if (this.user != null) {

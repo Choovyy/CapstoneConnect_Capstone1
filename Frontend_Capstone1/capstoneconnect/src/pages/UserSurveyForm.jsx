@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
@@ -16,6 +16,13 @@ const UserSurveyForm = () => {
   const [otherSkill, setOtherSkill] = useState('');
   const [otherError, setOtherError] = useState('');
 
+  // Restore state from sessionStorage on mount
+  useEffect(() => {
+    const saved = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
+    if (saved.skills) setSkills(saved.skills);
+    if (saved.otherSkill) setOtherSkill(saved.otherSkill);
+  }, []);
+
   const handleSkillChange = (skill) => {
     setSkills(prev => ({
       ...prev,
@@ -31,12 +38,14 @@ const UserSurveyForm = () => {
   const isNextDisabled = selectedSkillCount < 2 || isOtherInvalid;
 
   const handleNext = () => {
-    sessionStorage.setItem('surveyStep1', JSON.stringify(formData)); // Save this step's answers
+    sessionStorage.setItem('surveyStep1', JSON.stringify({
+      skills,
+      otherSkill
+    })); // Save this step's answers
     if (isOtherInvalid) {
       setOtherError('Please input this field.');
       return;
     }
-
     if (!isNextDisabled) {
       navigate('/user-survey-form2');
     }
