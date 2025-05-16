@@ -83,6 +83,12 @@ body, html {
     justify-content: center;
 }
 
+.sentrequest-card-front > *,
+.sentrequest-card-back > * {
+    max-width: 100%;
+    word-break: break-word;
+}
+
 .sentrequest-card-back {
     transform: rotateY(180deg);
     padding: 24px 16px;

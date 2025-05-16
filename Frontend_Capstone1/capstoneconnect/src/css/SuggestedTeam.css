@@ -95,6 +95,7 @@ body {
   gap: 24px;
   overflow-x: auto;
   padding-bottom: 16px;
+  padding-top: 11px;
   /* Optional: hide scrollbar in WebKit-based browsers */
   -webkit-overflow-scrolling: touch;
 }
@@ -233,6 +234,13 @@ body {
 .suggested-team-card-front {
   padding: 16px;
   box-sizing: border-box;
+}
+
+.suggested-team-card-front > *,
+.suggested-team-card-back > * {
+    max-width: 100%;
+    max-height: 100%;
+    word-break: break-word;
 }
 
 .suggested-team-label {
