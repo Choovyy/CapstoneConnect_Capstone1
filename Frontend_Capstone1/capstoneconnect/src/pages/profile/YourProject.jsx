@@ -1,19 +1,35 @@
 import React, { useEffect, useRef, useState } from 'react';
-import '../css/Navigation.css';
-import '../css/YourProject.css'; 
-import '../css/Matching.css';
-import logo from '../assets/logo.png';
-import editIcon from '../assets/edit.png';
-import deleteIcon from '../assets/delete.png';
-import EditProjectModal from './EditProjectModal';
-import DeleteProjectModal from './DeleteProjectModal';
+import '../../css/Navigation.css';
+import '../../css/YourProject.css'; 
+import Navigation from '../Navigation';
+import editIcon from '../../assets/edit.png';
+import deleteIcon from '../../assets/delete.png';
+import EditProjectModal from '../modals/EditProjectModal';
+import DeleteProjectModal from '../modals/DeleteProjectModal';
+import LogoutModal from '../LogoutModal';
 
 const YourProject = () => {
   const scrollContainerRef = useRef(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    // Clear sessions, tokens, and redirect to login page
+    sessionStorage.removeItem('jwtToken');
+    window.location.href = '/';
+    setShowLogoutModal(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     let isDown = false;
@@ -150,30 +166,14 @@ const YourProject = () => {
   return (
     <div>
       {/* Navbar */}
-      <header className="site-header">
-        <div className="header__logo">
-          <a href="#">
-            <img src={logo} alt="Logo" />
-          </a>
-        </div>
-        <nav className="header__nav">
-          <ul className="nav-list">
-            <li className="nav-item"><a href="#">Home</a></li>
-            <li className="nav-item"><a href="#">Profile</a></li>
-            <li className="nav-item"><a href="#">Projects</a></li>
-            <li className="nav-item"><a href="#">Team</a></li>
-            <li className="nav-item"><a href="#">More</a></li>
-          </ul>
-        </nav>
-        <div className="header__auth">
-          <button className="btn btn--primary">Logout</button>
-        </div>
-      </header>
-
+      <div>
+        <Navigation onLogout={handleLogout} />
+      </div>
+          
       {/* Section Header */}
-      <div className="matching-container" style={{ marginBottom: '-20px' }}>
-        <div className="matching-filter">
-          <h1 className="matching-title">Your Projects</h1>
+      <div className="yp-container" style={{ marginBottom: '-20px' }}>
+        <div className="yp-filter">
+          <h1 className="yp-title">Your Projects</h1>
         </div>
       </div>
 
@@ -201,6 +201,9 @@ const YourProject = () => {
         onConfirm={handleDeleteConfirm}
         projectTitle={selectedProject?.title}
       />
+
+      {/* Logout Modal */}
+      {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
     </div>
   );
 };

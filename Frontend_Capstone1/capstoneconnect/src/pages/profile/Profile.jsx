@@ -1,16 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import '../css/Profile.css';
-import logo from '../assets/logo.png';
-import vyn from '../assets/vyn.jpg';
-import '../css/Navigation.css';
-import { getUserId, getProfile } from '../api';
-import { useNavigate } from 'react-router-dom'; // Add this import
+import '../../css/Profile.css';
+import vyn from '../../assets/vyn.jpg';
+import '../../css/Navigation.css';
+import Navigation from '../../pages/Navigation';
+import { getUserId, getProfile } from '../../api';
+import { useNavigate } from 'react-router-dom';
+import LogoutModal from '../LogoutModal';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    // Clear sessions, tokens, and redirect to login page
+    sessionStorage.removeItem('jwtToken');
+    window.location.href = '/';
+    setShowLogoutModal(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
 
   useEffect(() => {
     async function fetchProfile() {
@@ -33,25 +50,9 @@ const Profile = () => {
 
   return (
     <>
-      <header className="site-header">
-        <div className="header__logo">
-          <a href="#">
-            <img src={logo} alt="CapstoneConnect Logo" />
-          </a>
-        </div>
-        <nav className="header__nav">
-          <ul className="nav-list">
-            <li className="nav-item nav-item--active"><a href="#">Home</a></li>
-            <li className="nav-item"><a href="#">Profile</a></li>
-            <li className="nav-item"><a href="#">Projects</a></li>
-            <li className="nav-item"><a href="#">Team</a></li>
-            <li className="nav-item"><a href="#">More</a></li>
-          </ul>
-        </nav>
-        <div className="header__auth">
-          <button className="btn btn--primary">Logout</button>
-        </div>
-      </header>
+      <div>
+        <Navigation onLogout={handleLogout} />
+      </div>
 
       {/* Only the profile-page is flex-centered */}
       <div className="profile-page">
@@ -102,6 +103,8 @@ const Profile = () => {
           </div>
         </main>
       </div>
+      
+      {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
     </>
   );
 };

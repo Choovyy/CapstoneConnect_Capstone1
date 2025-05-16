@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/ApplyProjectModal.css';
+import '../../css/ApplyProjectModal.css';
 
 const ApplyProjectModal = ({ isOpen, onClose, onConfirm, projectCreator }) => {
   if (!isOpen) return null;

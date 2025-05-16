@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import '../css/ProfileEdit.css';
-import logo from '../assets/logo.png';
-import vyn from '../assets/vyn.jpg';
-import { getUserId, getProfile, updateProfile } from '../api';
+import '../../css/ProfileEdit.css';
+import '../../css/Navigation.css';
+import vyn from '../../assets/vyn.jpg';
+import Navigation from '../Navigation';
+import { getUserId, getProfile, updateProfile } from '../../api';
+import LogoutModal from '../LogoutModal';
 
 // Match survey page options
 const technicalSkillOptions = [
@@ -44,9 +46,25 @@ const ProfileEdit = () => {
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [githubError, setGithubError] = useState('');
   const [profilePicFile, setProfilePicFile] = useState(null);
   const [profilePicError, setProfilePicError] = useState('');
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    // Clear sessions, tokens, and redirect to login page
+    sessionStorage.removeItem('jwtToken');
+    window.location.href = '/';
+    setShowLogoutModal(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -134,35 +152,9 @@ const ProfileEdit = () => {
   return (
     <div>
       {/* Navigation */}
-      <header className="profile-edit-header">
-        <div className="profile-edit-header__logo">
-          <a href="#">
-            <img src={logo} alt="Logo" />
-          </a>
-        </div>
-        <nav className="profile-edit-header__nav">
-          <ul className="profile-edit-nav-list">
-            <li className="profile-edit-nav-item">
-              <a href="#">Home</a>
-            </li>
-            <li className="profile-edit-nav-item">
-              <a href="#">Profile</a>
-            </li>
-            <li className="profile-edit-nav-item">
-              <a href="#">Projects</a>
-            </li>
-            <li className="profile-edit-nav-item">
-              <a href="#">Team</a>
-            </li>
-            <li className="profile-edit-nav-item">
-              <a href="#">More</a>
-            </li>
-          </ul>
-        </nav>
-        <div className="profile-edit-header__auth">
-          <button className="profile-edit-btn profile-edit-btn--primary">Logout</button>
-        </div>
-      </header>
+      <div>
+        <Navigation onLogout={handleLogout} />
+      </div>
 
       {/* Main Profile Section */}
       <main className="profile-edit-container">
@@ -343,6 +335,8 @@ const ProfileEdit = () => {
           </form>
         </section>
       </main>
+
+      {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
     </div>
   );
 };

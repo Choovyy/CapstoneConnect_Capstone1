@@ -1,13 +1,20 @@
-.pj-header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px;
-    flex-wrap: wrap;
+  .pj-container {
+    max-width: 1440px;
+    padding: 0 32px;  
+    margin-left: 32px;
+    margin-top: 100px;
   }
   
-  .pj-header-section h2 {
-    font-weight: bold;
+  .pj-filter {
+    margin-bottom: 32px;
+  }
+  
+  .pj-title {
+    text-align: left;
+    font-size: 35px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #040316;
   }
   
   .pj-create-btn {

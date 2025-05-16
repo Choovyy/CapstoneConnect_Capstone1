@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getCurrentUser } from '../api';
-import '../css/UserSurveyPage.css';
-import group from '../assets/group.jpg';
+import { getCurrentUser } from '../../api';
+import '../../css/UserSurveyPage.css';
+import group from '../../assets/group.jpg';
 
 const UserSurveyPage = () => {
   const navigate = useNavigate();

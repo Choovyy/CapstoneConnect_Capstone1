@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import '../css/LandingPage.css';
 import logo from '../assets/logo.png';
 import '../css/MicrosoftAuthModal.css';
@@ -21,6 +21,14 @@ const LandingPage = () => {
 
   const handleLogoClick = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
+  };
+
+  const scrollToSection = (e, sectionId) => {
+    e.preventDefault(); // Prevent default link behavior
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   // Microsoft Auth Modal Component
@@ -76,8 +84,9 @@ const LandingPage = () => {
           <img src={logo} alt="Capstone Connect Logo" />
         </div>
         <ul className="nav-pill-list">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
+          <li><a href="#" onClick={(e) => scrollToSection(e, 'home')}>Home</a></li>
+          <li><a href="#" onClick={(e) => scrollToSection(e, 'dashboard')}>About</a></li>
+          <li><a href="#" onClick={(e) => scrollToSection(e, 'about')}>Developers</a></li>
         </ul>
         <div className="nav-buttons">
           <button 

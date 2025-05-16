@@ -1,16 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react';
-import '../css/Navigation.css';
-import '../css/Project.css'; 
-import '../css/Matching.css';
-import logo from '../assets/logo.png';
-import CreateProjectModal from './CreateProjectModal';
-import ApplyProjectModal from './ApplyProjectModal';
+import '../../css/Navigation.css';
+import '../../css/Project.css'; 
+import Navigation from '../Navigation';
+import CreateProjectModal from '../modals/CreateProjectModal';
+import ApplyProjectModal from '../modals/ApplyProjectModal';
+import LogoutModal from '../LogoutModal';
 
 const Project = () => {
   const scrollContainerRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    // Clear sessions, tokens, and redirect to login page
+    sessionStorage.removeItem('jwtToken');
+    window.location.href = '/';
+    setShowLogoutModal(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
   
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -149,31 +165,14 @@ const Project = () => {
 
   return (
     <div>
-      {/* Navbar (unchanged) */}
-      <header className="site-header">
-        <div className="header__logo">
-          <a href="#">
-            <img src={logo} alt="Logo" />
-          </a>
-        </div>
-        <nav className="header__nav">
-          <ul className="nav-list">
-            <li className="nav-item"><a href="#">Home</a></li>
-            <li className="nav-item"><a href="#">Profile</a></li>
-            <li className="nav-item"><a href="#">Projects</a></li>
-            <li className="nav-item"><a href="#">Team</a></li>
-            <li className="nav-item"><a href="#">More</a></li>
-          </ul>
-        </nav>
-        <div className="header__auth">
-          <button className="btn btn--primary">Logout</button>
-        </div>
-      </header>
-
+      <div>
+        <Navigation onLogout={handleLogout} />
+      </div>
+      
       {/* Section Header - Updated to match Matching.jsx style */}
-      <div className="matching-container" style={{ marginBottom: '-20px' }}>
-        <div className="matching-filter">
-          <h1 className="matching-title">Project Needs</h1>
+      <div className="pj-container" style={{ marginBottom: '-20px' }}>
+        <div className="pj-filter">
+          <h1 className="pj-title">Project Needs</h1>
         </div>
         <div className="pj-create-btn-container">
           <button className="pj-create-btn" onClick={handleOpenModal}>Create Project</button>
@@ -203,6 +202,9 @@ const Project = () => {
         onConfirm={handleApplyConfirm}
         projectCreator={selectedProject?.creator}
       />
+
+      {/* Logout Modal */}
+      {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
     </div>
   );
 };

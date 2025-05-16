@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
-const UserSurveyForm = () => {
+const UserSurveyForm2 = () => {
   const navigate = useNavigate();
   const [skills, setSkills] = useState({
     cLanguage: false,
@@ -18,7 +18,7 @@ const UserSurveyForm = () => {
 
   // Restore state from sessionStorage on mount
   useEffect(() => {
-    const saved = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
+    const saved = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
     if (saved.skills) setSkills(saved.skills);
     if (saved.otherSkill) setOtherSkill(saved.otherSkill);
   }, []);
@@ -28,9 +28,12 @@ const UserSurveyForm = () => {
       ...prev,
       [skill]: !prev[skill]
     }));
-    if (skill === 'other') {
-      setOtherError(''); 
-    }
+    if (skill === 'other') setOtherError('');
+  };
+
+  const handleBack = () => {
+    sessionStorage.setItem('surveyStep2', JSON.stringify({ skills, otherSkill }));
+    navigate('/user-survey-form'); 
   };
 
   const selectedSkillCount = Object.values(skills).filter(Boolean).length;
@@ -38,7 +41,7 @@ const UserSurveyForm = () => {
   const isNextDisabled = selectedSkillCount < 2 || isOtherInvalid;
 
   const handleNext = () => {
-    sessionStorage.setItem('surveyStep1', JSON.stringify({
+    sessionStorage.setItem('surveyStep2', JSON.stringify({
       skills,
       otherSkill
     })); // Save this step's answers
@@ -47,7 +50,7 @@ const UserSurveyForm = () => {
       return;
     }
     if (!isNextDisabled) {
-      navigate('/user-survey-form2');
+      navigate('/user-survey-form3');
     }
   };
 
@@ -58,7 +61,7 @@ const UserSurveyForm = () => {
     padding: '8px',
     color: '#FFFFFF',
     fontFamily: 'Poppins, sans-serif',
-    marginLeft: '48px',
+    marginLeft: '30px',
     marginBottom: '4px',
   };
 
@@ -134,7 +137,7 @@ const UserSurveyForm = () => {
     checkboxLabel: {
       color: '#FFFFFF',
       fontFamily: 'Poppins, sans-serif',
-      pointerEvents: 'none',
+      pointerEvents: 'none', 
     },
     checkbox: {
       width: '20px',
@@ -168,6 +171,23 @@ const UserSurveyForm = () => {
       pointerEvents: 'auto',
       opacity: '1',
     },
+    buttonContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginTop: '-10px',
+    },
+    backButton: {
+        backgroundColor: '#CA9F58',
+        color: 'white',
+        padding: '5px 32px',
+        border: '1px solid #FFFFFF',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        marginTop: '32px',
+        fontFamily: 'Poppins, sans-serif',
+        alignSelf: 'flex-end',
+    },
     nextButton: {
       backgroundColor: isNextDisabled ? '#999' : '#267987',
       color: 'white',
@@ -176,7 +196,7 @@ const UserSurveyForm = () => {
       borderRadius: '4px',
       cursor: isNextDisabled ? 'not-allowed' : 'pointer',
       fontSize: '16px',
-      marginTop: '23px',
+      marginTop: '32px',
       fontFamily: 'Poppins, sans-serif',
       alignSelf: 'flex-end',
     },
@@ -207,15 +227,23 @@ const UserSurveyForm = () => {
       <main style={styles.main}>
         <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
           <div style={styles.skillsSection}>
-            <h2 style={styles.sectionTitle}>Preferred Roles</h2>
-            <p style={styles.subtitle}>Select your preferred roles</p>
+            <h2 style={styles.sectionTitle}>Technical Skills</h2>
+            <p style={styles.subtitle}>Select your top skills</p>
 
             <div style={styles.checkboxGroup}>
-              {Object.entries(skills).map(([key, checked]) => (
+              {[
+                { key: 'cLanguage', label: 'C Language' },
+                { key: 'php', label: 'PHP' },
+                { key: 'htmlCss', label: 'HTML and CSS' },
+                { key: 'javascript', label: 'JavaScript' },
+                { key: 'java', label: 'Java' },
+                { key: 'python', label: 'Python' },
+                { key: 'other', label: 'Others:' },
+              ].map(({ key, label }) => (
                 <div key={key} style={checkboxWrapper}>
                   <input
                     type="checkbox"
-                    checked={checked}
+                    checked={skills[key]}
                     onChange={() => handleSkillChange(key)}
                     style={{
                       width: '20px',
@@ -226,21 +254,11 @@ const UserSurveyForm = () => {
                       MozAppearance: 'none',
                       border: '2px solid #FFFFFF',
                       borderRadius: '3px',
-                      backgroundColor: checked ? '#514BC3' : 'transparent',
+                      backgroundColor: skills[key] ? '#514BC3' : 'transparent',
                       position: 'relative',
                     }}
                   />
-                  <span style={styles.checkboxLabel}>
-                    {{
-                      cLanguage: 'UI/UX Developer',
-                      php: 'Game Developer',
-                      htmlCss: 'Frontend Developer',
-                      javascript: 'Team Leader',
-                      java: 'Backend Developer',
-                      python: 'Technical Writer',
-                      other: 'Others:',
-                    }[key]}
-                  </span>
+                  <span style={styles.checkboxLabel}>{label}</span>
                   {key === 'other' && (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <input
@@ -251,7 +269,7 @@ const UserSurveyForm = () => {
                           setOtherError('');
                         }}
                         style={skills.other ? styles.otherInputActive : styles.otherInput}
-                        placeholder="Specify other roles"
+                        placeholder="Specify other skills"
                         disabled={!skills.other}
                       />
                       {otherError && <span style={styles.errorText}>{otherError}</span>}
@@ -261,14 +279,23 @@ const UserSurveyForm = () => {
               ))}
             </div>
           </div>
-          <button
-            type="button"
-            style={styles.nextButton}
-            onClick={handleNext}
-            disabled={isNextDisabled}
-          >
-            Next
-          </button>
+          <div style={styles.buttonContainer}>
+            <button 
+              type="button" 
+              style={styles.backButton}
+              onClick={handleBack}
+            >
+              Back
+            </button>
+            <button 
+              type="button" 
+              style={styles.nextButton}
+              onClick={handleNext}
+              disabled={isNextDisabled}
+            >
+              Next
+            </button>
+          </div>
         </form>
       </main>
 
@@ -291,4 +318,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-export default UserSurveyForm;
+export default UserSurveyForm2;
