@@ -34,6 +34,14 @@ public class UserController {
 		return ResponseEntity.status(401).body("{\"error\": \"User not authenticated\"}");
 	}
 
+	@GetMapping("/api/auth/userId")
+	public ResponseEntity<?> getUserId(@AuthenticationPrincipal UserEntity user) {
+		if (user != null) {
+			return ResponseEntity.ok("{\"userId\": " + user.getId() + "}");
+		}
+		return ResponseEntity.status(401).body("{\"error\": \"User not authenticated\"}");
+	}
+
 	// Example: in UserController or any other controller
 	@GetMapping("/api/test/protected")
 	public ResponseEntity<?> testProtected(@AuthenticationPrincipal UserEntity user) {

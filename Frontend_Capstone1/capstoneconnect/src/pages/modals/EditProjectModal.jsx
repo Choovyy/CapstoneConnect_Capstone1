@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../css/CreateProjectModal.css';
+import '../../css/CreateProjectModal.css';
 
 const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
   const roleOptions = [

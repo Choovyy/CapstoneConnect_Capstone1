@@ -1,30 +1,32 @@
-import React from 'react';
-import '../css/Navigation.css';
-import '../css/PendingTeam.css';
-import logo from '../assets/logo.png';
+import React, { useState } from 'react';
+import '../../css/Navigation.css';
+import '../../css/PendingTeam.css';
+import Navigation from '../Navigation';
+import LogoutModal from '../LogoutModal';
 
 const PendingTeam = () => {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    // Clear sessions, tokens, and redirect to login page
+    sessionStorage.removeItem('jwtToken');
+    window.location.href = '/';
+    setShowLogoutModal(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
   return (
     <>
-      <header className="site-header">
-        <div className="header__logo">
-          <a href="#">
-            <img src={logo} alt="Logo" />
-          </a>
-        </div>
-        <nav className="header__nav">
-          <ul className="nav-list">
-            <li className="nav-item"><a href="#">Home</a></li>
-            <li className="nav-item"><a href="#">Profile</a></li>
-            <li className="nav-item"><a href="#">Projects</a></li>
-            <li className="nav-item"><a href="#">Team</a></li>
-            <li className="nav-item"><a href="#">More</a></li>
-          </ul>
-        </nav>
-        <div className="header__auth">
-          <button className="btn btn--primary">Logout</button>
-        </div>
-      </header>
+      <div>
+        <Navigation onLogout={handleLogout} />
+      </div>
       
       <div className="pending-team-container">
         <div className="pending-team-filter">
@@ -59,6 +61,8 @@ const PendingTeam = () => {
           </div>
         </div>
       </div>
+      
+      {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
     </>
   );
 };

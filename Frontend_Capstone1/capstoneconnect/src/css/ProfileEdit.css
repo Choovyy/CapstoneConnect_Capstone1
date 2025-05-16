@@ -119,7 +119,7 @@ form {
 }
 
 label {
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 6px;
   display: block;
   font-size: 16px;
@@ -172,7 +172,6 @@ textarea {
   border: none;
   border-radius: 8px;
   font-size: 16px;
-  font-weight: 600;
   color: #ffffff;
   cursor: pointer;
 }

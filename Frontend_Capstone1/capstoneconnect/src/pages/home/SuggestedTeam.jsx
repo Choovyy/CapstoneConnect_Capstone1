@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
-import '../css/Navigation.css';
-import '../css/SuggestedTeam.css';
-import logo from '../assets/logo.png';
-import SuggestedTeamModal from './SuggestedTeamModal';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import '../../css/Navigation.css';
+import '../../css/SuggestedTeam.css';
+import Navigation from '../Navigation';
+import SuggestedTeamModal from '../modals/SuggestedTeamModal';
+import LogoutModal from '../LogoutModal';
 
 const placeholderImg = "https://via.placeholder.com/222x206.png?text=Profile+Image";
 
 const SuggestedTeam = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     role: "ui-ux-designer",
     skill: "c-language",
     preference: "web-app-dev"
   });
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    if (token) {
+      sessionStorage.setItem('jwtToken', token);
+      // Remove token from URL for cleanliness
+      const url = new URL(window.location.href);
+      url.searchParams.delete('token');
+      window.history.replaceState({}, document.title, url.pathname);
+    }
+  }, [location]);
 
   const handleSendRequest = () => {
     setShowModal(true);
@@ -24,6 +41,22 @@ const SuggestedTeam = () => {
   
   const handleCancel = () => {
     setShowModal(false);
+  };
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    // BACKEND INTEGRATION POINT:
+    // Clear sessions, tokens, and redirect to login page
+    sessionStorage.removeItem('jwtToken');
+    window.location.href = '/'; // or any other login route
+    setShowLogoutModal(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
   };
 
   const handleFilterChange = (e) => {
@@ -42,25 +75,7 @@ const SuggestedTeam = () => {
   return (
     <div>
       {/* Header Section */}
-      <header className="site-header">
-        <div className="header__logo">
-          <a href="#">
-            <img src={logo} alt="CapstoneConnect Logo" />
-          </a>
-        </div>
-        <nav className="header__nav">
-          <ul className="nav-list">
-            <li className="nav-item nav-item--active"><a href="#">Home</a></li>
-            <li className="nav-item"><a href="#">Profile</a></li>
-            <li className="nav-item"><a href="#">Projects</a></li>
-            <li className="nav-item"><a href="#">Team</a></li>
-            <li className="nav-item"><a href="#">More</a></li>
-          </ul>
-        </nav>
-        <div className="header__auth">
-          <button className="btn btn--primary">Logout</button>
-        </div>
-      </header>
+      <Navigation onLogout={handleLogout} />
 
       {/* Main Content */}
       <main className="suggested-team-container">
@@ -142,6 +157,7 @@ const SuggestedTeam = () => {
         </section>
       </main>
       {showModal && <SuggestedTeamModal onConfirm={handleConfirm} onCancel={handleCancel} />}
+      {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
     </div>
   );
 };

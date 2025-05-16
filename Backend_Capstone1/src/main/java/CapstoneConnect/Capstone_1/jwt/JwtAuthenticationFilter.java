@@ -1,6 +1,7 @@
 package CapstoneConnect.Capstone_1.jwt;
 
 import CapstoneConnect.Capstone_1.entity.UserEntity;
+import CapstoneConnect.Capstone_1.jwt.JwtUtil;
 import CapstoneConnect.Capstone_1.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,28 +36,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = null;
 
-        // Check for token in the "Authorization" header (optional, if you're using cookies only)
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7); // Extract the token from the header
+            token = authHeader.substring(7);
         }
 
-        // If not found in the header, check for the token in cookies
         if (token == null) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if ("jwt".equals(cookie.getName())) {
-                        token = cookie.getValue();  // Get the JWT token from the cookie
+                        token = cookie.getValue();
                         break;
                     }
                 }
             }
         }
 
-        // If a token is found and valid, set the authentication in the security context
         if (token != null && jwtUtil.validateToken(token)) {
             String email = jwtUtil.getEmailFromToken(token);
+            Long userId = jwtUtil.getUserIdFromToken(token);
+
+            System.out.println("JWT Token: " + token);
+            System.out.println("Extracted Email: " + email);
+            System.out.println("Extracted User ID: " + userId);
+
             Optional<UserEntity> userOptional = userService.getUserByEmail(email);
             if (userOptional.isPresent()) {
                 UserEntity user = userOptional.get();

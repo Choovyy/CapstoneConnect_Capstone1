@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
-const UserSurveyForm3 = () => {
+const UserSurveyForm2 = () => {
   const navigate = useNavigate();
   const [skills, setSkills] = useState({
     cLanguage: false,
@@ -16,6 +16,13 @@ const UserSurveyForm3 = () => {
   const [otherSkill, setOtherSkill] = useState('');
   const [otherError, setOtherError] = useState('');
 
+  // Restore state from sessionStorage on mount
+  useEffect(() => {
+    const saved = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
+    if (saved.skills) setSkills(saved.skills);
+    if (saved.otherSkill) setOtherSkill(saved.otherSkill);
+  }, []);
+
   const handleSkillChange = (skill) => {
     setSkills(prev => ({
       ...prev,
@@ -24,21 +31,26 @@ const UserSurveyForm3 = () => {
     if (skill === 'other') setOtherError('');
   };
 
-  const selectedSkillCount = Object.values(skills).filter(Boolean).length;
-  const isOtherInvalid = skills.other && otherSkill.trim() === '';
-  const isSubmitDisabled = selectedSkillCount < 2 || isOtherInvalid;
-
   const handleBack = () => {
-    navigate('/user-survey-form2'); 
+    sessionStorage.setItem('surveyStep2', JSON.stringify({ skills, otherSkill }));
+    navigate('/user-survey-form'); 
   };
 
-  const handleSubmit = () => {
+  const selectedSkillCount = Object.values(skills).filter(Boolean).length;
+  const isOtherInvalid = skills.other && otherSkill.trim() === '';
+  const isNextDisabled = selectedSkillCount < 2 || isOtherInvalid;
+
+  const handleNext = () => {
+    sessionStorage.setItem('surveyStep2', JSON.stringify({
+      skills,
+      otherSkill
+    })); // Save this step's answers
     if (isOtherInvalid) {
       setOtherError('Please input this field.');
       return;
     }
-    if (!isSubmitDisabled) {
-      navigate('/suggested-team');
+    if (!isNextDisabled) {
+      navigate('/user-survey-form3');
     }
   };
 
@@ -138,9 +150,6 @@ const UserSurveyForm3 = () => {
       borderRadius: '3px',
       backgroundColor: 'transparent',
       position: 'relative',
-      '&[type="checkbox"]:checked': {
-        backgroundColor: '#514BC3 !important'
-      }
     },
     otherInput: {
       marginLeft: '8px',
@@ -162,36 +171,30 @@ const UserSurveyForm3 = () => {
       pointerEvents: 'auto',
       opacity: '1',
     },
-    errorText: {
-      color: '#FFCCCC',
-      fontSize: '12px',
-      marginLeft: '8px',
-      fontFamily: 'Poppins, sans-serif',
-    },
     buttonContainer: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      marginTop: '-10px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginTop: '-10px',
     },
     backButton: {
-      backgroundColor: '#CA9F58',
+        backgroundColor: '#CA9F58',
+        color: 'white',
+        padding: '5px 32px',
+        border: '1px solid #FFFFFF',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        marginTop: '32px',
+        fontFamily: 'Poppins, sans-serif',
+        alignSelf: 'flex-end',
+    },
+    nextButton: {
+      backgroundColor: isNextDisabled ? '#999' : '#267987',
       color: 'white',
       padding: '5px 32px',
-      border: '1px solid #FFFFFF',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '16px',
-      marginTop: '32px',
-      fontFamily: 'Poppins, sans-serif',
-      alignSelf: 'flex-end',
-    },
-    submitButton: {
-      backgroundColor: isSubmitDisabled ? '#999' : '#267987',
-      color: 'white',
-      padding: '5px 21px',
       border: 'none',
       borderRadius: '4px',
-      cursor: isSubmitDisabled ? 'not-allowed' : 'pointer',
+      cursor: isNextDisabled ? 'not-allowed' : 'pointer',
       fontSize: '16px',
       marginTop: '32px',
       fontFamily: 'Poppins, sans-serif',
@@ -206,6 +209,12 @@ const UserSurveyForm3 = () => {
       color: '#267987',
       fontWeight: 'bold',
       fontFamily: 'Poppins, sans-serif',
+    },
+    errorText: {
+      color: '#FFCCCC',
+      fontSize: '12px',
+      marginLeft: '8px',
+      fontFamily: 'Poppins, sans-serif',
     }
   };
 
@@ -218,15 +227,23 @@ const UserSurveyForm3 = () => {
       <main style={styles.main}>
         <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
           <div style={styles.skillsSection}>
-            <h2 style={styles.sectionTitle}>Project Interests</h2>
-            <p style={styles.subtitle}>Select your project interests</p>
+            <h2 style={styles.sectionTitle}>Technical Skills</h2>
+            <p style={styles.subtitle}>Select your top skills</p>
 
             <div style={styles.checkboxGroup}>
-              {Object.entries(skills).map(([key, checked]) => (
+              {[
+                { key: 'cLanguage', label: 'C Language' },
+                { key: 'php', label: 'PHP' },
+                { key: 'htmlCss', label: 'HTML and CSS' },
+                { key: 'javascript', label: 'JavaScript' },
+                { key: 'java', label: 'Java' },
+                { key: 'python', label: 'Python' },
+                { key: 'other', label: 'Others:' },
+              ].map(({ key, label }) => (
                 <div key={key} style={checkboxWrapper}>
                   <input
                     type="checkbox"
-                    checked={checked}
+                    checked={skills[key]}
                     onChange={() => handleSkillChange(key)}
                     style={{
                       width: '20px',
@@ -237,21 +254,11 @@ const UserSurveyForm3 = () => {
                       MozAppearance: 'none',
                       border: '2px solid #FFFFFF',
                       borderRadius: '3px',
-                      backgroundColor: checked ? '#514BC3' : 'transparent',
+                      backgroundColor: skills[key] ? '#514BC3' : 'transparent',
                       position: 'relative',
                     }}
                   />
-                  <span style={styles.checkboxLabel}>
-                    {{
-                      cLanguage: 'Web App Development',
-                      php: 'E-Commerce Systems',
-                      htmlCss: 'Mobile App Development',
-                      javascript: 'Game Development',
-                      java: 'Task Management Systems',
-                      python: 'AI Development',
-                      other: 'Others:',
-                    }[key]}
-                  </span>
+                  <span style={styles.checkboxLabel}>{label}</span>
                   {key === 'other' && (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <input
@@ -262,7 +269,7 @@ const UserSurveyForm3 = () => {
                           setOtherError('');
                         }}
                         style={skills.other ? styles.otherInputActive : styles.otherInput}
-                        placeholder="Specify other interests"
+                        placeholder="Specify other skills"
                         disabled={!skills.other}
                       />
                       {otherError && <span style={styles.errorText}>{otherError}</span>}
@@ -272,7 +279,6 @@ const UserSurveyForm3 = () => {
               ))}
             </div>
           </div>
-
           <div style={styles.buttonContainer}>
             <button 
               type="button" 
@@ -281,14 +287,13 @@ const UserSurveyForm3 = () => {
             >
               Back
             </button>
-
             <button 
               type="button" 
-              style={styles.submitButton}
-              onClick={handleSubmit}
-              disabled={isSubmitDisabled}
+              style={styles.nextButton}
+              onClick={handleNext}
+              disabled={isNextDisabled}
             >
-              Submit
+              Next
             </button>
           </div>
         </form>
@@ -313,4 +318,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-export default UserSurveyForm3;
+export default UserSurveyForm2;
