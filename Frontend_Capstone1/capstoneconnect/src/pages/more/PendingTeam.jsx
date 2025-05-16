@@ -4,8 +4,32 @@ import '../../css/PendingTeam.css';
 import Navigation from '../Navigation';
 import LogoutModal from '../LogoutModal';
 
+// Demo data for pending team members
+const pendingMembers = [
+  {
+    id: 1,
+    name: 'Jhovynn Aldrich Apurado',
+    role: 'Frontend Developer',
+    compatibility: 89,
+    img: 'https://placehold.co/144x142',
+    skills: 'Python, Machine Learning',
+    interests: 'Collaboration',
+  },
+  {
+    id: 2,
+    name: 'Alex Johnson',
+    role: 'Backend Developer',
+    compatibility: 78,
+    img: 'https://placehold.co/144x142',
+    skills: 'Node.js, MongoDB',
+    interests: 'Data Structures',
+  },
+];
+
 const PendingTeam = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  // Flip state for each card
+  const [flipped, setFlipped] = useState(Array(pendingMembers.length).fill(false));
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -22,6 +46,11 @@ const PendingTeam = () => {
     setShowLogoutModal(false);
   };
 
+  // Flip handler for each card
+  const handleCardFlip = idx => {
+    setFlipped(prev => prev.map((f, i) => (i === idx ? !f : f)));
+  };
+
   return (
     <>
       <div>
@@ -33,32 +62,48 @@ const PendingTeam = () => {
           <h1 className="pending-team-title">Pending Team Members</h1>
         </div>
         <div className="pending-team-cards">
-          <div className="pending-team-card">
-            <div className="pending-team-compatibility">Compatibility: <span>89%</span></div>
-            <img src="https://placehold.co/144x142" alt="Profile" />
-            <h2>Jhovynn Aldrich Apurado</h2>
-            <p>Frontend Developer</p>
-            <div className="pending-team-skills">Skills: Python, Machine Learning</div>
-            <div className="pending-team-interests">Interests: Collaboration</div>
-            <div className="pending-team-actions">
-              <button className="btn pending-team-approve">Approve</button>
-              <button className="btn pending-team-reject">Reject</button>
+          {pendingMembers.map((member, idx) => (
+            <div
+              key={member.id}
+              className={`pending-team-card-flip${flipped[idx] ? ' flipped' : ''}`}
+              onClick={() => handleCardFlip(idx)}
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="pending-team-card-flip-inner">
+                {/* Front Side */}
+                <div className="pending-team-card pending-team-card-front">
+                  <div className="pending-team-compatibility">
+                    Compatibility: <span>{member.compatibility}%</span>
+                  </div>
+                  <img src={member.img} alt="Profile" />
+                  <h2>{member.name}</h2>
+                  <p>{member.role}</p>
+                  <div className="pending-team-actions">
+                    <button
+                      className="btn pending-team-approve"
+                      onClick={e => { e.stopPropagation(); /* handleApprove(member.id) */ }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="btn pending-team-reject"
+                      onClick={e => { e.stopPropagation(); /* handleReject(member.id) */ }}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+                {/* Back Side */}
+                <div className="pending-team-card pending-team-card-back">
+                  <div className="pending-team-label">Technical Skills</div>
+                  <div className="pending-team-data">{member.skills}</div>
+                  <div className="pending-team-label">Project Interests</div>
+                  <div className="pending-team-data">{member.interests}</div>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          {/* Additional cards can be added here */}
-          <div className="pending-team-card">
-            <div className="pending-team-compatibility">Compatibility: <span>78%</span></div>
-            <img src="https://placehold.co/144x142" alt="Profile" />
-            <h2>Alex Johnson</h2>
-            <p>Backend Developer</p>
-            <div className="pending-team-skills">Skills: Node.js, MongoDB</div>
-            <div className="pending-team-interests">Interests: Data Structures</div>
-            <div className="pending-team-actions">
-              <button className="btn pending-team-approve">Approve</button>
-              <button className="btn pending-team-reject">Reject</button>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
       

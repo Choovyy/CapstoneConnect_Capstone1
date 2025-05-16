@@ -4,8 +4,30 @@ import '../../css/Matching.css';
 import Navigation from '../Navigation';
 import LogoutModal from '../LogoutModal';
 
+const matchingMembers = [
+  {
+    id: 1,
+    name: 'Jane Doe',
+    role: 'Full Stack Developer',
+    compatibility: 92,
+    img: 'https://placehold.co/144x142',
+    skills: 'React, Node.js',
+    interests: 'Agile Development',
+  },
+  {
+    id: 2,
+    name: 'John Smith',
+    role: 'Data Scientist',
+    compatibility: 85,
+    img: 'https://placehold.co/144x142',
+    skills: 'Python, TensorFlow',
+    interests: 'AI Research',
+  },
+];
+
 const Matching = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [flipped, setFlipped] = useState(Array(matchingMembers.length).fill(false));
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -22,6 +44,10 @@ const Matching = () => {
     setShowLogoutModal(false);
   };
 
+  const handleCardFlip = idx => {
+    setFlipped(prev => prev.map((f, i) => (i === idx ? !f : f)));
+  };
+
   return (
     <>
       <div>
@@ -33,32 +59,48 @@ const Matching = () => {
           <h1 className="matching-title">Matching Members/Applicants</h1>
         </div>
         <div className="matching-cards">
-          <div className="matching-card">
-            <div className="matching-compatibility">Compatibility: <span>92%</span></div>
-            <img src="https://placehold.co/144x142" alt="Profile" />
-            <h2>Jane Doe</h2>
-            <p>Full Stack Developer</p>
-            <div className="matching-skills">Skills: React, Node.js</div>
-            <div className="matching-interests">Interests: Agile Development</div>
-            <div className="matching-actions">
-              <button className="btn matching-approve">Approve</button>
-              <button className="btn matching-reject">Reject</button>
+          {matchingMembers.map((member, idx) => (
+            <div
+              key={member.id}
+              className={`matching-card-flip${flipped[idx] ? ' flipped' : ''}`}
+              onClick={() => handleCardFlip(idx)}
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="matching-card-flip-inner">
+                {/* Front Side */}
+                <div className="matching-card matching-card-front">
+                  <div className="matching-compatibility">
+                    Compatibility: <span>{member.compatibility}%</span>
+                  </div>
+                  <img src={member.img} alt="Profile" />
+                  <h2>{member.name}</h2>
+                  <p>{member.role}</p>
+                  <div className="matching-actions">
+                    <button
+                      className="btn matching-approve"
+                      onClick={e => { e.stopPropagation(); /* handleApprove(member.id) */ }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="btn matching-reject"
+                      onClick={e => { e.stopPropagation(); /* handleReject(member.id) */ }}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+                {/* Back Side */}
+                <div className="matching-card matching-card-back">
+                  <div className="matching-skills">Technical Skills</div>
+                  <div className="matching-skills-data">{member.skills}</div>
+                  <div className="matching-interests">Project Interests</div>
+                  <div className="matching-interests-data">{member.interests}</div>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          {/* Additional cards can be added here */}
-          <div className="matching-card">
-            <div className="matching-compatibility">Compatibility: <span>85%</span></div>
-            <img src="https://placehold.co/144x142" alt="Profile" />
-            <h2>John Smith</h2>
-            <p>Data Scientist</p>
-            <div className="matching-skills">Skills: Python, TensorFlow</div>
-            <div className="matching-interests">Interests: AI Research</div>
-            <div className="matching-actions">
-              <button className="btn matching-approve">Approve</button>
-              <button className="btn matching-reject">Reject</button>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
       

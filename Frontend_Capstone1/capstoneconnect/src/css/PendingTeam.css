@@ -59,10 +59,6 @@ body {
     align-items: center;
 }
 
-.pending-team-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-}
 
 .pending-team-card img {
     width: 130px;
@@ -143,6 +139,71 @@ body {
 
 .pending-team-reject:hover {
     background-color: #f8d7da;
+}
+
+/* Card Flip Styles */
+.pending-team-card-flip {
+    perspective: 1000px;
+    width: 300px;
+    height: 410px; /* Adjust as needed for card content */
+    margin-bottom: 24px;
+}
+
+.pending-team-card-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(.4,2,.6,1);
+    transform-style: preserve-3d;
+}
+
+.pending-team-card-flip.flipped .pending-team-card-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.pending-team-card-front,
+.pending-team-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    backface-visibility: hidden;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pending-team-card-back {
+    transform: rotateY(180deg);
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
+.pending-team-card-front {
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
+.pending-team-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: center;
+    width: 100%;
+}
+
+.pending-team-data {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    text-align: center;
+    width: 100%;
 }
 
 /* Footer Section */

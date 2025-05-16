@@ -106,12 +106,6 @@ body, html {
     align-items: center;
 }
 
-.sentrequest-card:hover {
-    /* Remove translate and shadow on hover */
-    transform: none;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-}
-
 .sentrequest-card img {
     width: 130px;
     height: 130px;

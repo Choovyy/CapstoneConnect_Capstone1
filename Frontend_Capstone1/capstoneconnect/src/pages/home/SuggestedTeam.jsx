@@ -6,7 +6,20 @@ import Navigation from '../Navigation';
 import SuggestedTeamModal from '../modals/SuggestedTeamModal';
 import LogoutModal from '../LogoutModal';
 
-const placeholderImg = "https://via.placeholder.com/222x206.png?text=Profile+Image";
+const placeholderImg = "https://placehold.co/144x142";
+
+// Demo data for suggested teammates (replace with backend data later)
+const suggestedTeammates = [
+  {
+    id: 1,
+    name: "Sample Name",
+    role: "UI/UX Designer",
+    skills: "C Language",
+    preference: "Web App Dev",
+    img: placeholderImg,
+  },
+  // Add more teammates as needed
+];
 
 const SuggestedTeam = () => {
   const [showModal, setShowModal] = useState(false);
@@ -16,6 +29,7 @@ const SuggestedTeam = () => {
     skill: "c-language",
     preference: "web-app-dev"
   });
+  const [flipped, setFlipped] = useState(Array(suggestedTeammates.length).fill(false));
 
   const location = useLocation();
 
@@ -48,10 +62,8 @@ const SuggestedTeam = () => {
   };
 
   const handleLogoutConfirm = () => {
-    // BACKEND INTEGRATION POINT:
-    // Clear sessions, tokens, and redirect to login page
     sessionStorage.removeItem('jwtToken');
-    window.location.href = '/'; // or any other login route
+    window.location.href = '/';
     setShowLogoutModal(false);
   };
 
@@ -70,6 +82,11 @@ const SuggestedTeam = () => {
   const applyFilter = () => {
     // BACKEND INTEGRATION POINT:
     // Use selectedFilters to fetch filtered teammates from backend
+  };
+
+  // Flip handler for each card
+  const handleCardFlip = idx => {
+    setFlipped(prev => prev.map((f, i) => (i === idx ? !f : f)));
   };
 
   return (
@@ -140,20 +157,43 @@ const SuggestedTeam = () => {
 
         {/* Teammate Cards Section */}
         <section className="suggested-team-cards">
-          <article className="suggested-team-card">
-            <div className="suggested-team-card-image">
-              <img src={placeholderImg} alt="Profile Placeholder" />
+          {suggestedTeammates.map((member, idx) => (
+            <div
+              key={member.id}
+              className={`suggested-team-card-flip${flipped[idx] ? ' flipped' : ''}`}
+              onClick={() => handleCardFlip(idx)}
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="suggested-team-card-flip-inner">
+                {/* Front Side */}
+                <div className="suggested-team-card suggested-team-card-front">
+                  <div className="suggested-team-card-image">
+                    <img src={member.img} alt="Profile Placeholder" />
+                  </div>
+                  <div className="suggested-team-card-details-centered">
+                    <p className="suggested-team-card-name">{member.name}</p>
+                    <p className="suggested-team-card-role">{member.role}</p>
+                  </div>
+                  <div className="suggested-team-card-action">
+                    <button
+                      className="btn btn--action"
+                      onClick={e => { e.stopPropagation(); handleSendRequest(); }}
+                    >
+                      Send Request
+                    </button>
+                  </div>
+                </div>
+                {/* Back Side */}
+                <div className="suggested-team-card suggested-team-card-back">
+                  <div className="suggested-team-label">Technical Skills</div>
+                  <div className="suggested-team-data">{member.skills}</div>
+                  <div className="suggested-team-label">Project Interest</div>
+                  <div className="suggested-team-data">{member.preference}</div>
+                </div>
+              </div>
             </div>
-            <div className="suggested-team-card-details">
-              <p className="suggested-team-card-name">Name:</p>
-              <p className="suggested-team-card-role">Project Roles:</p>
-              <p className="suggested-team-card-skills">Technical Skills:</p>
-              <p className="suggested-team-card-reference">Project Interest:</p>
-            </div>
-            <div className="suggested-team-card-action">
-              <button className="btn btn--action" onClick={handleSendRequest}>Send Request</button>
-            </div>
-          </article>
+          ))}
         </section>
       </main>
       {showModal && <SuggestedTeamModal onConfirm={handleConfirm} onCancel={handleCancel} />}
