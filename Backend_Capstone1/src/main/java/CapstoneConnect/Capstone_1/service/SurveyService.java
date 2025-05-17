@@ -10,6 +10,7 @@ import CapstoneConnect.Capstone_1.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,9 +112,12 @@ public class SurveyService {    @Autowired
             user.setFirstTimeUser(false);
             userRepository.save(user);
         }
+    }    private void sendSurveyToMatchingService(UserEntity user, SurveyDTO survey) {
+    if (user == null || survey == null) {
+        System.err.println("❌ Cannot send null user or survey data to matching service");
+        return;
     }
     
-    private void sendSurveyToMatchingService(UserEntity user, SurveyDTO survey) {
     RestTemplate restTemplate = new RestTemplate();
     String fastApiUrl = matchingServiceUrl + "/add_profile";
 
@@ -123,21 +127,34 @@ public class SurveyService {    @Autowired
     Map<String, Object> payload = new HashMap<>();
     payload.put("email", user.getEmail());
     payload.put("name", user.getName());
-    payload.put("skills", survey.getTechnicalSkills());
-    payload.put("roles", survey.getPreferredRoles());
-    payload.put("interests", survey.getProjectInterests());
+    payload.put("technicalSkills", survey.getTechnicalSkills());
+    payload.put("preferredRoles", survey.getPreferredRoles());
+    payload.put("projectInterests", survey.getProjectInterests());
 
     try {
+        // Log what we're about to send
+        System.out.println("✅ Sending data to matching service for user: " + user.getEmail());
+        
         ObjectMapper mapper = new ObjectMapper();
         String jsonPayload = mapper.writeValueAsString(payload);
         HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(fastApiUrl, request, String.class);
-        System.out.println("✅ Sent to matching service: " + response.getBody());
+        
+        // Check response status
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("✅ Successfully sent to matching service: " + response.getBody());
+        } else {
+            System.err.println("❌ Matching service returned error status: " + response.getStatusCode());
+        }
     } catch (Exception e) {
         System.err.println("❌ Error calling matching service: " + e.getMessage());
+        e.printStackTrace(); // Added for more detailed debugging
     }
-  }
-  public List<Map<String, Object>> getMatchesFromAISystem(SurveyDTO surveyDTO) {
+  }  public List<Map<String, Object>> getMatchesFromAISystem(SurveyDTO surveyDTO) {
+    if (surveyDTO == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey data cannot be null");
+    }
+  
     RestTemplate restTemplate = new RestTemplate();
     String url = matchingServiceUrl + "/match";
 
@@ -145,24 +162,44 @@ public class SurveyService {    @Autowired
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     Map<String, Object> requestBody = new HashMap<>();
-    requestBody.put("skills", surveyDTO.getTechnicalSkills());
-    requestBody.put("roles", surveyDTO.getPreferredRoles());
-    requestBody.put("interests", surveyDTO.getProjectInterests());
+    requestBody.put("technicalSkills", surveyDTO.getTechnicalSkills());
+    requestBody.put("preferredRoles", surveyDTO.getPreferredRoles());
+    requestBody.put("projectInterests", surveyDTO.getProjectInterests());
     // Optional: requestBody.put("email", yourUserEmail); ← to exclude self
 
     HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
     try {
+        // Log what we're about to send
+        System.out.println("✅ Requesting matches from AI system");
+        
         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        
+        // Check response status
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            System.err.println("❌ Matching service returned error status: " + response.getStatusCode());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+                                             "Matching service returned status " + response.getStatusCode());
+        }
+        
         ObjectMapper mapper = new ObjectMapper();
         Map<String, List<Map<String, Object>>> responseMap = mapper.readValue(
             response.getBody(), 
             new TypeReference<Map<String, List<Map<String, Object>>>>() {}
         );
-        return responseMap.get("matches");
+        
+        List<Map<String, Object>> matches = responseMap.get("matches");
+        System.out.println("✅ Received " + (matches != null ? matches.size() : 0) + " matches from AI system");
+        
+        if (matches == null) {
+            return new ArrayList<>(); // Return empty list instead of null
+        }
+        
+        return matches;
     } catch (Exception e) {
         System.err.println("❌ Error calling /match: " + e.getMessage());
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Matching service unavailable");
+        e.printStackTrace(); // Added for more detailed debugging
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Matching service unavailable: " + e.getMessage());
     }
 }
 

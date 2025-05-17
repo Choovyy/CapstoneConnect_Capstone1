@@ -259,6 +259,43 @@ body {
   width: 100%;
 }
 
+/* Match score styling */
+.match-score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.score-label {
+  margin-right: 5px;
+  font-weight: 500;
+}
+
+.score-value {
+  font-weight: 700;
+  color: #4285f4;
+}
+
+.suggested-team-data.score {
+  font-weight: 700;
+  color: #4285f4;
+  font-size: 18px;
+}
+
+.loading-state, .error-state, .empty-state {
+  width: 100%;
+  text-align: center;
+  padding: 30px;
+  font-size: 16px;
+  color: #555;
+}
+
+.error-state {
+  color: #d32f2f;
+}
+
 /* Footer Section */
 .site-footer {
   text-align: center;

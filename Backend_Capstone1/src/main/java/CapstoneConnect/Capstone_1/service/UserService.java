@@ -1,6 +1,5 @@
 package CapstoneConnect.Capstone_1.service;
 
-
 import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

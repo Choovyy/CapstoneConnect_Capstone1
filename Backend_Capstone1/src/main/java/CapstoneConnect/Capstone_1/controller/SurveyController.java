@@ -31,7 +31,7 @@ public class SurveyController {
     @PostMapping("/match")
     public ResponseEntity<?> getMatches(@RequestBody SurveyDTO surveyDTO) {
         return ResponseEntity.ok(surveyService.getMatchesFromAISystem(surveyDTO));
-}
+    }
 
     
 }

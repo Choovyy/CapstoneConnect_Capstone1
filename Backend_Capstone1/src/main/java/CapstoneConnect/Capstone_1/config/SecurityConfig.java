@@ -31,12 +31,9 @@ public class SecurityConfig implements WebMvcConfigurer {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(cors -> cors.configurationSource(request -> new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues()))
+    private JwtAuthenticationFilter jwtAuthenticationFilter;    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/user", "/api/auth/microsoft").permitAll()
@@ -55,8 +52,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/api/projects/delete/**").authenticated()
                         .requestMatchers("/api/projects/user/**").authenticated()
                         .requestMatchers("/api/projects/**").authenticated()  // catch-all for others (like get by id)
-                        .requestMatchers( "/api/projects/*/apply/*").authenticated()
+                        .requestMatchers("/api/projects/*/apply/*").authenticated()
                         .requestMatchers("/api/projects/*/applicants").authenticated()
+                        .requestMatchers("/api/survey/**").authenticated()
 
                         .anyRequest().authenticated()
                 )
@@ -131,14 +129,28 @@ public class SecurityConfig implements WebMvcConfigurer {
             }
             response.sendRedirect(redirectUrl);
         };
-    }
-
-    @Override
+    }    @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .exposedHeaders("Authorization")
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
+    
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+        configuration.setAllowedOrigins(java.util.Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
+        configuration.setExposedHeaders(java.util.Arrays.asList("Authorization"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

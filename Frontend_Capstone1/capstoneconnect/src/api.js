@@ -64,3 +64,13 @@ export async function getSurvey(profileId) {
   if (!res.ok) throw new Error('Survey not found');
   return res.json();
 }
+
+export async function getMatchesFromSurvey(surveyData) {
+  const res = await fetch(`${BASE_URL}/api/survey/match`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(surveyData),
+  });
+  if (!res.ok) throw new Error('Failed to get matches');
+  return res.json();
+}
