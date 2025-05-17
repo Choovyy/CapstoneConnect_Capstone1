@@ -37,6 +37,7 @@ const SuggestedTeam = () => {  const [showModal, setShowModal] = useState(false)
     // Fetch suggested teammates when component mounts
     fetchSuggestedTeammates();
   }, [location]);
+  
   const fetchSuggestedTeammates = async () => {
     try {
       setLoading(true);

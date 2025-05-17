@@ -5,9 +5,9 @@ import logging
 
 #Buhata sa ni una
 # Step 1: venv\Scripts\activate
-# Step 2: uvicorn app:app --reload // to run the server
 
-# ayaw kalimot install sa dependencies pip install -r requirements.txt
+# Step 2: ayaw kalimot install sa dependencies // pip install -r requirements.txt
+# Step 3: uvicorn app:app --reload // to run the server
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
