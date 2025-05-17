@@ -1,8 +1,12 @@
 package CapstoneConnect.Capstone_1.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class UserEntity {
@@ -26,8 +30,17 @@ public class UserEntity {
 
 
     @OneToOne(mappedBy = "user")
-    @JsonManagedReference  // Manages the circular reference on the user side
+    @JsonManagedReference(value = "profile-user")
     private ProfileEntity profile;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference(value = "project-user")
+    private List<ProjectEntity> projects;
+
+    @ManyToMany(mappedBy = "applicants")
+    @JsonBackReference(value = "project-applicants")
+    private List<ProjectEntity> appliedProjects;
+
 
     public UserEntity() {
         // Default constructor
@@ -87,4 +100,16 @@ public class UserEntity {
     }
 
 
+    public List<ProjectEntity> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<ProjectEntity> projects) {
+        this.projects = projects;
+    }
+
+    public List<ProjectEntity> getAppliedProjects() {
+        return appliedProjects; }
+    public void setAppliedProjects(List<ProjectEntity> appliedProjects) {
+        this.appliedProjects = appliedProjects; }
 }

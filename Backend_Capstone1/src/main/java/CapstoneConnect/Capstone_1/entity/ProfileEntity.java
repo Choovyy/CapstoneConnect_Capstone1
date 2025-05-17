@@ -21,7 +21,7 @@ public class ProfileEntity {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonBackReference
+    @JsonBackReference(value = "profile-user")
     private UserEntity user;
 
     @OneToOne(cascade = CascadeType.ALL)

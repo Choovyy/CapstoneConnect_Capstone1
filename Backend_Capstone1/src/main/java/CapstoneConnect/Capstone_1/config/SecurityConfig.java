@@ -46,6 +46,18 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/api/survey/update/**").authenticated()
                         .requestMatchers("/api/test/protected").authenticated()
                         .requestMatchers("/api/profile/**").authenticated()
+
+
+                        // Add project endpoints protection:
+                        .requestMatchers("/api/projects/create").authenticated()
+                        .requestMatchers("/api/projects/getall").authenticated()
+                        .requestMatchers("/api/projects/update/**").authenticated()
+                        .requestMatchers("/api/projects/delete/**").authenticated()
+                        .requestMatchers("/api/projects/user/**").authenticated()
+                        .requestMatchers("/api/projects/**").authenticated()  // catch-all for others (like get by id)
+                        .requestMatchers( "/api/projects/*/apply/*").authenticated()
+                        .requestMatchers("/api/projects/*/applicants").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
