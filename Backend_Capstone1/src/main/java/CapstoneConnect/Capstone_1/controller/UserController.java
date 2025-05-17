@@ -26,7 +26,7 @@ public class UserController {
 			String name = oauth2User.getAttribute("name");
 
 			// Ensure user credentials are saved
-			UserEntity savedUser = userService.saveUserIfNotExists(oauthId, email, name);
+			userService.saveUserIfNotExists(oauthId, email, name);
 			boolean isFirstTimeUser = userService.isFirstTimeUser(email);
 
 			return ResponseEntity.ok("{\"email\": \"" + email + "\", \"name\": \"" + name + "\", \"firstTimeUser\": " + isFirstTimeUser + "}");

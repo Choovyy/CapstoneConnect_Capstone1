@@ -1,7 +1,8 @@
 package CapstoneConnect.Capstone_1.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class ProjectEntity {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonManagedReference(value = "project-applicants")
+    @JsonIgnore // Prevent serialization issues
     private List<UserEntity> applicants = new ArrayList<>();
 
     public ProjectEntity() {}

@@ -74,3 +74,59 @@ export async function getMatchesFromSurvey(surveyData) {
   if (!res.ok) throw new Error('Failed to get matches');
   return res.json();
 }
+
+// Project API
+export async function getAllProjects() {
+  const res = await fetch(`${BASE_URL}/api/projects/getall`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to fetch projects');
+  return res.json();
+}
+
+export async function createProject(projectData) {
+  const token = getToken();
+  console.log('DEBUG: JWT token before createProject:', token);
+  const res = await fetch(`${BASE_URL}/api/projects/create/`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(projectData),
+  });
+  if (!res.ok) throw new Error('Failed to create project');
+  return res.json();
+}
+
+export async function updateProject(projectId, projectData) {
+  const res = await fetch(`${BASE_URL}/api/projects/update/${projectId}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(projectData),
+  });
+  if (!res.ok) throw new Error('Failed to update project');
+  return res.json();
+}
+
+export async function deleteProject(projectId) {
+  const res = await fetch(`${BASE_URL}/api/projects/delete/${projectId}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to delete project');
+}
+
+export async function applyToProject(projectId, userId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}/apply/${userId}`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to apply to project');
+  return res.text();
+}
+
+export async function getProjectsByUser(userId) {
+  const res = await fetch(`${BASE_URL}/api/projects/user/${userId}`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to fetch user projects');
+  return res.json();
+}

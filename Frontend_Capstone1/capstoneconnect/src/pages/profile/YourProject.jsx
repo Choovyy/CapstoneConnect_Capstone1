@@ -8,6 +8,7 @@ import EditProjectModal from '../modals/EditProjectModal';
 import DeleteProjectModal from '../modals/DeleteProjectModal';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
+import { getProjectsByUser, updateProject, deleteProject, getUserId } from '../../api';
 
 const YourProject = () => {
   const scrollContainerRef = useRef(null);
@@ -16,6 +17,9 @@ const YourProject = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -41,6 +45,7 @@ const YourProject = () => {
     const token = sessionStorage.getItem('jwtToken');
     if (token) {
       setIsAuthenticated(true);
+      fetchUserProjects();
     }
     
     const scrollContainer = scrollContainerRef.current;
@@ -112,13 +117,18 @@ const YourProject = () => {
     }
   }, []);
 
-  const projectDetails = {
-    title: 'Social Media Analytics',
-    description: 'An application to analyze social media engagement and trends',
-    roles: ['Data Analyst', 'Frontend Developer', 'Backend Developer', 'UX Designer'],
-    skills: ['React', 'Python', 'Data Visualization', 'API Development'],
-    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engagement Metrics']
-  };
+  async function fetchUserProjects() {
+    setLoading(true);
+    try {
+      const { userId } = await getUserId();
+      const data = await getProjectsByUser(userId);
+      setProjects(data);
+    } catch (err) {
+      setError('Failed to load your projects');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleEditClick = (project) => {
     setSelectedProject(project);
@@ -130,47 +140,59 @@ const YourProject = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const handleEditSubmit = (updatedProject) => {
-    // Handle the updated project data here
-    console.log('Updated project:', updatedProject);
-    setIsEditModalOpen(false);
+  const handleEditSubmit = async (updatedProject) => {
+    // Map frontend fields to backend fields
+    const payload = {
+      ...updatedProject,
+      name: updatedProject.projectName,
+      description: updatedProject.projectDescription,
+    };
+    delete payload.projectName;
+    delete payload.projectDescription;
+    try {
+      await updateProject(selectedProject.id, payload);
+      setIsEditModalOpen(false);
+      fetchUserProjects();
+    } catch (err) {
+      alert('Failed to update project: ' + err.message);
+    }
   };
 
-  const handleDeleteConfirm = () => {
-    // Handle project deletion here
-    console.log('Deleting project:', selectedProject);
-    setIsDeleteModalOpen(false);
+  const handleDeleteConfirm = async () => {
+    try {
+      await deleteProject(selectedProject.id);
+      setIsDeleteModalOpen(false);
+      fetchUserProjects();
+    } catch (err) {
+      alert('Failed to delete project: ' + err.message);
+    }
   };
 
-  const renderCard = (_, index) => (
-    <div className="yp-card" key={index}>
+  const renderCard = (project, index) => (
+    <div className="yp-card" key={project.id || index}>
       <div className="yp-header">
-        <h3><strong>{projectDetails.title}</strong></h3>
-        <p>{projectDetails.description}</p>
+        <h3><strong>{project.name}</strong></h3>
+        <p>{project.description}</p>
       </div>
-
       <div className="yp-body">
         <p><strong>Roles Needed:</strong></p>
         <ul>
-          {projectDetails.roles.map((role, i) => <li key={i}>{role}</li>)}
+          {project.rolesNeeded && project.rolesNeeded.map((role, i) => <li key={i}>{role}</li>)}
         </ul>
-
         <p><strong>Skills Required:</strong></p>
         <ul>
-          {projectDetails.skills.map((skill, i) => <li key={i}>{skill}</li>)}
+          {project.skillsRequired && project.skillsRequired.map((skill, i) => <li key={i}>{skill}</li>)}
         </ul>
-
         <p><strong>Project Interests:</strong></p>
         <ul>
-          {projectDetails.interests.map((interest, i) => <li key={i}>{interest}</li>)}
+          {project.projectInterests && project.projectInterests.map((interest, i) => <li key={i}>{interest}</li>)}
         </ul>
       </div>
-
       <div className="yp-actions">
-        <button className="yp-edit-btn" onClick={() => handleEditClick(projectDetails)}>
+        <button className="yp-edit-btn" onClick={() => handleEditClick(project)}>
           <img src={editIcon} alt="Edit" className="yp-icon" />
         </button>
-        <button className="yp-delete-btn" onClick={() => handleDeleteClick(projectDetails)}>
+        <button className="yp-delete-btn" onClick={() => handleDeleteClick(project)}>
           <img src={deleteIcon} alt="Delete" className="yp-icon" />
         </button>
       </div>
@@ -199,7 +221,7 @@ const YourProject = () => {
       <main className="yp-main">
         <div className="yp-scroll-container" ref={scrollContainerRef}>
           <div className="yp-grid">
-            {Array(10).fill(null).map(renderCard)}
+            {loading ? <div>Loading...</div> : error ? <div>{error}</div> : projects.map(renderCard)}
           </div>
         </div>
       </main>

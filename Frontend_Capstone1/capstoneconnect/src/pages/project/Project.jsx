@@ -6,6 +6,7 @@ import CreateProjectModal from '../modals/CreateProjectModal';
 import ApplyProjectModal from '../modals/ApplyProjectModal';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
+import { getAllProjects, createProject, applyToProject, getUserId } from '../../api';
 
 const Project = () => {
   const scrollContainerRef = useRef(null);
@@ -14,6 +15,9 @@ const Project = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -39,6 +43,7 @@ const Project = () => {
     const token = sessionStorage.getItem('jwtToken');
     if (token) {
       setIsAuthenticated(true);
+      fetchProjects();
     }
     
     const scrollContainer = scrollContainerRef.current;
@@ -110,17 +115,20 @@ const Project = () => {
     }
   }, []);
 
-  const projectDetails = {
-    title: 'Social Media Analytics',
-    description: 'An application to analyze social media engagement and trends',
-    roles: ['Data Analyst', 'Frontend Developer', 'Backend Developer', 'UX Designer'],
-    skills: ['React', 'Python', 'Data Visualization', 'API Development'],
-    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engagement Metrics'],
-    creator: 'John Doe'
-  };
+  async function fetchProjects() {
+    setLoading(true);
+    try {
+      const data = await getAllProjects();
+      setProjects(data);
+    } catch (err) {
+      setError('Failed to load projects');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  const handleApplyClick = () => {
-    setSelectedProject(projectDetails);
+  const handleApplyClick = (project) => {
+    setSelectedProject(project);
     setIsApplyModalOpen(true);
   };
 
@@ -128,39 +136,16 @@ const Project = () => {
     setIsApplyModalOpen(false);
   };
 
-  const handleApplyConfirm = () => {
-    console.log('Applied for project:', selectedProject?.title);
-    // Here you would typically send this application to your backend API
-    setIsApplyModalOpen(false);
+  const handleApplyConfirm = async () => {
+    try {
+      const { userId } = await getUserId();
+      await applyToProject(selectedProject.id, userId);
+      alert('Applied successfully!');
+      setIsApplyModalOpen(false);
+    } catch (err) {
+      alert('Failed to apply: ' + err.message);
+    }
   };
-
-  const renderCard = (_, index) => (
-    <div className="pj-card" key={index}>
-      <div className="pj-header">
-        <h3><strong>{projectDetails.title}</strong></h3>
-        <p>{projectDetails.description}</p>
-      </div>
-
-      <div className="pj-body">
-        <p><strong>Roles Needed:</strong></p>
-        <ul>
-          {projectDetails.roles.map((role, i) => <li key={i}>{role}</li>)}
-        </ul>
-
-        <p><strong>Skills Required:</strong></p>
-        <ul>
-          {projectDetails.skills.map((skill, i) => <li key={i}>{skill}</li>)}
-        </ul>
-
-        <p><strong>Project Interests:</strong></p>
-        <ul>
-          {projectDetails.interests.map((interest, i) => <li key={i}>{interest}</li>)}
-        </ul>
-      </div>
-
-      <button className="pj-apply-btn" onClick={handleApplyClick}>Apply for Project</button>
-    </div>
-  );
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -170,12 +155,48 @@ const Project = () => {
     setIsModalOpen(false);
   };
 
-  const handleSubmitProject = (formData) => {
-    console.log('New project data:', formData);
-    // Here you would typically send this data to your backend API
-    // For now, we'll just close the modal
-    setIsModalOpen(false);
+  const handleSubmitProject = async (formData) => {
+    try {
+      const { userId } = await getUserId();
+      const payload = {
+        name: formData.projectName, // map to backend field
+        description: formData.projectDescription, // map to backend field
+        rolesNeeded: formData.rolesNeeded,
+        skillsRequired: formData.skillsRequired,
+        projectInterests: formData.projectInterests,
+        user: { id: userId }
+      };
+      await createProject(payload);
+      setIsModalOpen(false);
+      fetchProjects();
+    } catch (err) {
+      alert('Failed to create project: ' + err.message);
+    }
   };
+
+  const renderCard = (project, index) => (
+    <div className="pj-card" key={project.id || index}>
+      <div className="pj-header">
+        <h3><strong>{project.name}</strong></h3>
+        <p>{project.description}</p>
+      </div>
+      <div className="pj-body">
+        <p><strong>Roles Needed:</strong></p>
+        <ul>
+          {project.rolesNeeded && project.rolesNeeded.map((role, i) => <li key={i}>{role}</li>)}
+        </ul>
+        <p><strong>Skills Required:</strong></p>
+        <ul>
+          {project.skillsRequired && project.skillsRequired.map((skill, i) => <li key={i}>{skill}</li>)}
+        </ul>
+        <p><strong>Project Interests:</strong></p>
+        <ul>
+          {project.projectInterests && project.projectInterests.map((interest, i) => <li key={i}>{interest}</li>)}
+        </ul>
+      </div>
+      <button className="pj-apply-btn" onClick={() => handleApplyClick(project)}>Apply for Project</button>
+    </div>
+  );
 
   if (!isAuthenticated) {
     return <NotSignedIn onSignIn={handleSignIn} />;
@@ -201,7 +222,7 @@ const Project = () => {
       <main className="pj-main">
         <div className="pj-scroll-container" ref={scrollContainerRef}>
           <div className="pj-grid">
-            {Array(10).fill(null).map(renderCard)}
+            {loading ? <div>Loading...</div> : error ? <div>{error}</div> : projects.map(renderCard)}
           </div>
         </div>
       </main>
