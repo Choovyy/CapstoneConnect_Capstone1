@@ -153,11 +153,11 @@ const LandingPage = () => {
         </div>
 
         <div className="TeamContainer">
-          <TeamMember name="Jhovynn Aldrich Apurado" role="Frontend Developer" bio="Specializing in responsive design and user experience." img={vyn} figma="https://www.figma.com/@jhovynnaldricha" github="https://github.com/vyn23232" fb="https://web.facebook.com/jhovynnaldrich.apurado/" />
-          <TeamMember name="Harold Destura" role="Frontend Developer" bio="Expert in modern JavaScript frameworks." img={harold} figma="https://www.figma.com/@arutsedharold" github="https://github.com/harold0t1" fb="https://www.facebook.com/harold.destura/" />
-          <TeamMember name="Tovi Joshua Hermosisima" role="Backend Developer" bio="Building robust server-side architectures." img={tovi} figma="https://www.figma.com/@tovijoshua" github="https://github.com/Choovyy" fb="https://www.facebook.com/tobias.joshuu" />
-          <TeamMember name="John Gerard Donaire" role="Backend Developer" bio="Database expert ensuring optimized systems." img={gerard} figma="https://www.figma.com/@johngerarddonai" github="https://github.com/haloimnotcode" fb="https://www.facebook.com/gerarddonaire" />
-          <TeamMember name="John David Calimpong" role="Frontend Developer" bio="Creating beautiful, accessible interfaces." img={david} figma="https://www.figma.com/@johndavid4" github="https://github.com/calimps115646" fb="https://www.facebook.com/johncalimps" />
+          <TeamMember name="John Gerard Donaire" role="Backend Developer" img={gerard} figma="https://www.figma.com/@johngerarddonai" github="https://github.com/haloimnotcode" fb="https://www.facebook.com/gerarddonaire" />
+          <TeamMember name="Tovi Joshua Hermosisima" role="Backend Developer" img={tovi} figma="https://www.figma.com/@tovijoshua" github="https://github.com/Choovyy" fb="https://www.facebook.com/tobias.joshuu" />
+          <TeamMember name="Harold Destura" role="Backend Developer" img={harold} figma="https://www.figma.com/@arutsedharold" github="https://github.com/harold0t1" fb="https://www.facebook.com/harold.destura/" />
+          <TeamMember name="Jhovynn Aldrich Apurado" role="Frontend Developer" img={vyn} figma="https://www.figma.com/@jhovynnaldricha" github="https://github.com/vyn23232" fb="https://web.facebook.com/jhovynnaldrich.apurado/" />
+          <TeamMember name="John David Calimpong" role="Frontend Developer" img={david} figma="https://www.figma.com/@johndavid4" github="https://github.com/calimps115646" fb="https://www.facebook.com/johncalimps" />
         </div>
       </div>
 
