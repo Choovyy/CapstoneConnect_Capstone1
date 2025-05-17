@@ -98,4 +98,32 @@ public class ProjectService {
         return project.getApplicants();
     }
 
+    public void acceptApplicant(Long projectId, Long userId) {
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!project.getApplicants().contains(user)) {
+            throw new RuntimeException("User is not an applicant for this project");
+        }
+        // Remove from applicants, add to team members
+        project.getApplicants().remove(user);
+        if (!project.getTeamMembers().contains(user)) {
+            project.getTeamMembers().add(user);
+        }
+        projectRepository.save(project);
+    }
+
+    public void rejectApplicant(Long projectId, Long userId) {
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!project.getApplicants().contains(user)) {
+            throw new RuntimeException("User is not an applicant for this project");
+        }
+        project.getApplicants().remove(user);
+        projectRepository.save(project);
+    }
+
 }

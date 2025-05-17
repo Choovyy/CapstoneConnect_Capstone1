@@ -73,4 +73,16 @@ public class ProjectController {
         List<UserEntity> applicants = projectService.getApplicantsForProject(projectId);
         return ResponseEntity.ok(applicants);
     }
+
+    @PostMapping("/{projectId}/applicants/{userId}/accept")
+    public ResponseEntity<String> acceptApplicant(@PathVariable Long projectId, @PathVariable Long userId) {
+        projectService.acceptApplicant(projectId, userId);
+        return ResponseEntity.ok("Applicant accepted and added to team");
+    }
+
+    @PostMapping("/{projectId}/applicants/{userId}/reject")
+    public ResponseEntity<String> rejectApplicant(@PathVariable Long projectId, @PathVariable Long userId) {
+        projectService.rejectApplicant(projectId, userId);
+        return ResponseEntity.ok("Applicant rejected");
+    }
 }

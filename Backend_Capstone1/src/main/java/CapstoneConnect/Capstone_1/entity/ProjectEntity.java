@@ -2,7 +2,6 @@ package CapstoneConnect.Capstone_1.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -43,6 +42,15 @@ public class ProjectEntity {
     )
     @JsonIgnore // Prevent serialization issues
     private List<UserEntity> applicants = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_team_members",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonIgnore // Prevent serialization issues
+    private List<UserEntity> teamMembers = new ArrayList<>();
 
     public ProjectEntity() {}
 
@@ -119,5 +127,13 @@ public class ProjectEntity {
 
     public void setApplicants(List<UserEntity> applicants) {
         this.applicants = applicants; }
+
+    public List<UserEntity> getTeamMembers() {
+        return teamMembers;
+    }
+
+    public void setTeamMembers(List<UserEntity> teamMembers) {
+        this.teamMembers = teamMembers;
+    }
 }
 

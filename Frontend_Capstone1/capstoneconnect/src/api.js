@@ -130,3 +130,29 @@ export async function getProjectsByUser(userId) {
   if (!res.ok) throw new Error('Failed to fetch user projects');
   return res.json();
 }
+
+export async function getPendingApplicants(projectId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}/applicants`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to fetch pending applicants');
+  return res.json();
+}
+
+export async function acceptApplicant(projectId, userId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}/applicants/${userId}/accept`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to accept applicant');
+  return res.text();
+}
+
+export async function rejectApplicant(projectId, userId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}/applicants/${userId}/reject`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to reject applicant');
+  return res.text();
+}
