@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
+import NotSignedIn from '../NotSignedIn';
 
 const UserSurveyForm2 = () => {
   const navigate = useNavigate();
@@ -15,9 +16,15 @@ const UserSurveyForm2 = () => {
   });
   const [otherSkill, setOtherSkill] = useState('');
   const [otherError, setOtherError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Restore state from sessionStorage on mount
+  // Check authentication and restore state from sessionStorage on mount
   useEffect(() => {
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    
     const saved = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
     if (saved.skills) setSkills(saved.skills);
     if (saved.otherSkill) setOtherSkill(saved.otherSkill);
@@ -34,6 +41,10 @@ const UserSurveyForm2 = () => {
   const handleBack = () => {
     sessionStorage.setItem('surveyStep2', JSON.stringify({ skills, otherSkill }));
     navigate('/user-survey-form'); 
+  };
+
+  const handleSignIn = () => {
+    window.location.href = '/';
   };
 
   const selectedSkillCount = Object.values(skills).filter(Boolean).length;
@@ -217,6 +228,10 @@ const UserSurveyForm2 = () => {
       fontFamily: 'Poppins, sans-serif',
     }
   };
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
 
   return (
     <div style={styles.container}>

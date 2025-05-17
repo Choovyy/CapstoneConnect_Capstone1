@@ -3,11 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../../api';
 import '../../css/UserSurveyPage.css';
 import group from '../../assets/group.jpg';
+import NotSignedIn from '../NotSignedIn';
 
 const UserSurveyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Extract JWT from URL and store in sessionStorage
   useEffect(() => {
@@ -15,10 +17,16 @@ const UserSurveyPage = () => {
     const token = params.get('token');
     if (token) {
       sessionStorage.setItem('jwtToken', token);
+      setIsAuthenticated(true);
       // Remove token from URL for cleanliness
       const url = new URL(window.location.href);
       url.searchParams.delete('token');
       window.history.replaceState({}, document.title, url.pathname);
+    } else {
+      const storedToken = sessionStorage.getItem('jwtToken');
+      if (storedToken) {
+        setIsAuthenticated(true);
+      }
     }
   }, [location]);
 
@@ -31,12 +39,23 @@ const UserSurveyPage = () => {
         setUser(null);
       }
     }
-    fetchUser();
-  }, []);
+    
+    if (isAuthenticated) {
+      fetchUser();
+    }
+  }, [isAuthenticated]);
 
   const handleMatchNowClick = () => {
     navigate('/user-survey-form');
   };
+
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
 
   return (
     <section className="survey-page">

@@ -1,57 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
+import NotSignedIn from '../NotSignedIn';
 
 const UserSurveyForm = () => {
   const navigate = useNavigate();
-  const [skills, setSkills] = useState({
-    cLanguage: false,
-    php: false,
-    htmlCss: false,
-    javascript: false,
-    java: false,
-    python: false,
-    other: false,
-  });
-  const [otherSkill, setOtherSkill] = useState('');
-  const [otherError, setOtherError] = useState('');
+  const [selectedRole, setSelectedRole] = useState('');
+  const [error, setError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Restore state from sessionStorage on mount
+  // Check authentication and restore state from sessionStorage on mount
   useEffect(() => {
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    
     const saved = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
-    if (saved.skills) setSkills(saved.skills);
-    if (saved.otherSkill) setOtherSkill(saved.otherSkill);
+    if (saved.selectedRole) setSelectedRole(saved.selectedRole);
   }, []);
 
-  const handleSkillChange = (skill) => {
-    setSkills(prev => ({
-      ...prev,
-      [skill]: !prev[skill]
-    }));
-    if (skill === 'other') {
-      setOtherError(''); 
-    }
+  const handleRoleChange = (role) => {
+    setSelectedRole(role);
+    setError('');
   };
 
-  const selectedSkillCount = Object.values(skills).filter(Boolean).length;
-  const isOtherInvalid = skills.other && otherSkill.trim() === '';
-  const isNextDisabled = selectedSkillCount < 2 || isOtherInvalid;
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
+  const isNextDisabled = !selectedRole;
 
   const handleNext = () => {
     sessionStorage.setItem('surveyStep1', JSON.stringify({
-      skills,
-      otherSkill
+      selectedRole
     })); // Save this step's answers
-    if (isOtherInvalid) {
-      setOtherError('Please input this field.');
-      return;
-    }
+    
     if (!isNextDisabled) {
       navigate('/user-survey-form2');
     }
   };
 
-  const checkboxWrapper = {
+  const radioWrapper = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
@@ -124,49 +114,29 @@ const UserSurveyForm = () => {
       marginBottom: '64px',
       fontFamily: 'Poppins, sans-serif',
     },
-    checkboxGroup: {
+    radioGroup: {
       display: 'grid',
       gridTemplateColumns: 'repeat(2, 1fr)',
       gap: '16px',
       maxWidth: '600px',
       margin: '0 auto',
     },
-    checkboxLabel: {
+    radioLabel: {
       color: '#FFFFFF',
       fontFamily: 'Poppins, sans-serif',
       pointerEvents: 'none',
     },
-    checkbox: {
+    radio: {
       width: '20px',
       height: '20px',
       cursor: 'pointer',
-      appearance: 'none !important',
-      '-webkit-appearance': 'none !important',
-      '-moz-appearance': 'none !important',
+      appearance: 'none',
+      WebkitAppearance: 'none',
+      MozAppearance: 'none',
       border: '2px solid #FFFFFF',
-      borderRadius: '3px',
+      borderRadius: '50%',
       backgroundColor: 'transparent',
       position: 'relative',
-    },
-    otherInput: {
-      marginLeft: '8px',
-      padding: '4px',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      backgroundColor: '#CA9F58',
-      color: '#FFFFFF',
-      pointerEvents: 'none',
-      opacity: '0.5',
-    },
-    otherInputActive: {
-      marginLeft: '8px',
-      padding: '4px',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      backgroundColor: '#CA9F58',
-      color: '#FFFFFF',
-      pointerEvents: 'auto',
-      opacity: '1',
     },
     nextButton: {
       backgroundColor: isNextDisabled ? '#999' : '#267987',
@@ -176,7 +146,7 @@ const UserSurveyForm = () => {
       borderRadius: '4px',
       cursor: isNextDisabled ? 'not-allowed' : 'pointer',
       fontSize: '16px',
-      marginTop: '23px',
+      marginTop: '89px',
       fontFamily: 'Poppins, sans-serif',
       alignSelf: 'flex-end',
     },
@@ -198,6 +168,19 @@ const UserSurveyForm = () => {
     }
   };
 
+  const roles = [
+    'UI/UX Designer',
+    'Game Developer',
+    'Frontend Developer',
+    'Team Leader',
+    'Backend Developer',
+    'Technical Writer'
+  ];
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
+
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -208,15 +191,15 @@ const UserSurveyForm = () => {
         <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
           <div style={styles.skillsSection}>
             <h2 style={styles.sectionTitle}>Preferred Roles</h2>
-            <p style={styles.subtitle}>Select your preferred roles</p>
+            <p style={styles.subtitle}>Select your preferred role</p>
 
-            <div style={styles.checkboxGroup}>
-              {Object.entries(skills).map(([key, checked]) => (
-                <div key={key} style={checkboxWrapper}>
+            <div style={styles.radioGroup}>
+              {roles.map(role => (
+                <div key={role} style={radioWrapper}>
                   <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => handleSkillChange(key)}
+                    type="radio"
+                    checked={selectedRole === role}
+                    onChange={() => handleRoleChange(role)}
                     style={{
                       width: '20px',
                       height: '20px',
@@ -225,38 +208,12 @@ const UserSurveyForm = () => {
                       WebkitAppearance: 'none',
                       MozAppearance: 'none',
                       border: '2px solid #FFFFFF',
-                      borderRadius: '3px',
-                      backgroundColor: checked ? '#514BC3' : 'transparent',
+                      borderRadius: '50%',
+                      backgroundColor: selectedRole === role ? '#514BC3' : 'transparent',
                       position: 'relative',
                     }}
                   />
-                  <span style={styles.checkboxLabel}>
-                    {{
-                      cLanguage: 'UI/UX Developer',
-                      php: 'Game Developer',
-                      htmlCss: 'Frontend Developer',
-                      javascript: 'Team Leader',
-                      java: 'Backend Developer',
-                      python: 'Technical Writer',
-                      other: 'Others:',
-                    }[key]}
-                  </span>
-                  {key === 'other' && (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <input
-                        type="text"
-                        value={otherSkill}
-                        onChange={(e) => {
-                          setOtherSkill(e.target.value);
-                          setOtherError('');
-                        }}
-                        style={skills.other ? styles.otherInputActive : styles.otherInput}
-                        placeholder="Specify other roles"
-                        disabled={!skills.other}
-                      />
-                      {otherError && <span style={styles.errorText}>{otherError}</span>}
-                    </div>
-                  )}
+                  <span style={styles.radioLabel}>{role}</span>
                 </div>
               ))}
             </div>

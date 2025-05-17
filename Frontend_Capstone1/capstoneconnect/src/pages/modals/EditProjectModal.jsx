@@ -3,13 +3,12 @@ import '../../css/CreateProjectModal.css';
 
 const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
   const roleOptions = [
-    'UI/UX Developer', 
+    'UI/UX Designer', 
     'Frontend Developer', 
     'Backend Developer', 
     'Game Developer', 
     'Team Leader', 
-    'Technical Writer',
-    'Others'
+    'Technical Writer'
   ];
 
   const skillOptions = [
@@ -38,7 +37,6 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
     rolesNeeded: [],
     skillsRequired: [],
     projectInterests: [],
-    otherRole: '',
     otherSkill: '',
     otherInterest: ''
   };
@@ -60,7 +58,6 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
         rolesNeeded: project.roles || [],
         skillsRequired: project.skills || [],
         projectInterests: project.interests || [],
-        otherRole: '',
         otherSkill: '',
         otherInterest: ''
       });
@@ -85,27 +82,42 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
 
   const handleOptionToggle = (category, option) => {
     setFormData(prevData => {
-      let updatedArray;
+      // If option is already selected, allow deselection
       if (prevData[category].includes(option)) {
-        // Remove the option if already selected
-        updatedArray = prevData[category].filter(item => item !== option);
+        const updatedArray = prevData[category].filter(item => item !== option);
+        return {
+          ...prevData,
+          [category]: updatedArray
+        };
       } else {
-        // Add the option if not already selected
-        updatedArray = [...prevData[category], option];
+        // Check if we've reached the limit for this category
+        const maxAllowed = {
+          rolesNeeded: 4,
+          skillsRequired: 4,
+          projectInterests: 3
+        };
+        
+        // If we've reached the limit, don't add more
+        if (prevData[category].length >= maxAllowed[category]) {
+          return prevData;
+        }
+        
+        // Add the option if we haven't reached the limit
+        const updatedArray = [...prevData[category], option];
+        
+        // Clear error if we have enough selections
+        if (updatedArray.length >= maxAllowed[category]) {
+          setErrors(prev => ({
+            ...prev,
+            [category]: false
+          }));
+        }
+        
+        return {
+          ...prevData,
+          [category]: updatedArray
+        };
       }
-      
-      // Clear error if at least 2 options are selected
-      if (updatedArray.length >= 2) {
-        setErrors(prev => ({
-          ...prev,
-          [category]: false
-        }));
-      }
-      
-      return {
-        ...prevData,
-        [category]: updatedArray
-      };
     });
   };
 
@@ -113,17 +125,17 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
     let isValid = true;
     const newErrors = { ...errors };
 
-    if (formData.rolesNeeded.length < 2) {
+    if (formData.rolesNeeded.length < 4) {
       newErrors.rolesNeeded = true;
       isValid = false;
     }
 
-    if (formData.skillsRequired.length < 2) {
+    if (formData.skillsRequired.length < 4) {
       newErrors.skillsRequired = true;
       isValid = false;
     }
 
-    if (formData.projectInterests.length < 2) {
+    if (formData.projectInterests.length < 3) {
       newErrors.projectInterests = true;
       isValid = false;
     }
@@ -139,9 +151,6 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
       // Process "Others" option for submission
       const processedData = {
         ...formData,
-        rolesNeeded: formData.rolesNeeded.includes('Others') 
-          ? [...formData.rolesNeeded.filter(r => r !== 'Others'), formData.otherRole] 
-          : formData.rolesNeeded,
         skillsRequired: formData.skillsRequired.includes('Others')
           ? [...formData.skillsRequired.filter(s => s !== 'Others'), formData.otherSkill]
           : formData.skillsRequired,
@@ -206,29 +215,18 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
             </div>
 
             <div className="cp-form-group">
-              <label className="cp-form-label">Roles Needed</label>
+              <label className="cp-form-label">Roles Needed (4 roles)</label>
               {renderOptionButtons(roleOptions, 'rolesNeeded', formData.rolesNeeded)}
-              <input
-                type="text"
-                name="otherRole"
-                value={formData.otherRole}
-                onChange={handleChange}
-                className="cp-form-input"
-                placeholder="Specify other role"
-                disabled={!formData.rolesNeeded.includes('Others')}
-                required={formData.rolesNeeded.includes('Others')}
-                style={{ marginTop: '10px' }}
-              />
               {errors.rolesNeeded && (
                 <div className="cp-error-container">
                   <div className="cp-error-icon">!</div>
-                  <div className="cp-error-message">Please select at least 2 roles</div>
+                  <div className="cp-error-message">Please select at least 4 roles</div>
                 </div>
               )}
             </div>
 
             <div className="cp-form-group">
-              <label className="cp-form-label">Skills Required</label>
+              <label className="cp-form-label">Skills Required (4 skills)</label>
               {renderOptionButtons(skillOptions, 'skillsRequired', formData.skillsRequired)}
               <input
                 type="text"
@@ -244,13 +242,13 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
               {errors.skillsRequired && (
                 <div className="cp-error-container">
                   <div className="cp-error-icon">!</div>
-                  <div className="cp-error-message">Please select at least 2 skills</div>
+                  <div className="cp-error-message">Please select at least 4 skills</div>
                 </div>
               )}
             </div>
 
             <div className="cp-form-group">
-              <label className="cp-form-label">Project Interests</label>
+              <label className="cp-form-label">Project Interests (3 interests)</label>
               {renderOptionButtons(interestOptions, 'projectInterests', formData.projectInterests)}
               <input
                 type="text"
@@ -266,7 +264,7 @@ const EditProjectModal = ({ isOpen, onClose, onSubmit, project }) => {
               {errors.projectInterests && (
                 <div className="cp-error-container">
                   <div className="cp-error-icon">!</div>
-                  <div className="cp-error-message">Please select at least 2 interests</div>
+                  <div className="cp-error-message">Please select at least 3 interests</div>
                 </div>
               )}
             </div>

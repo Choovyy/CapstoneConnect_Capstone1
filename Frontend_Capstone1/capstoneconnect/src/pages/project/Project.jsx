@@ -5,6 +5,7 @@ import Navigation from '../Navigation';
 import CreateProjectModal from '../modals/CreateProjectModal';
 import ApplyProjectModal from '../modals/ApplyProjectModal';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 
 const Project = () => {
   const scrollContainerRef = useRef(null);
@@ -12,6 +13,7 @@ const Project = () => {
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -28,7 +30,17 @@ const Project = () => {
     setShowLogoutModal(false);
   };
   
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+  
   useEffect(() => {
+    // Check if user is authenticated
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    
     const scrollContainer = scrollContainerRef.current;
     let isDown = false;
     let startX;
@@ -73,35 +85,37 @@ const Project = () => {
       scrollContainer.scrollLeft = scrollLeft - walk;
     };
 
-    scrollContainer.addEventListener('mousedown', handleMouseDown);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
-    scrollContainer.addEventListener('mouseup', handleMouseUp);
-    scrollContainer.addEventListener('mousemove', handleMouseMove);
-    
-    scrollContainer.addEventListener('touchstart', handleTouchStart);
-    scrollContainer.addEventListener('touchend', handleMouseUp);
-    scrollContainer.addEventListener('touchcancel', handleMouseLeave);
-    scrollContainer.addEventListener('touchmove', handleTouchMove);
-
-    return () => {
-      scrollContainer.removeEventListener('mousedown', handleMouseDown);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
-      scrollContainer.removeEventListener('mouseup', handleMouseUp);
-      scrollContainer.removeEventListener('mousemove', handleMouseMove);
+    if (scrollContainer) {
+      scrollContainer.addEventListener('mousedown', handleMouseDown);
+      scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+      scrollContainer.addEventListener('mouseup', handleMouseUp);
+      scrollContainer.addEventListener('mousemove', handleMouseMove);
       
-      scrollContainer.removeEventListener('touchstart', handleTouchStart);
-      scrollContainer.removeEventListener('touchend', handleMouseUp);
-      scrollContainer.removeEventListener('touchcancel', handleMouseLeave);
-      scrollContainer.removeEventListener('touchmove', handleTouchMove);
-    };
+      scrollContainer.addEventListener('touchstart', handleTouchStart);
+      scrollContainer.addEventListener('touchend', handleMouseUp);
+      scrollContainer.addEventListener('touchcancel', handleMouseLeave);
+      scrollContainer.addEventListener('touchmove', handleTouchMove);
+
+      return () => {
+        scrollContainer.removeEventListener('mousedown', handleMouseDown);
+        scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+        scrollContainer.removeEventListener('mouseup', handleMouseUp);
+        scrollContainer.removeEventListener('mousemove', handleMouseMove);
+        
+        scrollContainer.removeEventListener('touchstart', handleTouchStart);
+        scrollContainer.removeEventListener('touchend', handleMouseUp);
+        scrollContainer.removeEventListener('touchcancel', handleMouseLeave);
+        scrollContainer.removeEventListener('touchmove', handleTouchMove);
+      };
+    }
   }, []);
 
   const projectDetails = {
     title: 'Social Media Analytics',
     description: 'An application to analyze social media engagement and trends',
-    roles: ['Data Analyst', 'Frontend Developer', 'Backend Developer'],
+    roles: ['Data Analyst', 'Frontend Developer', 'Backend Developer', 'UX Designer'],
     skills: ['React', 'Python', 'Data Visualization', 'API Development'],
-    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engage Metrics'],
+    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engagement Metrics'],
     creator: 'John Doe'
   };
 
@@ -163,6 +177,10 @@ const Project = () => {
     setIsModalOpen(false);
   };
 
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
+
   return (
     <div>
       <div>
@@ -170,7 +188,7 @@ const Project = () => {
       </div>
       
       {/* Section Header - Updated to match Matching.jsx style */}
-      <div className="pj-container" style={{ marginBottom: '-20px' }}>
+      <div className="pj-container" style={{ marginBottom: '-30px' }}>
         <div className="pj-filter">
           <h1 className="pj-title">Project Needs</h1>
         </div>

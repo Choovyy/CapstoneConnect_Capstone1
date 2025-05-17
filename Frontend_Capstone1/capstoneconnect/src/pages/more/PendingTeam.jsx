@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/Navigation.css';
 import '../../css/PendingTeam.css';
 import Navigation from '../Navigation';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 
 // Demo data for pending team members
 const pendingMembers = [
@@ -30,6 +31,15 @@ const PendingTeam = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   // Flip state for each card
   const [flipped, setFlipped] = useState(Array(pendingMembers.length).fill(false));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -46,10 +56,18 @@ const PendingTeam = () => {
     setShowLogoutModal(false);
   };
 
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
   // Flip handler for each card
   const handleCardFlip = idx => {
     setFlipped(prev => prev.map((f, i) => (i === idx ? !f : f)));
   };
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
 
   return (
     <>

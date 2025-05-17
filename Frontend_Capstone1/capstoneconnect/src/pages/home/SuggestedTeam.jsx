@@ -5,12 +5,15 @@ import '../../css/SuggestedTeam.css';
 import Navigation from '../Navigation';
 import SuggestedTeamModal from '../modals/SuggestedTeamModal';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 import { getMatchesFromSurvey, getSurvey, getProfile, getUserId } from '../../api';
 
 const placeholderImg = "https://placehold.co/144x142";
 
-const SuggestedTeam = () => {  const [showModal, setShowModal] = useState(false);
+const SuggestedTeam = () => {  
+  const [showModal, setShowModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     role: "",
     skill: "",
@@ -26,17 +29,30 @@ const SuggestedTeam = () => {  const [showModal, setShowModal] = useState(false)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
+    const storedToken = sessionStorage.getItem('jwtToken');
+    
     if (token) {
       sessionStorage.setItem('jwtToken', token);
+      setIsAuthenticated(true);
       // Remove token from URL for cleanliness
       const url = new URL(window.location.href);
       url.searchParams.delete('token');
       window.history.replaceState({}, document.title, url.pathname);
+    } else if (storedToken) {
+      setIsAuthenticated(true);
     }
     
-    // Fetch suggested teammates when component mounts
-    fetchSuggestedTeammates();
-  }, [location]);
+    // Only fetch data if authenticated
+    if (isAuthenticated) {
+      fetchSuggestedTeammates();
+    } else {
+      setLoading(false);
+    }
+  }, [location, isAuthenticated]);
+
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
   
   const fetchSuggestedTeammates = async () => {
     try {
@@ -153,6 +169,10 @@ const SuggestedTeam = () => {  const [showModal, setShowModal] = useState(false)
 
   if (loading) {
     return <div>Loading suggested teammates...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
   }
 
   if (error) {

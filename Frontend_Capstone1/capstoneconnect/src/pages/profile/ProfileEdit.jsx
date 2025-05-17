@@ -5,6 +5,7 @@ import vyn from '../../assets/vyn.jpg';
 import Navigation from '../Navigation';
 import { getUserId, getProfile, updateProfile } from '../../api';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 
 // Match survey page options
 const technicalSkillOptions = [
@@ -17,7 +18,7 @@ const technicalSkillOptions = [
   { key: 'other', label: 'Others' },
 ];
 const roleOptions = [
-  { key: 'uiux', label: 'UI/UX Developer' },
+  { key: 'uiux', label: 'UI/UX Designer' },
   { key: 'frontend', label: 'Frontend Developer' },
   { key: 'backend', label: 'Backend Developer' },
   { key: 'game', label: 'Game Developer' },
@@ -46,6 +47,7 @@ const ProfileEdit = () => {
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [githubError, setGithubError] = useState('');
   const [profilePicFile, setProfilePicFile] = useState(null);
@@ -66,7 +68,19 @@ const ProfileEdit = () => {
     setShowLogoutModal(false);
   };
 
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
   useEffect(() => {
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+      fetchData();
+    } else {
+      setLoading(false);
+    }
+
     async function fetchData() {
       try {
         const { userId } = await getUserId();
@@ -87,7 +101,6 @@ const ProfileEdit = () => {
         setLoading(false);
       }
     }
-    fetchData();
   }, []);
 
   // Checkbox handlers
@@ -147,6 +160,11 @@ const ProfileEdit = () => {
   };
 
   if (loading) return <div>Loading...</div>;
+  
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
+  
   if (error) return <div>{error}</div>;
 
   return (

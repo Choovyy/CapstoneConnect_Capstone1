@@ -6,11 +6,13 @@ import Navigation from '../../pages/Navigation';
 import { getUserId, getProfile } from '../../api';
 import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -29,7 +31,19 @@ const Profile = () => {
     setShowLogoutModal(false);
   };
 
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
   useEffect(() => {
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+    
     async function fetchProfile() {
       try {
         const { userId } = await getUserId();
@@ -41,10 +55,14 @@ const Profile = () => {
         setLoading(false);
       }
     }
-    fetchProfile();
   }, []);
 
   if (loading) return <div>Loading...</div>;
+  
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
+  
   if (error) return <div>{error}</div>;
   if (!profile) return <div>No profile data found.</div>;
 

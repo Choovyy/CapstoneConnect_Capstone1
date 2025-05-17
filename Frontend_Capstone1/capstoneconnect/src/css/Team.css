@@ -114,18 +114,60 @@
   flex-direction: column;
 }
 
+.tc-pie-chart-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px;
+}
+
 .tc-pie-chart {
   width: 200px;
   height: 200px;
-  margin: 20px auto;
+  margin-right: 10px;
   border-radius: 50%;
-  background: conic-gradient(
-    #3399CC 0% 20%, 
-    #CC3333 20% 40%, 
-    #33CC33 40% 60%, 
-    #FF9933 60% 80%,
-    #9966CC 80% 100%
-  );
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tc-pie-chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  max-width: 200px;
+}
+
+.tc-role-percentage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tc-role-color {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+}
+
+.tc-role-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 12px;
+}
+
+.tc-role-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.tc-role-value {
+  font-weight: 600;
+  color: #333;
 }
 
 /* Team Members Section */
@@ -191,6 +233,66 @@
   color: #666;
 }
 
+/* Member options dropdown */
+.tc-member-options {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.tc-options-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.3s ease;
+}
+
+.tc-options-toggle:hover {
+  color: #ff9800;
+}
+
+.tc-options-dropdown {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 120px;
+  z-index: 20;
+}
+
+.tc-options-dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s ease, color 0.3s ease;
+}
+
+.tc-options-dropdown button:hover {
+  background-color: #f5f5f5;
+  color: #ff9800;
+}
+
+.tc-options-dropdown button:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+
 /* Responsive Styles */
 @media (max-width: 992px) {
   .tc-dashboard-layout {
@@ -200,6 +302,16 @@
   .tc-notifications-section,
   .tc-team-chart-container {
     max-width: 100%;
+  }
+
+  .tc-pie-chart-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tc-pie-chart {
+    margin-right: 0;
+    margin-bottom: 20px;
   }
 
   .tc-member-card {

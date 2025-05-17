@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/Navigation.css';
 import '../../css/SentRequest.css';
 import Navigation from '../Navigation';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 
 const SentRequest = () => {
   // TODO: Replace the static card data below with dynamic data from backend
@@ -13,6 +14,15 @@ const SentRequest = () => {
   // For demo, using a single card. For dynamic, use state for each card's flip.
   const [isFlipped, setIsFlipped] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   // TODO: For multiple cards, use an array of flip states or card IDs.
 
@@ -34,6 +44,14 @@ const SentRequest = () => {
   const handleLogoutCancel = () => {
     setShowLogoutModal(false);
   };
+
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
 
   return (
     <>

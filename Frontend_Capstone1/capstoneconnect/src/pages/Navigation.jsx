@@ -67,7 +67,7 @@ const Navigation = ({ onLogout }) => {
         </ul>
       </nav>
       <div className="header__auth">
-        <button className="btn btn--primary" onClick={onLogout}>Logout</button>
+        <button className="btn btn--primary" onClick={onLogout}>Log Out</button>
       </div>
     </header>
   );

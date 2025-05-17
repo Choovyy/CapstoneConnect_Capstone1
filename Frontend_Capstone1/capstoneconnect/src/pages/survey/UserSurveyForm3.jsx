@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserId, saveSurvey } from '../../api';
 import logo from '../../assets/logo.png';
+import NotSignedIn from '../NotSignedIn';
 
 const UserSurveyForm3 = () => {
   const navigate = useNavigate();
@@ -16,9 +17,15 @@ const UserSurveyForm3 = () => {
   });
   const [otherSkill, setOtherSkill] = useState('');
   const [otherError, setOtherError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Restore state from sessionStorage on mount
+  // Check authentication and restore state from sessionStorage on mount
   useEffect(() => {
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    
     const saved = JSON.parse(sessionStorage.getItem('surveyStep3') || '{}');
     if (saved.skills) setSkills(saved.skills);
     if (saved.otherSkill) setOtherSkill(saved.otherSkill);
@@ -30,6 +37,10 @@ const UserSurveyForm3 = () => {
       [skill]: !prev[skill]
     }));
     if (skill === 'other') setOtherError('');
+  };
+
+  const handleSignIn = () => {
+    window.location.href = '/';
   };
 
   const selectedSkillCount = Object.values(skills).filter(Boolean).length;
@@ -55,7 +66,7 @@ const UserSurveyForm3 = () => {
     const step2 = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
     // Step 1: Preferred Roles
     const preferredRolesMapping = {
-      cLanguage: 'UI/UX Developer',
+      cLanguage: 'UI/UX Designer',
       php: 'Game Developer',
       htmlCss: 'Frontend Developer',
       javascript: 'Team Leader',
@@ -270,6 +281,10 @@ const UserSurveyForm3 = () => {
       fontFamily: 'Poppins, sans-serif',
     }
   };
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
 
   return (
     <div style={styles.container}>

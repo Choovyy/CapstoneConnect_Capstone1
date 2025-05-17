@@ -1,0 +1,31 @@
+import React from 'react';
+import '../../css/NotificationModal.css';
+
+const NotificationModal = ({ notifications, onClose }) => {
+  return (
+    <div className="notifm-overlay">
+      <div className="notifm-modal">
+        <div className="notifm-header">
+          <h2>All Notifications</h2>
+          <button className="notifm-close-button" onClick={onClose}>X</button>
+        </div>
+        <div className="notifm-content">
+          {notifications.map((notification) => (
+            <div className="notifm-item" key={notification.id}>
+              <div
+                className="notifm-avatar"
+                style={{ backgroundColor: notification.color || '#ddd' }}
+              ></div>
+              <div className="notifm-content-text">
+                <p className="notifm-message">{notification.message}</p>
+                <p className="notifm-date">{notification.date}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NotificationModal;

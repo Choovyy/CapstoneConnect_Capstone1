@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/Navigation.css';
 import '../../css/Matching.css';
 import Navigation from '../Navigation';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 
 const matchingMembers = [
   {
@@ -28,6 +29,15 @@ const matchingMembers = [
 const Matching = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [flipped, setFlipped] = useState(Array(matchingMembers.length).fill(false));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -44,9 +54,17 @@ const Matching = () => {
     setShowLogoutModal(false);
   };
 
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
   const handleCardFlip = idx => {
     setFlipped(prev => prev.map((f, i) => (i === idx ? !f : f)));
   };
+
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
 
   return (
     <>

@@ -7,6 +7,7 @@ import deleteIcon from '../../assets/delete.png';
 import EditProjectModal from '../modals/EditProjectModal';
 import DeleteProjectModal from '../modals/DeleteProjectModal';
 import LogoutModal from '../LogoutModal';
+import NotSignedIn from '../NotSignedIn';
 
 const YourProject = () => {
   const scrollContainerRef = useRef(null);
@@ -14,6 +15,7 @@ const YourProject = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -30,7 +32,17 @@ const YourProject = () => {
     setShowLogoutModal(false);
   };
 
+  const handleSignIn = () => {
+    window.location.href = '/';
+  };
+
   useEffect(() => {
+    // Check if user is authenticated
+    const token = sessionStorage.getItem('jwtToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    
     const scrollContainer = scrollContainerRef.current;
     let isDown = false;
     let startX;
@@ -75,35 +87,37 @@ const YourProject = () => {
       scrollContainer.scrollLeft = scrollLeft - walk;
     };
 
-    scrollContainer.addEventListener('mousedown', handleMouseDown);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
-    scrollContainer.addEventListener('mouseup', handleMouseUp);
-    scrollContainer.addEventListener('mousemove', handleMouseMove);
-    
-    scrollContainer.addEventListener('touchstart', handleTouchStart);
-    scrollContainer.addEventListener('touchend', handleMouseUp);
-    scrollContainer.addEventListener('touchcancel', handleMouseLeave);
-    scrollContainer.addEventListener('touchmove', handleTouchMove);
-
-    return () => {
-      scrollContainer.removeEventListener('mousedown', handleMouseDown);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
-      scrollContainer.removeEventListener('mouseup', handleMouseUp);
-      scrollContainer.removeEventListener('mousemove', handleMouseMove);
+    if (scrollContainer) {
+      scrollContainer.addEventListener('mousedown', handleMouseDown);
+      scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+      scrollContainer.addEventListener('mouseup', handleMouseUp);
+      scrollContainer.addEventListener('mousemove', handleMouseMove);
       
-      scrollContainer.removeEventListener('touchstart', handleTouchStart);
-      scrollContainer.removeEventListener('touchend', handleMouseUp);
-      scrollContainer.removeEventListener('touchcancel', handleMouseLeave);
-      scrollContainer.removeEventListener('touchmove', handleTouchMove);
-    };
+      scrollContainer.addEventListener('touchstart', handleTouchStart);
+      scrollContainer.addEventListener('touchend', handleMouseUp);
+      scrollContainer.addEventListener('touchcancel', handleMouseLeave);
+      scrollContainer.addEventListener('touchmove', handleTouchMove);
+
+      return () => {
+        scrollContainer.removeEventListener('mousedown', handleMouseDown);
+        scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+        scrollContainer.removeEventListener('mouseup', handleMouseUp);
+        scrollContainer.removeEventListener('mousemove', handleMouseMove);
+        
+        scrollContainer.removeEventListener('touchstart', handleTouchStart);
+        scrollContainer.removeEventListener('touchend', handleMouseUp);
+        scrollContainer.removeEventListener('touchcancel', handleMouseLeave);
+        scrollContainer.removeEventListener('touchmove', handleTouchMove);
+      };
+    }
   }, []);
 
   const projectDetails = {
     title: 'Social Media Analytics',
     description: 'An application to analyze social media engagement and trends',
-    roles: ['Data Analyst', 'Frontend Developer', 'Backend Developer'],
+    roles: ['Data Analyst', 'Frontend Developer', 'Backend Developer', 'UX Designer'],
     skills: ['React', 'Python', 'Data Visualization', 'API Development'],
-    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engage Metrics']
+    interests: ['Real-time Analytics', 'Social Media Monitoring', 'Engagement Metrics']
   };
 
   const handleEditClick = (project) => {
@@ -163,6 +177,10 @@ const YourProject = () => {
     </div>
   );
 
+  if (!isAuthenticated) {
+    return <NotSignedIn onSignIn={handleSignIn} />;
+  }
+
   return (
     <div>
       {/* Navbar */}
@@ -171,7 +189,7 @@ const YourProject = () => {
       </div>
           
       {/* Section Header */}
-      <div className="yp-container" style={{ marginBottom: '-20px' }}>
+      <div className="yp-container" style={{ marginBottom: '-35px' }}>
         <div className="yp-filter">
           <h1 className="yp-title">Your Projects</h1>
         </div>
