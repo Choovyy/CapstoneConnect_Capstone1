@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 @Service
 public class ProjectService {
@@ -112,9 +113,7 @@ public class ProjectService {
             project.getTeamMembers().add(user);
         }
         projectRepository.save(project);
-    }
-
-    public void rejectApplicant(Long projectId, Long userId) {
+    }    public void rejectApplicant(Long projectId, Long userId) {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
         UserEntity user = userRepository.findById(userId)
@@ -124,6 +123,22 @@ public class ProjectService {
         }
         project.getApplicants().remove(user);
         projectRepository.save(project);
+    }
+
+    public List<UserEntity> getTeamMembersForProject(Long projectId) {
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        
+        // Create a new list with all team members
+        List<UserEntity> allTeamMembers = new ArrayList<>(project.getTeamMembers());
+        
+        // Add project owner if not already included
+        UserEntity projectOwner = project.getUser();
+        if (!allTeamMembers.contains(projectOwner)) {
+            allTeamMembers.add(projectOwner);
+        }
+        
+        return allTeamMembers;
     }
 
 }

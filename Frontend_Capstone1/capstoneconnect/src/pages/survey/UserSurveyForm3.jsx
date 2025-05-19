@@ -59,21 +59,11 @@ const UserSurveyForm3 = () => {
       .map(([key]) => mapping[key] === '__OTHER__' ? (otherSkill && otherSkill.trim() ? otherSkill.trim() : null) : mapping[key])
       .filter(Boolean);
   }
-
   const handleSubmit = async () => {
     // Retrieve all answers from sessionStorage
     const step1 = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
     const step2 = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
-    // Step 1: Preferred Roles
-    const preferredRolesMapping = {
-      cLanguage: 'UI/UX Designer',
-      php: 'Game Developer',
-      htmlCss: 'Frontend Developer',
-      javascript: 'Team Leader',
-      java: 'Backend Developer',
-      python: 'Technical Writer',
-      other: '__OTHER__',
-    };
+    
     // Step 2: Technical Skills
     const technicalSkillsMapping = {
       cLanguage: 'C Language',
@@ -84,6 +74,7 @@ const UserSurveyForm3 = () => {
       python: 'Python',
       other: '__OTHER__',
     };
+    
     // Step 3: Project Interests
     const projectInterestsMapping = {
       cLanguage: 'Web App Development',
@@ -94,7 +85,10 @@ const UserSurveyForm3 = () => {
       python: 'AI Development',
       other: '__OTHER__',
     };
-    const preferredRoles = extractSelectedSkills(step1.skills || {}, step1.otherSkill, preferredRolesMapping);
+    
+    // Get single role from step1 (it's a direct value, not using the mapping function)
+    const preferredRoles = step1.selectedRole ? [step1.selectedRole] : [];
+    
     const technicalSkills = extractSelectedSkills(step2.skills || {}, step2.otherSkill, technicalSkillsMapping);
     const projectInterests = extractSelectedSkills(skills, otherSkill, projectInterestsMapping);
     const surveyData = {
