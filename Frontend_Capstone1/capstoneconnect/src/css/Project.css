@@ -92,7 +92,15 @@
     margin: 8px;
     background-color: white;
     text-align: left;
-    transition: all 0.3s ease;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+    cursor: pointer;
+    height: 550px;
+  }
+  
+  .pj-card.flipped {
+    transform: rotateY(180deg);
   }
   
   .pj-card:hover {
@@ -100,16 +108,53 @@
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   }
   
+  .pj-card.flipped:hover {
+    transform: rotateY(180deg) translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  }
+  
   .pj-header {
     text-align: center;
+    backface-visibility: hidden;
+    height: 470px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   
   .pj-body {
-    margin-top: 20px;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotateY(180deg);
+    left: 0;
+    right: 0;
+    padding: 16px;
+    display: none;
+    height: auto;
+    overflow-y: visible;
+    text-align: left;
+  }
+  
+  .pj-card.flipped .pj-body {
+    display: block;
+  }
+  
+  .pj-card.flipped .pj-header, 
+  .pj-card.flipped .pj-apply-btn {
+    display: none;
+  }
+  
+  .pj-body p {
+    text-align: left;
+    font-weight: bold;
   }
   
   .pj-body ul {
     padding-left: 16px;
+    text-align: left;
   }
   
   .pj-apply-btn {
@@ -124,10 +169,34 @@
     margin-left: auto;
     margin-right: auto;
     transition: all 0.3s ease;
+    backface-visibility: hidden;
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    width: fit-content;
+    z-index: 10;
   }
   
   .pj-apply-btn:hover {
     background-color: #b78d49;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pj-tooltip {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .pj-tooltip.visible {
+    opacity: 1;
   }
   

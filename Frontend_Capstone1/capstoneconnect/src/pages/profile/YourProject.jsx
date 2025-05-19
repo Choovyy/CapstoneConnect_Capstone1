@@ -20,6 +20,9 @@ const YourProject = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [flippedCardId, setFlippedCardId] = useState(null);
+  const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
+  const tooltipRef = useRef(null);
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -38,6 +41,21 @@ const YourProject = () => {
 
   const handleSignIn = () => {
     window.location.href = '/';
+  };
+  
+  const toggleFlip = (projectId, event) => {
+    // Don't flip if clicking on the edit or delete buttons
+    if (event.target.closest('.yp-edit-btn') || event.target.closest('.yp-delete-btn')) {
+      return;
+    }
+    
+    // If clicking the same card, toggle its state
+    if (flippedCardId === projectId) {
+      setFlippedCardId(null);
+    } else {
+      // If clicking a different card, close any open card and flip this one
+      setFlippedCardId(projectId);
+    }
   };
 
   useEffect(() => {
@@ -130,12 +148,14 @@ const YourProject = () => {
     }
   }
 
-  const handleEditClick = (project) => {
+  const handleEditClick = (e, project) => {
+    e.stopPropagation(); // Prevent card flip
     setSelectedProject(project);
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteClick = (project) => {
+  const handleDeleteClick = (e, project) => {
+    e.stopPropagation(); // Prevent card flip
     setSelectedProject(project);
     setIsDeleteModalOpen(true);
   };
@@ -168,8 +188,40 @@ const YourProject = () => {
     }
   };
 
+  // Function to handle card hovering
+  const handleCardMouseMove = (e) => {
+    if (e.target.closest('.yp-edit-btn') || e.target.closest('.yp-delete-btn')) {
+      setTooltip({ visible: false, x: 0, y: 0 });
+      return;
+    }
+    
+    setTooltip({
+      visible: true,
+      x: e.clientX + 15, // Offset to the right of the cursor
+      y: e.clientY - 10  // Offset slightly above the cursor
+    });
+  };
+  
+  const handleCardMouseLeave = () => {
+    setTooltip({ visible: false, x: 0, y: 0 });
+  };
+  
+  // Update tooltip position
+  useEffect(() => {
+    if (tooltipRef.current) {
+      tooltipRef.current.style.left = `${tooltip.x}px`;
+      tooltipRef.current.style.top = `${tooltip.y}px`;
+    }
+  }, [tooltip]);
+
   const renderCard = (project, index) => (
-    <div className="yp-card" key={project.id || index}>
+    <div 
+      className={`yp-card ${flippedCardId === project.id ? 'flipped' : ''}`} 
+      key={project.id || index}
+      onClick={(e) => toggleFlip(project.id, e)}
+      onMouseMove={handleCardMouseMove}
+      onMouseLeave={handleCardMouseLeave}
+    >
       <div className="yp-header">
         <h3><strong>{project.name}</strong></h3>
         <p>{project.description}</p>
@@ -189,10 +241,10 @@ const YourProject = () => {
         </ul>
       </div>
       <div className="yp-actions">
-        <button className="yp-edit-btn" onClick={() => handleEditClick(project)}>
+        <button className="yp-edit-btn" onClick={(e) => handleEditClick(e, project)}>
           <img src={editIcon} alt="Edit" className="yp-icon" />
         </button>
-        <button className="yp-delete-btn" onClick={() => handleDeleteClick(project)}>
+        <button className="yp-delete-btn" onClick={(e) => handleDeleteClick(e, project)}>
           <img src={deleteIcon} alt="Delete" className="yp-icon" />
         </button>
       </div>
@@ -225,6 +277,14 @@ const YourProject = () => {
           </div>
         </div>
       </main>
+
+      {/* Tooltip */}
+      <div 
+        ref={tooltipRef}
+        className={`yp-tooltip ${tooltip.visible ? 'visible' : ''}`}
+      >
+        Click to view more details
+      </div>
 
       {/* Edit Project Modal */}
       <EditProjectModal 
