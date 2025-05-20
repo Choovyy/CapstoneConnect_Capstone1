@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import '../../css/Navigation.css';
 import '../../css/YourProject.css'; 
 import Navigation from '../Navigation';
@@ -12,9 +13,8 @@ import { getProjectsByUser, updateProject, deleteProject, getUserId } from '../.
 
 const YourProject = () => {
   const scrollContainerRef = useRef(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [selectedProject, setSelectedProject] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [projects, setProjects] = useState([]);
@@ -23,6 +23,7 @@ const YourProject = () => {
   const [flippedCardId, setFlippedCardId] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
   const tooltipRef = useRef(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -148,17 +149,30 @@ const YourProject = () => {
     }
   }
 
+  const isEditModalOpen = searchParams.get('modal') === 'edit';
+  const isDeleteModalOpen = searchParams.get('modal') === 'delete';
+
   const handleEditClick = (e, project) => {
-    e.stopPropagation(); // Prevent card flip
-    setSelectedProject(project);
-    setIsEditModalOpen(true);
+    e.stopPropagation();
+    setSelectedProject({
+      title: project.name || '',
+      description: project.description || '',
+      roles: project.rolesNeeded || [],
+      skills: project.skillsRequired || [],
+      interests: project.projectInterests || [],
+      id: project.id
+    });
+    setSearchParams({ modal: 'edit' });
   };
 
   const handleDeleteClick = (e, project) => {
-    e.stopPropagation(); // Prevent card flip
+    e.stopPropagation();
     setSelectedProject(project);
-    setIsDeleteModalOpen(true);
+    setSearchParams({ modal: 'delete' });
   };
+
+  const handleEditModalClose = () => setSearchParams({});
+  const handleDeleteModalClose = () => setSearchParams({});
 
   const handleEditSubmit = async (updatedProject) => {
     // Map frontend fields to backend fields
@@ -289,7 +303,7 @@ const YourProject = () => {
       {/* Edit Project Modal */}
       <EditProjectModal 
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={handleEditModalClose}
         onSubmit={handleEditSubmit}
         project={selectedProject}
       />
@@ -297,7 +311,7 @@ const YourProject = () => {
       {/* Delete Project Modal */}
       <DeleteProjectModal 
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={handleDeleteModalClose}
         onConfirm={handleDeleteConfirm}
         projectTitle={selectedProject?.title}
       />

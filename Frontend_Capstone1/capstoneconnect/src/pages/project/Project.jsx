@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import '../../css/Navigation.css';
 import '../../css/Project.css'; 
 import Navigation from '../Navigation';
@@ -10,8 +11,8 @@ import { getAllProjects, createProject, applyToProject, getUserId } from '../../
 
 const Project = () => {
   const scrollContainerRef = useRef(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -20,7 +21,6 @@ const Project = () => {
   const [error, setError] = useState(null);
   const [flippedCardId, setFlippedCardId] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
-  const [currentUserId, setCurrentUserId] = useState(null);
   const tooltipRef = useRef(null);
   
   const handleLogout = () => {
@@ -160,19 +160,6 @@ const Project = () => {
     }
   }, []);
 
-  useEffect(() => {
-    // Fetch current user ID on mount
-    async function fetchUserId() {
-      try {
-        const { userId } = await getUserId();
-        setCurrentUserId(userId);
-      } catch (err) {
-        setCurrentUserId(null);
-      }
-    }
-    fetchUserId();
-  }, []);
-
   async function fetchProjects() {
     setLoading(true);
     try {
@@ -185,32 +172,26 @@ const Project = () => {
     }
   }
 
+  const isCreateModalOpen = searchParams.get('modal') === 'create';
+  const isApplyModalOpen = searchParams.get('modal') === 'apply';
+
+  const handleOpenModal = () => setSearchParams({ modal: 'create' });
+  const handleCloseModal = () => setSearchParams({});
   const handleApplyClick = (project) => {
     setSelectedProject(project);
-    setIsApplyModalOpen(true);
+    setSearchParams({ modal: 'apply' });
   };
-
-  const handleApplyClose = () => {
-    setIsApplyModalOpen(false);
-  };
+  const handleApplyClose = () => setSearchParams({});
 
   const handleApplyConfirm = async () => {
     try {
       const { userId } = await getUserId();
       await applyToProject(selectedProject.id, userId);
       alert('Applied successfully!');
-      setIsApplyModalOpen(false);
+      setSearchParams({});
     } catch (err) {
       alert('Failed to apply: ' + err.message);
     }
-  };
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   const handleSubmitProject = async (formData) => {
@@ -225,7 +206,7 @@ const Project = () => {
         user: { id: userId }
       };
       await createProject(payload);
-      setIsModalOpen(false);
+      setSearchParams({});
       fetchProjects();
     } catch (err) {
       alert('Failed to create project: ' + err.message);
@@ -258,34 +239,12 @@ const Project = () => {
           {project.projectInterests && project.projectInterests.map((interest, i) => <li key={i}>{interest}</li>)}
         </ul>
       </div>
-      
-      {/* Warning and Apply button section */}
-      <div className="pj-footer">
-        {project.user?.id === currentUserId && (
-          <div className="apply-warning" style={{ color: 'orange', fontWeight: 'bold', marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontSize: '20px', marginRight: '8px' }}>⚠️</span>
-            You cannot apply to your own project.
-          </div>
-        )}
-
-        <button
-          className="pj-apply-btn"
-          onClick={() => handleApplyClick(project)}
-          disabled={project.user?.id === currentUserId}
-        >
-          Apply for Project
-        </button>
-      </div>
+      <button className="pj-apply-btn" onClick={() => handleApplyClick(project)}>Apply for Project</button>
     </div>
   );
 
   if (!isAuthenticated) {
     return <NotSignedIn onSignIn={handleSignIn} />;
-  }
-
-  // Wait for currentUserId to load before rendering
-  if (currentUserId === null) {
-    return <div>Loading...</div>;
   }
 
   return (
@@ -323,7 +282,7 @@ const Project = () => {
 
       {/* Create Project Modal */}
       <CreateProjectModal 
-        isOpen={isModalOpen}
+        isOpen={isCreateModalOpen}
         onClose={handleCloseModal}
         onSubmit={handleSubmitProject}
       />

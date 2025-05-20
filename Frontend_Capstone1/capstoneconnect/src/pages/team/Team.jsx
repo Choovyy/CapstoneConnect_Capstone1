@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import '../../css/Navigation.css';
 import '../../css/Team.css';
 import Navigation from '../Navigation';
@@ -10,7 +11,6 @@ import { getProjectById } from '../../api';
 
 const Team = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -22,6 +22,8 @@ const Team = () => {
   const [removedFromTeam, setRemovedFromTeam] = useState(false);
   const prevTeamMembersRef = useRef([]);
   const dropdownRef = useRef(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -288,13 +290,16 @@ const Team = () => {
   // Limited notifications for main view (only 3)
   const limitedNotifications = allNotifications.slice(0, 3);
 
+  // Replace handleViewAllNotifications and closeNotificationModal
   const handleViewAllNotifications = () => {
-    setShowNotificationModal(true);
+    setSearchParams({ modal: 'notifications' });
+  };
+  const closeNotificationModal = () => {
+    setSearchParams({});
   };
 
-  const closeNotificationModal = () => {
-    setShowNotificationModal(false);
-  };
+  // Modal open state from URL
+  const isNotificationModalOpen = searchParams.get('modal') === 'notifications';
 
   const renderNotification = (notification) => {
     const member = teamMembers.find(m => notification.message.toLowerCase().includes(m.name.split(' ')[0].toLowerCase()));
@@ -516,7 +521,9 @@ const Team = () => {
       </main>
 
       {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
-      {showNotificationModal && <NotificationModal notifications={notifications} onClose={closeNotificationModal} />}
+      {isNotificationModalOpen && (
+        <NotificationModal notifications={notifications} onClose={closeNotificationModal} />
+      )}
     </div>
   );
 };

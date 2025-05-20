@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../../css/NotificationModal.css';
 
 const NotificationModal = ({ notifications, onClose }) => {
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
   return (
     <div className="notifm-overlay">
       <div className="notifm-modal">
