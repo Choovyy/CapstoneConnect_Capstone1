@@ -127,8 +127,11 @@ export async function getProjectsByUser(userId) {
   const res = await fetch(`${BASE_URL}/api/projects/user/${userId}`, {
     headers: authHeaders(),
   });
+  if (res.status === 204) return []; // No Content
   if (!res.ok) throw new Error('Failed to fetch user projects');
-  return res.json();
+  const text = await res.text();
+  if (!text) return [];
+  return JSON.parse(text);
 }
 
 export async function getPendingApplicants(projectId) {
@@ -155,4 +158,39 @@ export async function rejectApplicant(projectId, userId) {
   });
   if (!res.ok) throw new Error('Failed to reject applicant');
   return res.text();
+}
+
+export async function getProjectTeam(projectId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}/team`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to fetch project team');
+  return res.json();
+}
+
+export async function makeLeader(projectId, userId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}/team/${userId}/make-leader`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to make leader');
+  return res.text();
+}
+
+export async function kickMember(projectId, userId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}/team/${userId}/kick`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to kick member');
+  return res.text();
+}
+
+// Add this function to fetch a project by ID
+export async function getProjectById(projectId) {
+  const res = await fetch(`${BASE_URL}/api/projects/${projectId}`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to fetch project');
+  return res.json();
 }

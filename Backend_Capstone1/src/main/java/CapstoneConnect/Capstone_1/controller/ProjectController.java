@@ -1,5 +1,6 @@
 package CapstoneConnect.Capstone_1.controller;
 
+import CapstoneConnect.Capstone_1.dto.ProfileDTO;
 import CapstoneConnect.Capstone_1.entity.ProjectEntity;
 import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.service.ProjectService;
@@ -84,5 +85,31 @@ public class ProjectController {
     public ResponseEntity<String> rejectApplicant(@PathVariable Long projectId, @PathVariable Long userId) {
         projectService.rejectApplicant(projectId, userId);
         return ResponseEntity.ok("Applicant rejected");
+    }
+
+    // Get team for a project (owner first, then members)
+    @GetMapping("/{projectId}/team")
+    public ResponseEntity<List<ProfileDTO>> getTeamForProject(@PathVariable Long projectId) {
+        List<UserEntity> team = projectService.getTeamMembersForProject(projectId);
+        // Convert to ProfileDTOs for frontend use
+        List<ProfileDTO> teamProfiles = team.stream()
+            .map(user -> user.getProfile() != null ? user.getProfile().toDTO() : null)
+            .filter(profile -> profile != null)
+            .toList();
+        return ResponseEntity.ok(teamProfiles);
+    }
+
+    // Make a member the new leader (owner)
+    @PostMapping("/{projectId}/team/{userId}/make-leader")
+    public ResponseEntity<String> makeLeader(@PathVariable Long projectId, @PathVariable Long userId) {
+        projectService.makeLeader(projectId, userId);
+        return ResponseEntity.ok("Leader changed successfully");
+    }
+
+    // Kick a member from the team
+    @PostMapping("/{projectId}/team/{userId}/kick")
+    public ResponseEntity<String> kickMember(@PathVariable Long projectId, @PathVariable Long userId) {
+        projectService.kickMember(projectId, userId);
+        return ResponseEntity.ok("Member kicked successfully");
     }
 }

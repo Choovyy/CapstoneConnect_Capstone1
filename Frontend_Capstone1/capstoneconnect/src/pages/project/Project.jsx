@@ -20,6 +20,7 @@ const Project = () => {
   const [error, setError] = useState(null);
   const [flippedCardId, setFlippedCardId] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
+  const [currentUserId, setCurrentUserId] = useState(null);
   const tooltipRef = useRef(null);
   
   const handleLogout = () => {
@@ -159,6 +160,19 @@ const Project = () => {
     }
   }, []);
 
+  useEffect(() => {
+    // Fetch current user ID on mount
+    async function fetchUserId() {
+      try {
+        const { userId } = await getUserId();
+        setCurrentUserId(userId);
+      } catch (err) {
+        setCurrentUserId(null);
+      }
+    }
+    fetchUserId();
+  }, []);
+
   async function fetchProjects() {
     setLoading(true);
     try {
@@ -244,12 +258,34 @@ const Project = () => {
           {project.projectInterests && project.projectInterests.map((interest, i) => <li key={i}>{interest}</li>)}
         </ul>
       </div>
-      <button className="pj-apply-btn" onClick={() => handleApplyClick(project)}>Apply for Project</button>
+      
+      {/* Warning and Apply button section */}
+      <div className="pj-footer">
+        {project.user?.id === currentUserId && (
+          <div className="apply-warning" style={{ color: 'orange', fontWeight: 'bold', marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+            <span style={{ fontSize: '20px', marginRight: '8px' }}>⚠️</span>
+            You cannot apply to your own project.
+          </div>
+        )}
+
+        <button
+          className="pj-apply-btn"
+          onClick={() => handleApplyClick(project)}
+          disabled={project.user?.id === currentUserId}
+        >
+          Apply for Project
+        </button>
+      </div>
     </div>
   );
 
   if (!isAuthenticated) {
     return <NotSignedIn onSignIn={handleSignIn} />;
+  }
+
+  // Wait for currentUserId to load before rendering
+  if (currentUserId === null) {
+    return <div>Loading...</div>;
   }
 
   return (

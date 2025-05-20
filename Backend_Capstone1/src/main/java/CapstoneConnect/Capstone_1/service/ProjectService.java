@@ -6,6 +6,8 @@ import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.repository.ProjectRepository;
 import CapstoneConnect.Capstone_1.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +18,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     public ProjectService(ProjectRepository projectRepository, UserRepository userRepository) {
         this.projectRepository = projectRepository;
@@ -47,8 +50,7 @@ public class ProjectService {
     }
 
     public List<ProjectEntity> getProjectsByUserId(Long userId) {
-        Optional<UserEntity> userOpt = userRepository.findById(userId);
-        return userOpt.map(projectRepository::findByUser).orElse(null);
+        return projectRepository.findProjectsByUserOrTeamMember(userId);
     }
 
     public ProjectEntity updateProject(Long id, ProjectEntity updatedProject) {
@@ -128,17 +130,60 @@ public class ProjectService {
     public List<UserEntity> getTeamMembersForProject(Long projectId) {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-        
-        // Create a new list with all team members
-        List<UserEntity> allTeamMembers = new ArrayList<>(project.getTeamMembers());
-        
-        // Add project owner if not already included
+        List<UserEntity> allTeamMembers = new ArrayList<>();
+        // Always add the owner/leader first
         UserEntity projectOwner = project.getUser();
-        if (!allTeamMembers.contains(projectOwner)) {
+        if (projectOwner != null) {
+            logger.debug("Project owner found: id={}, name={}", projectOwner.getId(), projectOwner.getName());
             allTeamMembers.add(projectOwner);
+        } else {
+            logger.debug("Project owner is null for projectId={}", projectId);
         }
-        
+        // Add the rest of the team members, excluding the owner if present
+        for (UserEntity member : project.getTeamMembers()) {
+            logger.debug("Team member: id={}, name={}", member.getId(), member.getName());
+            if (projectOwner == null || !member.getId().equals(projectOwner.getId())) {
+                allTeamMembers.add(member);
+            }
+        }
+        logger.debug("Returning team list of size {} for projectId={}", allTeamMembers.size(), projectId);
         return allTeamMembers;
+    }
+
+    // Make a member the new leader (owner)
+    public void makeLeader(Long projectId, Long userId) {
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        UserEntity newLeader = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Only allow if the user is already a team member
+        if (!project.getTeamMembers().contains(newLeader)) {
+            throw new RuntimeException("User is not a team member");
+        }
+        // Add current owner to teamMembers if not present
+        UserEntity oldOwner = project.getUser();
+        if (!project.getTeamMembers().contains(oldOwner)) {
+            project.getTeamMembers().add(oldOwner);
+        }
+        // Remove new leader from teamMembers
+        project.getTeamMembers().remove(newLeader);
+        // Set new owner
+        project.setUser(newLeader);
+        projectRepository.save(project);
+    }
+
+    // Kick a member from the team
+    public void kickMember(Long projectId, Long userId) {
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Prevent kicking the owner
+        if (project.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Cannot kick the project owner/leader");
+        }
+        project.getTeamMembers().remove(user);
+        projectRepository.save(project);
     }
 
 }
