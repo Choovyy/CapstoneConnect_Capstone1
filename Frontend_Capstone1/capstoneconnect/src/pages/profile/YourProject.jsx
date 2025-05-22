@@ -195,7 +195,7 @@ const YourProject = () => {
   const handleDeleteConfirm = async () => {
     try {
       await deleteProject(selectedProject.id);
-      setIsDeleteModalOpen(false);
+      setSearchParams({}); // Close the modal by clearing the URL param
       fetchUserProjects();
     } catch (err) {
       alert('Failed to delete project: ' + err.message);
