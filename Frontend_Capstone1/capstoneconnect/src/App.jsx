@@ -12,7 +12,6 @@ import Profile from './pages/profile/Profile.jsx';
 import ProfileEdit from './pages/profile/ProfileEdit.jsx';
 import YourProject from './pages/profile/YourProject.jsx';
 import Matching from './pages/more/Matching.jsx';
-import SentRequest from './pages/more/SentRequest.jsx';
 
 function App() {
   return (
@@ -30,7 +29,6 @@ function App() {
           <Route path="/profile-edit" element={<ProfileEdit />} />
           <Route path="/your-project" element={<YourProject />} />
           <Route path="/matching" element={<Matching />} />
-          <Route path="/sent-request" element={<SentRequest />} />
           <Route path="/home" element={<SuggestedTeam />} />
         </Routes>
       </div>

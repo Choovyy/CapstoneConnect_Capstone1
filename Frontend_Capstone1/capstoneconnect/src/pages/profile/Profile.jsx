@@ -7,6 +7,7 @@ import { getUserId, getProfile } from '../../api';
 import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
+import SentRequestCards from '../profile/SentRequestCards';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -72,7 +73,7 @@ const Profile = () => {
         <Navigation onLogout={handleLogout} />
       </div>
 
-      {/* Only the profile-page is flex-centered */}
+      {/* Profile Section */}
       <div className="profile-page">
         <main className="profile-container">
           <div className="profile-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px' }}>
@@ -119,6 +120,11 @@ const Profile = () => {
               )
             }
           </div>
+        </main>
+
+        {/* Sent Requests Section */}
+        <main className="profile-container" style={{ marginTop: '32px' }}>
+          <SentRequestCards />
         </main>
       </div>
       

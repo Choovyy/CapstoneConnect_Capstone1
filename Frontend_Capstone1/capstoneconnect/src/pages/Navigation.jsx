@@ -49,13 +49,10 @@ const Navigation = ({ onLogout }) => {
           <li className="nav-item">
             <Link to="/matching">Your Match</Link>
           </li>
-          <li className="nav-item">
-            <Link to="/sent-request">Sent Requests</Link>
-          </li>
         </ul>
       </nav>
       <div className="header__auth">
-        <button className="btn btn--primary" onClick={onLogout}>Log Out</button>
+        <button className="btn btn--primary" onClick={onLogout}>Logout</button>
       </div>
     </header>
   );
