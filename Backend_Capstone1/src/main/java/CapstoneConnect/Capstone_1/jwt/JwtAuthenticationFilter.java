@@ -1,7 +1,6 @@
 package CapstoneConnect.Capstone_1.jwt;
 
 import CapstoneConnect.Capstone_1.entity.UserEntity;
-import CapstoneConnect.Capstone_1.jwt.JwtUtil;
 import CapstoneConnect.Capstone_1.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

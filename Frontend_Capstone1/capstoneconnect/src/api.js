@@ -48,13 +48,29 @@ export async function updateProfile(userId, profileData) {
 }
 
 export async function saveSurvey(userId, surveyData) {
-  const res = await fetch(`${BASE_URL}/api/survey/save/${userId}`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify(surveyData),
-  });
-  if (!res.ok) throw new Error('Survey save failed');
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/api/survey/save/${userId}`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(surveyData),
+    });
+    
+    if (!res.ok) {
+      // Try to get more detailed error message from response
+      try {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `Survey save failed with status: ${res.status}`);
+      } catch (parseError) {
+        // If we couldn't parse the error response
+        throw new Error(`Survey save failed with status: ${res.status}`);
+      }
+    }
+    
+    return res.json();
+  } catch (error) {
+    console.error('API error in saveSurvey:', error);
+    throw error; // Re-throw for component handling
+  }
 }
 
 export async function getSurvey(profileId) {
@@ -66,13 +82,39 @@ export async function getSurvey(profileId) {
 }
 
 export async function getMatchesFromSurvey(surveyData) {
-  const res = await fetch(`${BASE_URL}/api/survey/match`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify(surveyData),
-  });
-  if (!res.ok) throw new Error('Failed to get matches');
-  return res.json();
+  try {
+    // Validate survey data
+    if (!surveyData) {
+      throw new Error('Survey data is required to find matches');
+    }
+    
+    // Log the request for debugging
+    console.log('Requesting matches with survey data:', surveyData);
+    
+    const res = await fetch(`${BASE_URL}/api/survey/match`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(surveyData),
+    });
+    
+    if (!res.ok) {
+      // Try to get more detailed error message from response
+      try {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `Failed to get matches with status: ${res.status}`);
+      } catch (parseError) {
+        // If we couldn't parse the error response
+        throw new Error(`Failed to get matches with status: ${res.status}`);
+      }
+    }
+    
+    const matchesData = await res.json();
+    console.log('Received matches:', matchesData);
+    return matchesData;
+  } catch (error) {
+    console.error('Error in getMatchesFromSurvey:', error);
+    throw error; // Re-throw for component handling
+  }
 }
 
 // Project API
@@ -193,4 +235,65 @@ export async function getProjectById(projectId) {
   });
   if (!res.ok) throw new Error('Failed to fetch project');
   return res.json();
+}
+
+// Personality Quiz API functions
+export async function initializeQuiz() {
+  const res = await fetch(`${BASE_URL}/api/personality-quiz/initialize`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) throw new Error('Failed to initialize quiz');
+  return res.text();
+}
+
+export async function getQuizQuestions() {
+  const res = await fetch(`${BASE_URL}/api/personality-quiz/questions`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) throw new Error('Failed to fetch quiz questions');
+  return res.json();
+}
+
+export async function submitQuizAnswers(userId, answers) {
+  try {
+    // Input validation
+    if (!userId) {
+      throw new Error('User ID is required for quiz submission');
+    }
+    if (!answers || Object.keys(answers).length === 0) {
+      throw new Error('No answers provided for quiz submission');
+    }
+    
+    console.log('Submitting quiz answers:', {userId, answerCount: Object.keys(answers).length});
+    
+    const res = await fetch(`${BASE_URL}/api/personality-quiz/submit`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        userId: userId,
+        answers: answers
+      }),
+    });
+    
+    if (!res.ok) {
+      // Try to get more detailed error message from response
+      const errorText = await res.text();
+      try {
+        const errorJson = JSON.parse(errorText);
+        throw new Error(errorJson.message || `Failed to submit quiz answers with status: ${res.status}`);
+      } catch (parseError) {
+        // If we couldn't parse the error response
+        throw new Error(`Failed to submit quiz answers with status: ${res.status}. Response: ${errorText.substring(0, 100)}`);
+      }
+    }
+      // The response should be a plain text personality type
+    const result = await res.text();
+    console.log('Quiz submission result:', result);
+    
+    // Ensure we're returning a valid string value
+    return result && result.trim().length > 0 ? result.trim() : "Unknown";
+  } catch (error) {
+    console.error('API error in submitQuizAnswers:', error);
+    throw error; // Re-throw for component handling
+  }
 }

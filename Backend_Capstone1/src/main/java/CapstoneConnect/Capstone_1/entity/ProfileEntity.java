@@ -1,7 +1,6 @@
 package CapstoneConnect.Capstone_1.entity;
 
 import CapstoneConnect.Capstone_1.dto.ProfileDTO;
-import CapstoneConnect.Capstone_1.entity.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
@@ -82,12 +81,11 @@ public class ProfileEntity {
             profileDTO.setUserId(this.user.getId());
             profileDTO.setName(this.user.getName());
             profileDTO.setEmail(this.user.getEmail());
-        }
-
-        if (this.survey != null) {
+        }        if (this.survey != null) {
             profileDTO.setTechnicalSkills(this.survey.getTechnicalSkills());
             profileDTO.setProjectInterests(this.survey.getProjectInterests());
             profileDTO.setPreferredRoles(this.survey.getPreferredRoles());
+            profileDTO.setPersonality(this.survey.getPersonality());
         }
 
         return profileDTO;

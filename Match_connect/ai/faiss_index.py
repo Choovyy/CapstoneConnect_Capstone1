@@ -67,15 +67,32 @@ def save_state():
         logger.error(f"Error saving state: {str(e)}")
         return False
 
-def add_user_profile(embedding, user_info):
-    if embedding is None or len(embedding) != dimension:
-        logger.error(f"Invalid embedding: {embedding}")
-        return False
-        
+def add_user_profile(profile_embedding, personality_embedding, user_info):
     try:
-        vector = np.array([embedding]).astype("float32")
+        # Validate inputs
+        if profile_embedding is None:
+            logger.error("Profile embedding is None")
+            return False
+            
+        # Convert to numpy array and verify shape
+        profile_embedding_np = np.array(profile_embedding).astype("float32")
+        if profile_embedding_np.size != dimension:
+            logger.error(f"Invalid profile embedding dimension: expected {dimension}, got {profile_embedding_np.size}")
+            return False
+            
+        # Convert personality embedding to numpy array
+        personality_embedding_np = np.array(personality_embedding).astype("float32")
+            
+        # Add the profile embedding to the FAISS index
+        vector = np.array([profile_embedding_np]).astype("float32")
         index.add(vector)
-        user_profiles.append(user_info)
+        
+        # Store the user profile and personality embedding
+        user_profiles.append({
+            "info": user_info,
+            "personality_embedding": personality_embedding_np.tolist() if hasattr(personality_embedding_np, 'tolist') else personality_embedding_np
+        })
+        
         logger.info(f"Added profile for {user_info.get('email', 'unknown')}. Total profiles: {len(user_profiles)}")
         
         # Save after each addition
@@ -85,18 +102,21 @@ def add_user_profile(embedding, user_info):
         logger.error(f"Error adding profile: {str(e)}")
         return False
 
-def get_top_matches(embedding, k=3, exclude_email=None):
+def get_top_matches(query_embedding, personality_embedding, k=3, exclude_email=None):
     if len(user_profiles) == 0:
         logger.warning("No user profiles available for matching")
         return []
         
-    if embedding is None or len(embedding) != dimension:
-        logger.error(f"Invalid embedding for matching: {embedding}")
-        return []
-        
     try:
-        vector = np.array([embedding]).astype("float32")
+        # Convert to numpy array and verify shape
+        query_embedding_np = np.array(query_embedding).astype("float32")
+        if query_embedding_np.size != dimension:
+            logger.error(f"Invalid embedding dimension for matching: expected {dimension}, got {query_embedding_np.size}")
+            return []
         
+        # Ensure personality_embedding is a numpy array
+        personality_embedding_np = np.array(personality_embedding).astype("float32")
+            
         # Limit k to the number of actual profiles
         effective_k = min(k + 1, len(user_profiles))
         
@@ -105,24 +125,39 @@ def get_top_matches(embedding, k=3, exclude_email=None):
             logger.warning(f"Not enough profiles to perform matching (requested {k}, have {len(user_profiles)})")
             return []
             
-        distances, indices = index.search(vector, effective_k)
+        distances, indices = index.search(np.array([query_embedding_np]).astype("float32"), effective_k)
 
         matches = []
         for i, dist in zip(indices[0], distances[0]):
-            # Validate index is within range
             if 0 <= i < len(user_profiles):
-                user = user_profiles[i]
-                if exclude_email and user.get("email") == exclude_email:
+                profile = user_profiles[i]
+                user = profile["info"]
+
+                # Use explicit comparison for email checking
+                if exclude_email is not None and user.get("email") == exclude_email:
                     continue
-                similarity_score = float(100 / (1 + dist))
+
+                skill_score = float(100 / (1 + dist))
+
+                # compute personality score - safely convert to numpy array
+                target_p = np.array(profile["personality_embedding"]).astype("float32")
+                dist_p = np.linalg.norm(personality_embedding_np - target_p)
+                personality_score = float(100 / (1 + dist_p))
+
+                # combine scores
+                overall_score = round((skill_score * 0.6 + personality_score * 0.4), 2)
+
                 matches.append({
                     "name": user.get("name", ""),
                     "technicalSkills": user.get("technicalSkills", []),
                     "preferredRoles": user.get("preferredRoles", []),
                     "projectInterests": user.get("projectInterests", []),
-                    "score": round(similarity_score, 2)
+                    "personality": user.get("personality", ""),
+                    "skillScore": round(skill_score, 2), #if i want to show the score
+                    "personalityScore": round(personality_score, 2), #if i want to show the personaity score
+                    "overallScore": overall_score
                 })
-                
+
             if len(matches) == k:
                 break
 

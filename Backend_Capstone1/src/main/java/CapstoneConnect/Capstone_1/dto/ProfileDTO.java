@@ -8,16 +8,15 @@ public class ProfileDTO {
     private Long userId; // ✅ Add this field
     private String name;
     private String email;
-    private String profilePicture;
+    private String profilePicture;    
     private List<String> technicalSkills;
     private List<String> projectInterests;
     private List<String> preferredRoles;
+    private String personality;
     private String github; // Add this field
 
-    public ProfileDTO() {}
-
-    public ProfileDTO(Long id, Long userId, String name, String email, String profilePicture, List<String> technicalSkills,
-                      List<String> projectInterests, List<String> preferredRoles, String github) {
+    public ProfileDTO() {}    public ProfileDTO(Long id, Long userId, String name, String email, String profilePicture, List<String> technicalSkills,
+                      List<String> projectInterests, List<String> preferredRoles, String personality, String github) {
         this.id = id;
         this.userId = userId;
         this.name = name;
@@ -26,6 +25,7 @@ public class ProfileDTO {
         this.technicalSkills = technicalSkills;
         this.projectInterests = projectInterests;
         this.preferredRoles = preferredRoles;
+        this.personality = personality;
         this.github = github; // Initialize new field
     }
 
@@ -92,13 +92,19 @@ public class ProfileDTO {
 
     public void setPreferredRoles(List<String> preferredRoles) {
         this.preferredRoles = preferredRoles;
-    }
-
-    public String getGithub() {
+    }    public String getGithub() {
         return github;
     }
 
     public void setGithub(String github) {
         this.github = github;
+    }
+    
+    public String getPersonality() {
+        return personality;
+    }
+    
+    public void setPersonality(String personality) {
+        this.personality = personality;
     }
 }

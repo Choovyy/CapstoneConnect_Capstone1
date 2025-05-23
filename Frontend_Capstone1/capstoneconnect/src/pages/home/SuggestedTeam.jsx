@@ -25,7 +25,6 @@ const SuggestedTeam = () => {
   const [error, setError] = useState(null);
 
   const location = useLocation();
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
@@ -43,37 +42,48 @@ const SuggestedTeam = () => {
     }
     
     // Only fetch data if authenticated
-    if (isAuthenticated) {
+    if (token || storedToken) {
       fetchSuggestedTeammates();
     } else {
       setLoading(false);
     }
-  }, [location, isAuthenticated]);
+  }, [location]);
 
   const handleSignIn = () => {
     window.location.href = '/';
   };
-  
-  const fetchSuggestedTeammates = async () => {
+    const fetchSuggestedTeammates = async () => {
     try {
       setLoading(true);
+      setError(null);
+      
       // Get current user info
-      const { userId } = await getUserId();
+      const userIdResponse = await getUserId();
+      const { userId } = userIdResponse;
       const profile = await getProfile(userId);
       
       // Get user's survey data
       const surveyData = await getSurvey(profile.id);
-        // Get matches based on the survey
+      
+      // Get matches based on the survey
       const matches = await getMatchesFromSurvey(surveyData);
       
+      console.log('Current userId:', userId);
+      console.log('Matches raw data:', matches);
+      
+      // Filter out the current user from matches based on name
+      const filteredMatches = matches.filter(match => match.name !== profile.name);
+      console.log('Filtered matches:', filteredMatches);
+      
       // Transform matches data to match our component's expected format
-      const formattedMatches = matches.map((match, index) => ({
+      const formattedMatches = filteredMatches.map((match, index) => ({
         id: index + 1,
         name: match.name || 'No Name',
         role: match.preferredRoles ? match.preferredRoles.join(', ') : 'No Role',
         skills: match.technicalSkills ? match.technicalSkills.join(', ') : 'No Skills',
         preference: match.projectInterests ? match.projectInterests.join(', ') : 'No Preferences',
-        score: match.score,
+        personality: match.personality || 'No Personality',
+        score: match.overallScore,
         img: placeholderImg
       }));
       
@@ -82,7 +92,14 @@ const SuggestedTeam = () => {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching suggested teammates:', err);
-      setError('Failed to load suggested teammates. Please try again later.');
+      if (err.message === 'Not authenticated' || err.message === 'User ID not found') {
+        // Clear token and set not authenticated if the token is invalid
+        sessionStorage.removeItem('jwtToken');
+        setIsAuthenticated(false);
+        setError('Your session has expired. Please sign in again.');
+      } else {
+        setError('Failed to load suggested teammates. Please try again later.');
+      }
       setLoading(false);
     }
   };
@@ -122,8 +139,11 @@ const SuggestedTeam = () => {
   };  const applyFilter = async () => {
     try {
       setLoading(true);
+      setError(null);
+      
       // Get current user info
-      const { userId } = await getUserId();
+      const userIdResponse = await getUserId();
+      const { userId } = userIdResponse;
       const profile = await getProfile(userId);
       
       // Get user's survey data
@@ -141,14 +161,19 @@ const SuggestedTeam = () => {
       
       // Get matches based on the filtered survey
       const matches = await getMatchesFromSurvey(filteredSurvey);
-        // Transform matches data to match our component's expected format
-      const formattedMatches = matches.map((match, index) => ({
+      
+      // Filter out the current user from matches based on name
+      const filteredMatches = matches.filter(match => match.name !== profile.name);
+      
+      // Transform matches data to match our component's expected format
+      const formattedMatches = filteredMatches.map((match, index) => ({
         id: index + 1,
         name: match.name || 'No Name',
         role: match.preferredRoles ? match.preferredRoles.join(', ') : 'No Role',
         skills: match.technicalSkills ? match.technicalSkills.join(', ') : 'No Skills',
         preference: match.projectInterests ? match.projectInterests.join(', ') : 'No Preferences',
-        score: match.score,
+        personality: match.personality || 'No Personality',
+        score: match.overallScore,
         img: placeholderImg
       }));
       
@@ -157,7 +182,14 @@ const SuggestedTeam = () => {
       setLoading(false);
     } catch (err) {
       console.error('Error applying filters:', err);
-      setError('Failed to apply filters. Please try again later.');
+      if (err.message === 'Not authenticated' || err.message === 'User ID not found') {
+        // Clear token and set not authenticated if the token is invalid
+        sessionStorage.removeItem('jwtToken');
+        setIsAuthenticated(false);
+        setError('Your session has expired. Please sign in again.');
+      } else {
+        setError('Failed to apply filters. Please try again later.');
+      }
       setLoading(false);
     }
   };
@@ -281,13 +313,14 @@ const SuggestedTeam = () => {
                         Send Request
                       </button>
                     </div>
-                  </div>
-                  {/* Back Side */}
+                  </div>                  {/* Back Side */}
                   <div className="suggested-team-card suggested-team-card-back">
                     <div className="suggested-team-label">Technical Skills</div>
                     <div className="suggested-team-data">{member.skills}</div>
                     <div className="suggested-team-label">Project Interest</div>
                     <div className="suggested-team-data">{member.preference}</div>
+                    <div className="suggested-team-label">Personality</div>
+                    <div className="suggested-team-data">{member.personality}</div>
                     <div className="suggested-team-label">Match Score</div>
                     <div className="suggested-team-data score">{member.score}%</div>
                   </div>

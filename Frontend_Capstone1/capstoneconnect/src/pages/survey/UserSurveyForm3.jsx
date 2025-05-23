@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getUserId, saveSurvey } from '../../api';
 import logo from '../../assets/logo.png';
 import NotSignedIn from '../NotSignedIn';
+import PersonalityQuiz from './PersonalityQuiz';
 
 const UserSurveyForm3 = () => {
   const navigate = useNavigate();
@@ -18,6 +19,9 @@ const UserSurveyForm3 = () => {
   const [otherSkill, setOtherSkill] = useState('');
   const [otherError, setOtherError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // New state for the quiz flow
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [personalityType, setPersonalityType] = useState('');
 
   // Check authentication and restore state from sessionStorage on mount
   useEffect(() => {
@@ -50,63 +54,131 @@ const UserSurveyForm3 = () => {
   const handleBack = () => {
     sessionStorage.setItem('surveyStep3', JSON.stringify({ skills, otherSkill }));
     navigate('/user-survey-form2'); 
-  };
-
-  // Helper to map skills object to array of selected strings for each step
+  };  // Helper to map skills object to array of selected strings for each step
   function extractSelectedSkills(skillsObj, otherSkill, mapping) {
     return Object.entries(skillsObj)
       .filter(([key, checked]) => checked && mapping[key])
       .map(([key]) => mapping[key] === '__OTHER__' ? (otherSkill && otherSkill.trim() ? otherSkill.trim() : null) : mapping[key])
       .filter(Boolean);
   }
-  const handleSubmit = async () => {
-    // Retrieve all answers from sessionStorage
-    const step1 = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
-    const step2 = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
+
+  // This is now the "Next" button which leads to the quiz
+  const handleContinueToQuiz = () => {
+    if (isOtherInvalid) {
+      setOtherError('Please specify your other interest');
+      return;
+    }
+    sessionStorage.setItem('surveyStep3', JSON.stringify({ skills, otherSkill }));
+    setShowQuiz(true);
+  };
+
+  // New handler for when personality quiz is completed
+  const handleQuizComplete = async (personalityResult) => {
+    console.log('Quiz completed with result:', personalityResult);
     
-    // Step 2: Technical Skills
-    const technicalSkillsMapping = {
-      cLanguage: 'C Language',
-      php: 'PHP',
-      htmlCss: 'HTML and CSS',
-      javascript: 'JavaScript',
-      java: 'Java',
-      python: 'Python',
-      other: '__OTHER__',
-    };
+    // Validate personality result
+    if (!personalityResult || personalityResult.trim() === '') {
+      console.error('ERROR: Received empty personality result from quiz');
+      personalityResult = 'Unknown'; // Set default value
+    }
     
-    // Step 3: Project Interests
-    const projectInterestsMapping = {
-      cLanguage: 'Web App Development',
-      php: 'E-Commerce Systems',
-      htmlCss: 'Mobile App Development',
-      javascript: 'Game Development',
-      java: 'Task Management Systems',
-      python: 'AI Development',
-      other: '__OTHER__',
-    };
-    
-    // Get single role from step1 (it's a direct value, not using the mapping function)
-    const preferredRoles = step1.selectedRole ? [step1.selectedRole] : [];
-    
-    const technicalSkills = extractSelectedSkills(step2.skills || {}, step2.otherSkill, technicalSkillsMapping);
-    const projectInterests = extractSelectedSkills(skills, otherSkill, projectInterestsMapping);
-    const surveyData = {
-      preferredRoles,
-      technicalSkills,
-      projectInterests,
-    };
-    // Get JWT and userId as before
-    const token = sessionStorage.getItem('jwtToken');
-    const { userId } = await getUserId(token); // Or your existing method to get userId
-    // Submit to backend
-    await saveSurvey(userId, surveyData);
-    // Optionally clear survey data from sessionStorage
-    sessionStorage.removeItem('surveyStep1');
-    sessionStorage.removeItem('surveyStep2');
-    sessionStorage.removeItem('surveyStep3');
-    // ...navigate to home or next page...
-    navigate('/home');
+    setPersonalityType(personalityResult);
+
+    try {
+      // Now submit everything including the personality
+      const step1 = JSON.parse(sessionStorage.getItem('surveyStep1') || '{}');
+      const step2 = JSON.parse(sessionStorage.getItem('surveyStep2') || '{}');
+      
+      // Log session storage data for debugging
+      console.log('Step 1 data:', step1);
+      console.log('Step 2 data:', step2);
+      console.log('Step 3 skills:', skills);
+      console.log('Step 3 otherSkill:', otherSkill);
+      console.log('Personality result:', personalityResult);
+      
+      // Step 2: Technical Skills
+      const technicalSkillsMapping = {
+        cLanguage: 'C Language',
+        php: 'PHP',
+        htmlCss: 'HTML and CSS',
+        javascript: 'JavaScript',
+        java: 'Java',
+        python: 'Python',
+        other: '__OTHER__',
+      };
+      
+      // Step 3: Project Interests
+      const projectInterestsMapping = {
+        cLanguage: 'Web App Development',
+        php: 'E-Commerce Systems',
+        htmlCss: 'Mobile App Development',
+        javascript: 'Game Development',
+        java: 'Task Management Systems',
+        python: 'AI Development',
+        other: '__OTHER__',
+      };
+      
+      // Get single role from step1 (it's a direct value, not using the mapping function)
+      const preferredRoles = step1.selectedRole ? [step1.selectedRole] : [];
+      
+      const technicalSkills = extractSelectedSkills(step2.skills || {}, step2.otherSkill || '', technicalSkillsMapping);
+      const projectInterests = extractSelectedSkills(skills || {}, otherSkill || '', projectInterestsMapping);
+      
+      // Validate that we have at least some data to submit
+      if (!preferredRoles.length) {
+        console.warn('No preferred roles found in session storage');
+      }
+      if (!technicalSkills.length) {
+        console.warn('No technical skills found in session storage');
+      }
+      if (!projectInterests.length) {
+        console.warn('No project interests found in the current form');
+      }
+      
+      // Include personality in the survey data
+      const surveyData = {
+        preferredRoles,
+        technicalSkills,
+        projectInterests,
+        personality: personalityResult || 'Unknown' // Ensure we don't send null or empty string
+      };
+      
+      // Get JWT and userId
+      const token = sessionStorage.getItem('jwtToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      // Log the stringified data to see the exact format being sent
+      console.log('Saving survey data JSON:', JSON.stringify(surveyData));
+      
+      // Get user ID in a safer way
+      const userIdResponse = await getUserId();
+      if (!userIdResponse || !userIdResponse.userId) {
+        throw new Error('Failed to retrieve user ID');
+      }
+      const userId = userIdResponse.userId;
+      
+      console.log('User ID:', userId);
+      console.log('Saving survey data:', surveyData);
+      
+      // Submit to backend
+      const response = await saveSurvey(userId, surveyData);
+      console.log('Survey save response:', response);
+      
+      // Optionally clear survey data from sessionStorage
+      sessionStorage.removeItem('surveyStep1');
+      sessionStorage.removeItem('surveyStep2');
+      sessionStorage.removeItem('surveyStep3');
+      
+      // Navigate to home page
+      console.log('Survey saved successfully, navigating to home page');
+      navigate('/home');
+    } catch (error) {
+      console.error('Error saving survey:', error);
+      // More detailed error message
+      alert(`There was an error saving your survey: ${error.message || 'Unknown error'}. Please try again.`);
+    }
   };
 
   const checkboxWrapper = {
@@ -119,7 +191,6 @@ const UserSurveyForm3 = () => {
     marginLeft: '30px',
     marginBottom: '4px',
   };
-
   const styles = {
     container: {
       display: 'flex',
@@ -145,7 +216,7 @@ const UserSurveyForm3 = () => {
       maxWidth: '800px',
       margin: '32px auto',
       padding: '32px',
-      backgroundColor: '#CA9F58',
+      backgroundColor: showQuiz ? '#FFFFFF' : '#CA9F58',
       borderRadius: '8px',
     },
     form: {
@@ -275,9 +346,31 @@ const UserSurveyForm3 = () => {
       fontFamily: 'Poppins, sans-serif',
     }
   };
-
   if (!isAuthenticated) {
     return <NotSignedIn onSignIn={handleSignIn} />;
+  }
+  
+  // Show the personality quiz if we're at that step
+  if (showQuiz) {
+    return (
+      <div style={styles.container}>
+        <header style={styles.header}>
+          <h1 style={styles.title}>Personality Quiz</h1>
+        </header>
+        
+        <main style={styles.main}>
+          <PersonalityQuiz onComplete={handleQuizComplete} />
+        </main>
+        
+        <footer style={styles.footer}>
+          <img src={logo} alt="CapstoneConnect Logo" style={styles.logo} />
+          <span>
+            <span style={styles.capstoneText}>Capstone</span>
+            <span style={styles.connectText}>Connect</span>
+          </span>
+        </footer>
+      </div>
+    );
   }
 
   return (
@@ -351,15 +444,13 @@ const UserSurveyForm3 = () => {
               onClick={handleBack}
             >
               Back
-            </button>
-
-            <button 
+            </button>            <button 
               type="button" 
               style={styles.submitButton}
-              onClick={handleSubmit}
+              onClick={handleContinueToQuiz}
               disabled={isSubmitDisabled}
             >
-              Submit
+              Next
             </button>
           </div>
         </form>

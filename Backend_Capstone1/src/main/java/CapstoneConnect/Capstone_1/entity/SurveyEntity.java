@@ -21,12 +21,13 @@ public class SurveyEntity {
     @ElementCollection
     @CollectionTable(name = "survey_project_interests", joinColumns = @JoinColumn(name = "survey_id"))
     @Column(name = "project_interest")
-    private List<String> projectInterests;
-
-    @ElementCollection
+    private List<String> projectInterests;    @ElementCollection
     @CollectionTable(name = "survey_preferred_roles", joinColumns = @JoinColumn(name = "survey_id"))
     @Column(name = "preferred_role")
     private List<String> preferredRoles;
+    
+    @Column(name = "personality")
+    private String personality;
 
     // Getters and Setters
     public Long getId() {
@@ -55,19 +56,24 @@ public class SurveyEntity {
 
     public List<String> getPreferredRoles() {
         return preferredRoles;
-    }
-
-    public void setPreferredRoles(List<String> preferredRoles) {
+    }    public void setPreferredRoles(List<String> preferredRoles) {
         this.preferredRoles = preferredRoles;
     }
+    
+    public String getPersonality() {
+        return personality;
+    }
 
-    // SurveyDTO conversion
+    public void setPersonality(String personality) {
+        this.personality = personality;
+    }    // SurveyDTO conversion
     public SurveyDTO toDTO() {
         SurveyDTO surveyDTO = new SurveyDTO();
         surveyDTO.setId(this.id);
         surveyDTO.setTechnicalSkills(this.technicalSkills);
         surveyDTO.setProjectInterests(this.projectInterests);
         surveyDTO.setPreferredRoles(this.preferredRoles);
+        surveyDTO.setPersonality(this.personality);
         return surveyDTO;
     }
 

@@ -7,16 +7,22 @@ public class MatchResultDTO {
     private List<String> technicalSkills;
     private List<String> preferredRoles;
     private List<String> projectInterests;
-    private double score;  // compatibility score
+    private String personality;
+    private double overallScore;  // compatibility score
+    private double skillScore;    // score based on technical skills
+    private double personalityScore; // score based on personality
 
-    public MatchResultDTO() {}
-
-    public MatchResultDTO(String name, List<String> technicalSkills, List<String> preferredRoles, List<String> projectInterests, double score) {
+    public MatchResultDTO() {}    public MatchResultDTO(String name, List<String> technicalSkills, List<String> preferredRoles,
+                      List<String> projectInterests, String personality, double overallScore, 
+                      double skillScore, double personalityScore) {
         this.name = name;
         this.technicalSkills = technicalSkills;
         this.preferredRoles = preferredRoles;
         this.projectInterests = projectInterests;
-        this.score = score;
+        this.personality = personality;
+        this.overallScore = overallScore;
+        this.skillScore = skillScore;
+        this.personalityScore = personalityScore;
     }
 
     // Getters and Setters
@@ -52,11 +58,33 @@ public class MatchResultDTO {
         this.projectInterests = projectInterests;
     }
 
-    public double getScore() {
-        return score;
+    public String getPersonality() {
+        return personality;
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    public void setPersonality(String personality) {
+        this.personality = personality;
+    }
+
+    public double getOverallScore() {
+        return overallScore;
+    }    public void setOverallScore(double overallScore) {
+        this.overallScore = overallScore;
+    }
+    
+    public double getSkillScore() {
+        return skillScore;
+    }
+
+    public void setSkillScore(double skillScore) {
+        this.skillScore = skillScore;
+    }
+
+    public double getPersonalityScore() {
+        return personalityScore;
+    }
+
+    public void setPersonalityScore(double personalityScore) {
+        this.personalityScore = personalityScore;
     }
 }

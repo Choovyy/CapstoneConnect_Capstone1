@@ -1,6 +1,7 @@
 package CapstoneConnect.Capstone_1.service;
 
 import CapstoneConnect.Capstone_1.dto.SurveyDTO;
+import CapstoneConnect.Capstone_1.dto.MatchResultDTO;
 import CapstoneConnect.Capstone_1.entity.ProfileEntity;
 import CapstoneConnect.Capstone_1.entity.SurveyEntity;
 import CapstoneConnect.Capstone_1.entity.UserEntity;
@@ -101,56 +102,79 @@ public class SurveyService {    @Autowired
         sendSurveyToMatchingService(profile.getUser(), savedSurvey.toDTO());
         
         return savedSurvey.toDTO();
-    }
-
-    private void applySurveyDTOToEntity(SurveyDTO dto, SurveyEntity entity) {
+    }    private void applySurveyDTOToEntity(SurveyDTO dto, SurveyEntity entity) {
         entity.setTechnicalSkills(dto.getTechnicalSkills());
         entity.setProjectInterests(dto.getProjectInterests());
         entity.setPreferredRoles(dto.getPreferredRoles());
-    }    private void updateUserFirstTimeFlag(UserEntity user) {
+        
+        // Ensure personality is never null or empty
+        String personality = dto.getPersonality();
+        if (personality == null || personality.trim().isEmpty()) {
+            personality = "Unknown";
+            System.out.println("⚠️ Empty personality detected, using default: 'Unknown'");
+        }
+        entity.setPersonality(personality);
+    }private void updateUserFirstTimeFlag(UserEntity user) {
         if (user != null && user.isFirstTimeUser()) {
             user.setFirstTimeUser(false);
             userRepository.save(user);
         }
     }    private void sendSurveyToMatchingService(UserEntity user, SurveyDTO survey) {
-    if (user == null || survey == null) {
-        System.err.println("❌ Cannot send null user or survey data to matching service");
-        return;
-    }
-    
-    RestTemplate restTemplate = new RestTemplate();
-    String fastApiUrl = matchingServiceUrl + "/add_profile";
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-
-    Map<String, Object> payload = new HashMap<>();
-    payload.put("email", user.getEmail());
-    payload.put("name", user.getName());
-    payload.put("technicalSkills", survey.getTechnicalSkills());
-    payload.put("preferredRoles", survey.getPreferredRoles());
-    payload.put("projectInterests", survey.getProjectInterests());
-
-    try {
-        // Log what we're about to send
-        System.out.println("✅ Sending data to matching service for user: " + user.getEmail());
-        
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonPayload = mapper.writeValueAsString(payload);
-        HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(fastApiUrl, request, String.class);
-        
-        // Check response status
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("✅ Successfully sent to matching service: " + response.getBody());
-        } else {
-            System.err.println("❌ Matching service returned error status: " + response.getStatusCode());
+        if (user == null || survey == null) {
+            System.err.println("❌ Cannot send null user or survey data to matching service");
+            return;
         }
+        
+        // Check if personality is set
+        if (survey.getPersonality() == null || survey.getPersonality().isEmpty()) {
+            System.err.println("❌ Personality is null or empty for user: " + user.getEmail());
+            // Set a default value to avoid errors
+            survey.setPersonality("Unknown");
+        }
+        
+        RestTemplate restTemplate = new RestTemplate();
+        String fastApiUrl = matchingServiceUrl + "/add_profile";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);    
+        
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("email", user.getEmail());
+        payload.put("name", user.getName());
+        payload.put("technicalSkills", survey.getTechnicalSkills());
+        payload.put("preferredRoles", survey.getPreferredRoles());
+        payload.put("projectInterests", survey.getProjectInterests());
+        payload.put("personality", survey.getPersonality());
+
+        try {
+            // Log what we're about to send
+            System.out.println("✅ Sending data to matching service for user: " + user.getEmail());
+            
+            // Log the actual payload for debugging
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonPayload = mapper.writeValueAsString(payload);
+            System.out.println("📦 Payload: " + jsonPayload);
+            
+            HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(fastApiUrl, request, String.class);
+            
+            // Check response status
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("✅ Successfully sent to matching service: " + response.getBody());
+            } else {
+                System.err.println("❌ Matching service returned error status: " + response.getStatusCode());
+                System.err.println("❌ Response body: " + response.getBody());
+            }
     } catch (Exception e) {
         System.err.println("❌ Error calling matching service: " + e.getMessage());
+        // Try to determine if it's a connection issue
+        if (e.getMessage().contains("Connection refused") || e.getMessage().contains("Connection timed out")) {
+            System.err.println("❌ Could not connect to matching service at URL: " + fastApiUrl);
+            System.err.println("❌ Make sure the Python FastAPI service is running on the expected port");
+        }
         e.printStackTrace(); // Added for more detailed debugging
     }
-  }  public List<Map<String, Object>> getMatchesFromAISystem(SurveyDTO surveyDTO) {
+  }  public List<MatchResultDTO> getMatchesFromAISystem(SurveyDTO surveyDTO) {
     if (surveyDTO == null) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey data cannot be null");
     }
@@ -165,7 +189,8 @@ public class SurveyService {    @Autowired
     requestBody.put("technicalSkills", surveyDTO.getTechnicalSkills());
     requestBody.put("preferredRoles", surveyDTO.getPreferredRoles());
     requestBody.put("projectInterests", surveyDTO.getProjectInterests());
-    // Optional: requestBody.put("email", yourUserEmail); ← to exclude self
+    requestBody.put("personality", surveyDTO.getPersonality());
+    
 
     HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
@@ -173,31 +198,50 @@ public class SurveyService {    @Autowired
         // Log what we're about to send
         System.out.println("✅ Requesting matches from AI system");
         
+        // Log request body for debugging
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonRequestBody = mapper.writeValueAsString(requestBody);
+        System.out.println("📦 Request body: " + jsonRequestBody);
+        
         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
         
         // Check response status
         if (!response.getStatusCode().is2xxSuccessful()) {
             System.err.println("❌ Matching service returned error status: " + response.getStatusCode());
+            System.err.println("❌ Response body: " + response.getBody());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
                                              "Matching service returned status " + response.getStatusCode());
         }
         
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, List<Map<String, Object>>> responseMap = mapper.readValue(
-            response.getBody(), 
-            new TypeReference<Map<String, List<Map<String, Object>>>>() {}
-        );
+        // Log response for debugging
+        System.out.println("✅ Received response: " + response.getBody());
         
-        List<Map<String, Object>> matches = responseMap.get("matches");
-        System.out.println("✅ Received " + (matches != null ? matches.size() : 0) + " matches from AI system");
-        
-        if (matches == null) {
-            return new ArrayList<>(); // Return empty list instead of null
+        try {
+            mapper = new ObjectMapper();
+            Map<String, List<MatchResultDTO>> responseMap = mapper.readValue(
+                response.getBody(), 
+                new TypeReference<Map<String, List<MatchResultDTO>>>() {}
+            );
+            
+            List<MatchResultDTO> matches = responseMap.get("matches");
+            System.out.println("✅ Received " + (matches != null ? matches.size() : 0) + " matches from AI system");
+            
+            if (matches == null) {
+                return new ArrayList<>(); // Return empty list instead of null
+            }
+            
+            return matches;
+        } catch (Exception e) {
+            System.err.println("❌ Error parsing response from matching service: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error parsing response from matching service: " + e.getMessage());
         }
-        
-        return matches;
     } catch (Exception e) {
         System.err.println("❌ Error calling /match: " + e.getMessage());
+        // Try to determine if it's a connection issue
+        if (e.getMessage().contains("Connection refused") || e.getMessage().contains("Connection timed out")) {
+            System.err.println("❌ Could not connect to matching service at URL: " + url);
+            System.err.println("❌ Make sure the Python FastAPI service is running on the expected port");
+        }
         e.printStackTrace(); // Added for more detailed debugging
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Matching service unavailable: " + e.getMessage());
     }

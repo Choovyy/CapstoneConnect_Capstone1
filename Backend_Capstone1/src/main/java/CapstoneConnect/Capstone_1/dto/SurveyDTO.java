@@ -8,14 +8,14 @@ public class SurveyDTO {
     private List<String> technicalSkills;
     private List<String> projectInterests;
     private List<String> preferredRoles;
+    private String personality;    public SurveyDTO() {}
 
-    public SurveyDTO() {}
-
-    public SurveyDTO(Long id, List<String> technicalSkills, List<String> projectInterests, List<String> preferredRoles) {
+    public SurveyDTO(Long id, List<String> technicalSkills, List<String> projectInterests, List<String> preferredRoles, String personality) {
         this.id = id;
         this.technicalSkills = technicalSkills;
         this.projectInterests = projectInterests;
         this.preferredRoles = preferredRoles;
+        this.personality = personality;
     }
 
     // Getters and Setters
@@ -45,9 +45,13 @@ public class SurveyDTO {
 
     public List<String> getPreferredRoles() {
         return preferredRoles;
+    }    public void setPreferredRoles(List<String> preferredRoles) {
+        this.preferredRoles = preferredRoles;
+    }    public String getPersonality() {
+        return personality != null ? personality : "Unknown";
     }
 
-    public void setPreferredRoles(List<String> preferredRoles) {
-        this.preferredRoles = preferredRoles;
+    public void setPersonality(String personality) {
+        this.personality = personality != null && !personality.trim().isEmpty() ? personality : "Unknown";
     }
 }
