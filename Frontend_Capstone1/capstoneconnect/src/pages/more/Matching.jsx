@@ -74,7 +74,7 @@ const Matching = () => {
       
       <div className="matching-container">
         <div className="matching-filter">
-          <h1 className="matching-title">Matching Members/Applicants</h1>
+          <h1 className="matching-title">Your Matches</h1>
         </div>
         <div className="matching-cards">
           {matchingMembers.map((member, idx) => (
@@ -99,7 +99,7 @@ const Matching = () => {
                       className="btn matching-approve"
                       onClick={e => { e.stopPropagation(); /* handleApprove(member.id) */ }}
                     >
-                      Approve
+                      Email via Outlook
                     </button>
                     <button
                       className="btn matching-reject"

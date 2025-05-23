@@ -46,23 +46,11 @@ const Navigation = ({ onLogout }) => {
           <li className="nav-item">
             <Link to="/team">Team</Link>
           </li>
-          <li className="nav-item dropdown" ref={dropdownRef}>
-            <button onClick={toggleDropdown} className="dropdown-toggle">
-              More
-            </button>
-            {dropdownOpen && (
-              <ul className="dropdown-menu">
-                <li>
-                  <Link to="/pending-team">Apply Member</Link>
-                </li>
-                <li>
-                  <Link to="/matching">Matching Member</Link>
-                </li>
-                <li>
-                  <Link to="/sent-request">Sent Requests</Link>
-                </li>
-              </ul>
-            )}
+          <li className="nav-item">
+            <Link to="/matching">Your Match</Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/sent-request">Sent Requests</Link>
           </li>
         </ul>
       </nav>

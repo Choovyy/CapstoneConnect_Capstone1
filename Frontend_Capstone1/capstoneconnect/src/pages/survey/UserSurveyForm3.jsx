@@ -74,6 +74,12 @@ const UserSurveyForm3 = () => {
 
   // New handler for when personality quiz is completed
   const handleQuizComplete = async (personalityResult) => {
+    // Handle going back to Project Interests
+    if (personalityResult === 'back_to_interests') {
+      setShowQuiz(false);
+      return;
+    }
+    
     console.log('Quiz completed with result:', personalityResult);
     
     // Validate personality result
@@ -216,7 +222,7 @@ const UserSurveyForm3 = () => {
       maxWidth: '800px',
       margin: '32px auto',
       padding: '32px',
-      backgroundColor: showQuiz ? '#FFFFFF' : '#CA9F58',
+      backgroundColor: '#CA9F58',
       borderRadius: '8px',
     },
     form: {
@@ -326,7 +332,7 @@ const UserSurveyForm3 = () => {
     submitButton: {
       backgroundColor: isSubmitDisabled ? '#999' : '#267987',
       color: 'white',
-      padding: '5px 21px',
+      padding: '5px 32px',
       border: 'none',
       borderRadius: '4px',
       cursor: isSubmitDisabled ? 'not-allowed' : 'pointer',
@@ -355,7 +361,7 @@ const UserSurveyForm3 = () => {
     return (
       <div style={styles.container}>
         <header style={styles.header}>
-          <h1 style={styles.title}>Personality Quiz</h1>
+          <h1 style={styles.title}>User Preference Survey</h1>
         </header>
         
         <main style={styles.main}>

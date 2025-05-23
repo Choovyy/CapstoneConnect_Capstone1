@@ -17,21 +17,25 @@ const NotificationModal = ({ notifications, onClose }) => {
       <div className="notifm-modal">
         <div className="notifm-header">
           <h2>All Notifications</h2>
-          <button className="notifm-close-button" onClick={onClose}>X</button>
+          <button className="notifm-close-button" onClick={onClose}>&times;</button>
         </div>
         <div className="notifm-content">
-          {notifications.map((notification) => (
-            <div className="notifm-item" key={notification.id}>
-              <div
-                className="notifm-avatar"
-                style={{ backgroundColor: notification.color || '#ddd' }}
-              ></div>
-              <div className="notifm-content-text">
-                <p className="notifm-message">{notification.message}</p>
-                <p className="notifm-date">{notification.date}</p>
+          {notifications.length === 0 ? (
+            <div>No notifications found.</div>
+          ) : (
+            notifications.map((notification) => (
+              <div className="notifm-item" key={notification.id}>
+                <div
+                  className="notifm-avatar"
+                  style={{ backgroundColor: notification.color || '#ddd' }}
+                ></div>
+                <div className="notifm-content-text">
+                  <p className="notifm-message">{notification.message}</p>
+                  <p className="notifm-date">{notification.date}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

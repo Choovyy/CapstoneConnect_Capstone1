@@ -11,14 +11,46 @@
 
 .tc-filter {
   margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .tc-title {
   text-align: left;
   font-size: 35px;
   font-weight: 500;
-  margin-bottom: 16px;
+  margin-bottom: 30px;
   color: #040316;
+}
+
+.tc-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.pending-members-btn {
+  background-color: #CA9F58;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-members-btn:hover {
+  background-color: #b78e47;
+}
+
+.pending-members-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .tc-main {

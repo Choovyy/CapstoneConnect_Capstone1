@@ -1,176 +1,219 @@
-
-.personality-quiz-container {
+.pq-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #CA9F58;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
 }
 
-.personality-quiz-header {
+.pq-header {
     text-align: center;
     margin-bottom: 30px;
 }
 
-.personality-quiz-header h2 {
+.pq-header h2 {
     font-size: 28px;
-    color: #333;
+    color: #FFFFFF;
     margin-bottom: 10px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
 }
 
-.personality-quiz-header p {
+.pq-header p {
     font-size: 16px;
-    color: #666;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
 }
 
-.quiz-question {
+.pq-question {
     margin-bottom: 30px;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #CA9F58;
     border-radius: 8px;
-    border-left: 4px solid #3498db;
+    border-left: none;
+    text-align: center;
 }
 
-.quiz-question h3 {
+.pq-question h3 {
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 18px;
-    color: #444;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    font-weight: normal;
 }
 
-.options-container {
+.pq-options-container {
     display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+    width: 100%;
 }
 
-@media (max-width: 768px) {
-    .options-container {
-        flex-direction: column;
-    }
-}
-
-.option-item {
+.pq-option-item {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    white-space: nowrap;
 }
 
-.option-item input[type="radio"] {
-    margin-right: 10px;
+.pq-option-item input[type="radio"] {
+    margin-right: 8px;
+    cursor: pointer;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid white;
+    border-radius: 50%;
+    outline: none;
+    position: relative;
 }
 
-.option-item label {
+.pq-option-item input[type="radio"]:checked {
+    background-color: #514BC3;
+    border-color: white;
+}
+
+.pq-option-item label {
     font-size: 15px;
-    color: #555;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
+    margin-left: 0;
+    cursor: pointer;
 }
 
-.quiz-navigation {
+.pq-navigation {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-top: 30px;
 }
 
-.quiz-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.pq-navigation > div {
+    display: flex;
+    gap: 10px;
 }
 
-.back-button {
-    background-color: #f1f1f1;
-    color: #333;
-}
-
-.back-button:hover {
-    background-color: #e0e0e0;
-}
-
-.next-button, .submit-button {
-    background-color: #3498db;
+/* Style for Previous button */
+.pq-button-previous {
+    background-color: #CA9F58;
     color: white;
+    padding: 5px 32px;
+    border: 1px solid #FFFFFF;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
 }
 
-.next-button:hover, .submit-button:hover {
-    background-color: #2980b9;
+.pq-button-previous.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
-.submit-button {
-    background-color: #27ae60;
+/* Style for Next/Submit button */
+.pq-button-next, 
+.pq-button-submit {
+    background-color: #267987;
+    color: white;
+    padding: 5px 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
 }
 
-.submit-button:hover {
-    background-color: #219653;
-}
-
-.result-container {
+/* Result container styles */
+.pq-result-container {
     text-align: center;
     padding: 30px;
-    background-color: #f9f9f9;
+    background-color: #CA9F58;
     border-radius: 10px;
     margin-top: 20px;
+    box-shadow: none;
 }
 
-.result-title {
+.pq-result-title {
     font-size: 24px;
-    color: #333;
+    color: #FFFFFF;
     margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
 }
 
-.personality-type {
+.pq-personality-type {
     font-size: 36px;
-    color: #3498db;
+    color: #FFFFFF;
     margin: 20px 0;
     font-weight: bold;
+    font-family: 'Poppins', sans-serif;
 }
 
-.result-description {
+.pq-result-description {
     font-size: 16px;
-    color: #555;
+    color: #FFFFFF;
     margin-bottom: 25px;
     line-height: 1.6;
+    font-family: 'Poppins', sans-serif;
 }
 
-.continue-button {
-    padding: 12px 25px;
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.continue-button:hover {
-    background-color: #219653;
-}
-
-.quiz-progress {
+.pq-progress {
     margin-bottom: 20px;
     background-color: #e0e0e0;
     border-radius: 10px;
     height: 8px;
 }
 
-.quiz-progress-bar {
+.pq-progress-bar {
     height: 100%;
     border-radius: 10px;
-    background-color: #3498db;
+    background-color: #267987;
     transition: width 0.3s ease;
 }
 
-.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.pq-question-number {
+    font-size: 14px;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
 }
 
-.question-number {
-    font-size: 14px;
-    color: #777;
-    margin-bottom: 5px;
+/* Continue button styling */
+.pq-continue-button {
+    padding: 5px 32px;
+    background-color: #267987;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+.pq-continue-button:hover {
+    background-color: #267987;
+}
+
+/* Back button style without hover effect */
+.pq-back-button {
+    background-color: #CA9F58;
+    color: white;
+    padding: 5px 32px;
+    border: 1px solid #FFFFFF;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    margin-right: auto;
+}
+
+/* Remove hover class */
+.pq-back-button:hover {
+    background-color: #CA9F58;
 }

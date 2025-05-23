@@ -8,7 +8,6 @@ import UserSurveyForm3 from './pages/survey/UserSurveyForm3.jsx';
 import SuggestedTeam from './pages/home/SuggestedTeam.jsx';
 import Project from './pages/project/Project.jsx';
 import Team from './pages/team/Team.jsx';
-import PendingTeam from './pages/more/PendingTeam.jsx';
 import Profile from './pages/profile/Profile.jsx';
 import ProfileEdit from './pages/profile/ProfileEdit.jsx';
 import YourProject from './pages/profile/YourProject.jsx';
@@ -27,7 +26,6 @@ function App() {
           <Route path="/user-survey-form3" element={<UserSurveyForm3 />} />
           <Route path="/project" element={<Project />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/pending-team" element={<PendingTeam />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile-edit" element={<ProfileEdit />} />
           <Route path="/your-project" element={<YourProject />} />

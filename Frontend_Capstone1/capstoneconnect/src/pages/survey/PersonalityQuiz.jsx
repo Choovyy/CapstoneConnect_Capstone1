@@ -58,7 +58,17 @@ const PersonalityQuiz = ({ onComplete }) => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
-  };  const submitQuiz = async () => {
+  };  
+  
+  // Add a new function to handle going back to Project Interests
+  const handleBackToProjectInterests = () => {
+    // Call onComplete with a special value to indicate going back
+    if (onComplete) {
+      onComplete('back_to_interests');
+    }
+  };
+
+  const submitQuiz = async () => {
     try {
       setIsLoading(true);
       
@@ -131,20 +141,20 @@ const PersonalityQuiz = ({ onComplete }) => {
   };
 
   if (isLoading) {
-    return <div className="personality-quiz-container">Loading...</div>;
+    return <div className="pq-container">Loading...</div>;
   }
   if (questions.length === 0) {
     return (
-      <div className="personality-quiz-container">
-        <div className="result-container">
-          <h2 className="result-title">No questions available</h2>
-          <p className="result-description">
+      <div className="pq-container">
+        <div className="pq-result-container">
+          <h2 className="pq-result-title">No questions available</h2>
+          <p className="pq-result-description">
             The quiz questions couldn't be loaded. This might be because:
             <br />- The backend server is not running
             <br />- Quiz questions haven't been initialized in the database
             <br />- There's a connection issue between frontend and backend
           </p>
-          <button className="continue-button" onClick={() => window.location.reload()}>
+          <button className="pq-continue-button" onClick={() => window.location.reload()}>
             Try Again
           </button>
         </div>
@@ -154,17 +164,29 @@ const PersonalityQuiz = ({ onComplete }) => {
 
   if (showResults) {
     return (
-      <div className="personality-quiz-container">
-        <div className="result-container">
-          <h2 className="result-title">Your Personality Type:</h2>
-          <div className="personality-type">{personalityResult}</div>
-          <p className="result-description">
+      <div className="pq-container">
+        <div className="pq-header">
+          <h2>Personality Quiz</h2>
+          <p>Discover how you can best contribute to a project team</p>
+        </div>
+        
+        <div className="pq-result-container">
+          <h2 className="pq-result-title">Your Personality Type:</h2>
+          <div className="pq-personality-type">{personalityResult}</div>
+          <p className="pq-result-description">
             This personality type reflects your preferences in teamwork, project approach, and problem-solving style. 
             We'll use this information to match you with compatible team members for your projects.
           </p>
-          <button className="continue-button" onClick={handleContinue}>
-            Continue
-          </button>
+          <div className="pq-navigation">
+            <button className="pq-back-button" onClick={handleBackToProjectInterests}>
+              Back
+            </button>
+            <div>
+              <button className="pq-continue-button" onClick={handleContinue}>
+                Continue
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -174,66 +196,123 @@ const PersonalityQuiz = ({ onComplete }) => {
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="personality-quiz-container">
-      <div className="personality-quiz-header">
+    <div className="pq-container">
+      <div className="pq-header">
         <h2>Personality Quiz</h2>
         <p>Discover how you can best contribute to a project team</p>
       </div>
 
-      <div className="quiz-progress">
+      <div className="pq-progress">
         <div 
-          className="quiz-progress-bar" 
+          className="pq-progress-bar" 
           style={{ width: `${progress}%` }}
         ></div>
       </div>
 
-      <div className="quiz-question">
-        <div className="question-number">
+      <div className="pq-question">
+        <div className="pq-question-number">
           Question {currentQuestionIndex + 1} of {questions.length}
         </div>
         <h3>{currentQuestion.questionText}</h3>
         
-        <div className="options-container">
-          {[
-            { value: 1, label: currentQuestion.option1 },
-            { value: 2, label: currentQuestion.option2 },
-            { value: 3, label: currentQuestion.option3 },
-            { value: 4, label: currentQuestion.option4 },
-            { value: 5, label: currentQuestion.option5 }
-          ].map((option) => (
-            <div key={option.value} className="option-item">
-              <input
-                type="radio"
-                id={`option-${currentQuestion.id}-${option.value}`}
-                name={`question-${currentQuestion.id}`}
-                value={option.value}
-                checked={answers[currentQuestion.id] === option.value}
-                onChange={() => handleAnswerChange(currentQuestion.id, option.value)}
-              />
-              <label htmlFor={`option-${currentQuestion.id}-${option.value}`}>
-                {option.label}
-              </label>
-            </div>
-          ))}
+        <div className="pq-options-container">
+          <div className="pq-option-item">
+            <input
+              type="radio"
+              id={`option-${currentQuestion.id}-1`}
+              name={`question-${currentQuestion.id}`}
+              value={1}
+              checked={answers[currentQuestion.id] === 1}
+              onChange={() => handleAnswerChange(currentQuestion.id, 1)}
+            />
+            <label htmlFor={`option-${currentQuestion.id}-1`}>
+              {currentQuestion.option1}
+            </label>
+          </div>
+          
+          <div className="pq-option-item">
+            <input
+              type="radio"
+              id={`option-${currentQuestion.id}-2`}
+              name={`question-${currentQuestion.id}`}
+              value={2}
+              checked={answers[currentQuestion.id] === 2}
+              onChange={() => handleAnswerChange(currentQuestion.id, 2)}
+            />
+            <label htmlFor={`option-${currentQuestion.id}-2`}>
+              {currentQuestion.option2}
+            </label>
+          </div>
+          
+          <div className="pq-option-item">
+            <input
+              type="radio"
+              id={`option-${currentQuestion.id}-3`}
+              name={`question-${currentQuestion.id}`}
+              value={3}
+              checked={answers[currentQuestion.id] === 3}
+              onChange={() => handleAnswerChange(currentQuestion.id, 3)}
+            />
+            <label htmlFor={`option-${currentQuestion.id}-3`}>
+              {currentQuestion.option3}
+            </label>
+          </div>
+          
+          <div className="pq-option-item">
+            <input
+              type="radio"
+              id={`option-${currentQuestion.id}-4`}
+              name={`question-${currentQuestion.id}`}
+              value={4}
+              checked={answers[currentQuestion.id] === 4}
+              onChange={() => handleAnswerChange(currentQuestion.id, 4)}
+            />
+            <label htmlFor={`option-${currentQuestion.id}-4`}>
+              {currentQuestion.option4}
+            </label>
+          </div>
+          
+          <div className="pq-option-item">
+            <input
+              type="radio"
+              id={`option-${currentQuestion.id}-5`}
+              name={`question-${currentQuestion.id}`}
+              value={5}
+              checked={answers[currentQuestion.id] === 5}
+              onChange={() => handleAnswerChange(currentQuestion.id, 5)}
+            />
+            <label htmlFor={`option-${currentQuestion.id}-5`}>
+              {currentQuestion.option5}
+            </label>
+          </div>
         </div>
       </div>
 
-      <div className="quiz-navigation">
+      <div className="pq-navigation">
         <button
-          className={`quiz-button back-button ${currentQuestionIndex === 0 ? 'disabled' : ''}`}
-          onClick={handlePreviousQuestion}
-          disabled={currentQuestionIndex === 0}
+          className="pq-back-button"
+          onClick={handleBackToProjectInterests}
         >
-          Previous
+          Back
         </button>
         
-        <button
-          className={`quiz-button ${currentQuestionIndex === questions.length - 1 ? 'submit-button' : 'next-button'}`}
-          onClick={handleNextQuestion}
-          disabled={!answers[currentQuestion.id]}
-        >
-          {currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next'}
-        </button>
+        <div>
+          <button
+            className={`pq-button-previous ${currentQuestionIndex === 0 ? 'disabled' : ''}`}
+            onClick={handlePreviousQuestion}
+            disabled={currentQuestionIndex === 0}
+          >
+            Previous
+          </button>
+          
+          <button
+            className="pq-button-next"
+            onClick={currentQuestionIndex === questions.length - 1 ? submitQuiz : handleNextQuestion}
+            disabled={!answers[currentQuestion.id]}
+          >
+            {currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next'}
+          </button>
+        </div>
       </div>
     </div>
   );
