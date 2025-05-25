@@ -297,3 +297,34 @@ export async function submitQuizAnswers(userId, answers) {
     throw error; // Re-throw for component handling
   }
 }
+
+// Sent Requests API
+export async function sendRequest(senderId, receiverName, matchScore) {
+  const token = getToken();
+  const res = await fetch(`${BASE_URL}/api/requests/send?senderId=${senderId}&receiverName=${encodeURIComponent(receiverName)}&matchScore=${matchScore}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': token ? `Bearer ${token}` : undefined,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!res.ok) throw new Error('Failed to send request');
+  return res.json();
+}
+
+export async function getSentRequestsDTO(senderId) {
+  const res = await fetch(`${BASE_URL}/api/requests/sent-dto/${senderId}`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to fetch sent requests');
+  return res.json();
+}
+
+export async function cancelRequest(requestId, senderId) {
+  const res = await fetch(`${BASE_URL}/api/requests/cancel/${requestId}?senderId=${senderId}`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to cancel request');
+  return res.text();
+}

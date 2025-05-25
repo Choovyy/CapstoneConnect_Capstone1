@@ -1,64 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/SentRequest.css';
-
-const demoRequests = [
-  // TODO: Replace this static array with real backend data
-  {
-    id: 1,
-    name: 'Emily Carter',
-    role: 'UI/UX Designer',
-    compatibility: 88,
-    img: 'https://placehold.co/144x142',
-    skills: 'Figma, Adobe XD',
-    interests: 'User Research',
-    status: 'Request Sent!',
-  },
-  {
-    id: 2,
-    name: 'Michael Lee',
-    role: 'Frontend Developer',
-    compatibility: 92,
-    img: 'https://placehold.co/144x142?text=ML',
-    skills: 'React, JavaScript',
-    interests: 'Web Animation',
-    status: 'Request Sent!',
-  },
-  {
-    id: 3,
-    name: 'Sarah Kim',
-    role: 'Backend Developer',
-    compatibility: 85,
-    img: 'https://placehold.co/144x142?text=SK',
-    skills: 'Node.js, MongoDB',
-    interests: 'APIs',
-    status: 'Request Sent!',
-  },
-  // ...add more demo cards as needed
-];
+import { getUserId, getSentRequestsDTO, cancelRequest } from '../../api';
 
 const SentRequestCards = () => {
-  // For each card, track flip state
-  const [flipped, setFlipped] = useState(Array(demoRequests.length).fill(false));
-  // For scrolling: show two cards at a time, track the start index
+  const [requests, setRequests] = useState([]);
+  const [flipped, setFlipped] = useState([]);
   const [startIdx, setStartIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Handles flipping a card
+  useEffect(() => {
+    async function fetchRequests() {
+      try {
+        setLoading(true);
+        setError(null);
+        const { userId } = await getUserId();
+        const data = await getSentRequestsDTO(userId);
+        setRequests(data);
+        setFlipped(Array(data.length).fill(false));
+      } catch (err) {
+        setError('Failed to load sent requests');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRequests();
+  }, []);
+
   const handleCardClick = idx => {
     setFlipped(prev => prev.map((f, i) => (i === idx ? !f : f)));
   };
 
-  // Scroll left (show previous two cards)
   const handlePrev = () => {
     setStartIdx(idx => Math.max(0, idx - 2));
   };
 
-  // Scroll right (show next two cards)
   const handleNext = () => {
-    setStartIdx(idx => Math.min(demoRequests.length - 2, idx + 2));
+    setStartIdx(idx => Math.min(requests.length - 2, idx + 2));
   };
 
-  // Only show two cards at a time
-  const visibleRequests = demoRequests.slice(startIdx, startIdx + 2);
+  const handleCancel = async (requestId, idx) => {
+    try {
+      const { userId } = await getUserId();
+      await cancelRequest(requestId, userId);
+      setRequests(prev => prev.filter(r => r.id !== requestId));
+      setFlipped(prev => prev.filter((_, i) => i !== idx));
+    } catch (err) {
+      alert('Failed to cancel request');
+    }
+  };
+
+  const visibleRequests = requests.slice(startIdx, startIdx + 2);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (requests.length === 0) return <div>No sent requests.</div>;
 
   return (
     <div className="sentrequest-container" style={{ marginTop: 0 }}>
@@ -66,7 +62,6 @@ const SentRequestCards = () => {
         <h1 className="sentrequest-title">Sent Request</h1>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        {/* Show left arrow if not at the start */}
         <button
           className="sentrequest-scroll-btn"
           onClick={handlePrev}
@@ -108,7 +103,7 @@ const SentRequestCards = () => {
                       className="btn sentrequest-cancel"
                       onClick={e => {
                         e.stopPropagation();
-                        // TODO: Implement cancel request logic with backend
+                        handleCancel(req.id, startIdx + idx);
                       }}
                     >
                       Cancel
@@ -126,31 +121,24 @@ const SentRequestCards = () => {
             </div>
           ))}
         </div>
-        {/* Show right arrow if not at the end */}
         <button
           className="sentrequest-scroll-btn"
           onClick={handleNext}
-          disabled={startIdx + 2 >= demoRequests.length}
+          disabled={startIdx + 2 >= requests.length}
           aria-label="Next"
           style={{
             background: 'none',
             border: 'none',
             fontSize: 32,
-            cursor: startIdx + 2 >= demoRequests.length ? 'not-allowed' : 'pointer',
+            cursor: startIdx + 2 >= requests.length ? 'not-allowed' : 'pointer',
             color: '#CA9F58',
             marginLeft: 8,
-            opacity: startIdx + 2 >= demoRequests.length ? 0.3 : 1,
+            opacity: startIdx + 2 >= requests.length ? 0.3 : 1,
           }}
         >
           &#8594;
         </button>
       </div>
-      {/* 
-        TODO: 
-        - Replace demoRequests with backend data (e.g., from props or API).
-        - Replace cancel logic with backend call.
-        - Optionally, add loading/error states for requests.
-      */}
     </div>
   );
 };

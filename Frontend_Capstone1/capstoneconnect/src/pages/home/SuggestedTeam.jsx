@@ -6,7 +6,7 @@ import Navigation from '../Navigation';
 import SuggestedTeamModal from '../modals/SuggestedTeamModal';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
-import { getMatchesFromSurvey, getSurvey, getProfile, getUserId } from '../../api';
+import { getMatchesFromSurvey, getSurvey, getProfile, getUserId, sendRequest } from '../../api';
 
 const placeholderImg = "https://placehold.co/144x142";
 
@@ -79,6 +79,7 @@ const SuggestedTeam = () => {
       const formattedMatches = filteredMatches.map((match, index) => ({
         id: index + 1,
         name: match.name || 'No Name',
+        email: match.email || '',
         role: match.preferredRoles ? match.preferredRoles.join(', ') : 'No Role',
         skills: match.technicalSkills ? match.technicalSkills.join(', ') : 'No Skills',
         preference: match.projectInterests ? match.projectInterests.join(', ') : 'No Preferences',
@@ -104,8 +105,19 @@ const SuggestedTeam = () => {
     }
   };
 
-  const handleSendRequest = () => {
-    setShowModal(true);
+  // Send request to backend when user clicks Send Request
+  const handleSendRequest = async (receiver) => {
+    try {
+      const { userId: senderId } = await getUserId();
+      if (!receiver.name) {
+        alert('Receiver name not found.');
+        return;
+      }
+      await sendRequest(senderId, receiver.name, receiver.score); // Pass match score
+      alert('Request sent!');
+    } catch (err) {
+      alert('Failed to send request: ' + err.message);
+    }
   };
   
   const handleConfirm = () => {
@@ -174,7 +186,8 @@ const SuggestedTeam = () => {
         preference: match.projectInterests ? match.projectInterests.join(', ') : 'No Preferences',
         personality: match.personality || 'No Personality',
         score: match.overallScore,
-        img: placeholderImg
+        img: placeholderImg,
+        userId: match.userId || match.id // Ensure userId is always present in filtered matches
       }));
       
       setSuggestedTeammates(formattedMatches);
@@ -308,7 +321,7 @@ const SuggestedTeam = () => {
                     <div className="suggested-team-card-action">
                       <button
                         className="btn btn--action"
-                        onClick={e => { e.stopPropagation(); handleSendRequest(); }}
+                        onClick={e => { e.stopPropagation(); handleSendRequest(member); }}
                       >
                         Send Request
                       </button>
