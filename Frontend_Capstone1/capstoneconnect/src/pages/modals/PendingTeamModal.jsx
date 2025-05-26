@@ -110,9 +110,6 @@ const PendingTeamModal = ({ isOpen, onClose, projectId }) => {
                 <div className="pending-team-card-flip-inner">
                   {/* Front Side */}
                   <div className="pending-team-card pending-team-card-front">
-                    <div className="pending-team-compatibility">
-                      Compatibility: <span>{member.compatibility ? member.compatibility + '%' : 'N/A'}</span>
-                    </div>
                     <img src={member.img || 'https://placehold.co/144x142'} alt="Profile" />
                     <h2>{member.name || member.email}</h2>
                     <p>{member.role || 'Applicant'}</p>

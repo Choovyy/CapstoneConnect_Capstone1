@@ -88,20 +88,6 @@ body {
     margin-bottom: 8px;
 }
 
-.pending-team-compatibility {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--secondary-color);
-    margin-bottom: 12px;
-}
-
-.pending-team-compatibility span {
-    display: block;
-    font-size: 36px;
-    font-weight: bold;
-    margin-top: 4px;
-}
-
 .pending-team-actions {
     display: flex;
     flex-direction: column;
@@ -338,4 +324,4 @@ body {
     .header__nav .nav-list {
         justify-content: center;
     }
-} 
+}
