@@ -62,4 +62,19 @@ public class RequestService {
             }
         }
     }
+
+    public List<RequestEntity> getIncomingRequests(Long receiverId) {
+        return requestRepository.findByReceiverId(receiverId);
+    }
+
+    public void rejectIncomingRequest(Long requestId, Long receiverId) {
+        Optional<RequestEntity> reqOpt = requestRepository.findById(requestId);
+        if (reqOpt.isPresent()) {
+            RequestEntity req = reqOpt.get();
+            if (req.getReceiver().getId().equals(receiverId)) {
+                req.setStatus("REJECTED");
+                requestRepository.save(req);
+            }
+        }
+    }
 }

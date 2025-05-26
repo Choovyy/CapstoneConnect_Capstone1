@@ -328,3 +328,20 @@ export async function cancelRequest(requestId, senderId) {
   if (!res.ok) throw new Error('Failed to cancel request');
   return res.text();
 }
+
+export async function getIncomingRequestsDTO(receiverId) {
+  const res = await fetch(`${BASE_URL}/api/requests/incoming-dto/${receiverId}`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to fetch incoming requests');
+  return res.json();
+}
+
+export async function rejectIncomingRequest(requestId, receiverId) {
+  const res = await fetch(`${BASE_URL}/api/requests/reject/${requestId}?receiverId=${receiverId}`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error('Failed to reject request');
+  return res.text();
+}

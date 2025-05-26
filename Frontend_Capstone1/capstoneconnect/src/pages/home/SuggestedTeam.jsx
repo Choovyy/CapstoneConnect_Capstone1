@@ -330,7 +330,7 @@ const SuggestedTeam = () => {
                   <div className="suggested-team-card suggested-team-card-back">
                     <div className="suggested-team-label">Technical Skills</div>
                     <div className="suggested-team-data">{member.skills}</div>
-                    <div className="suggested-team-label">Project Interest</div>
+                    <div className="suggested-team-label">Project Interests</div>
                     <div className="suggested-team-data">{member.preference}</div>
                     <div className="suggested-team-label">Personality</div>
                     <div className="suggested-team-data">{member.personality}</div>

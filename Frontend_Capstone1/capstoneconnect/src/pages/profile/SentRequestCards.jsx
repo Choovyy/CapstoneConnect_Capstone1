@@ -112,10 +112,12 @@ const SentRequestCards = () => {
                 </div>
                 {/* Back Side */}
                 <div className="sentrequest-card sentrequest-card-back">
-                  <div className="sentrequest-label">Skills</div>
+                  <div className="sentrequest-label">Technical Skills</div>
                   <div className="sentrequest-data">{req.skills}</div>
-                  <div className="sentrequest-label">Interests</div>
+                  <div className="sentrequest-label">Project Interests</div>
                   <div className="sentrequest-data">{req.interests}</div>
+                  <div className="sentrequest-label">Personality</div>
+                  <div className="sentrequest-data">{req.personality}</div>
                 </div>
               </div>
             </div>

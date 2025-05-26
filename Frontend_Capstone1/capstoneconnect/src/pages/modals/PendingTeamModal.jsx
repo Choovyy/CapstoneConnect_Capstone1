@@ -44,9 +44,10 @@ const PendingTeamModal = ({ isOpen, onClose, projectId }) => {
             ...user,
             skills: Array.isArray(profile.technicalSkills) ? profile.technicalSkills.join(', ') : 'N/A',
             interests: Array.isArray(profile.projectInterests) ? profile.projectInterests.join(', ') : 'N/A',
+            personality: profile.personality || 'N/A',
           };
         } catch (e) {
-          return { ...user, skills: 'N/A', interests: 'N/A' };
+          return { ...user, skills: 'N/A', interests: 'N/A', personality: 'N/A' };
         }
       }));
       setPendingMembers(applicantsWithProfile);
@@ -136,6 +137,8 @@ const PendingTeamModal = ({ isOpen, onClose, projectId }) => {
                     <div className="pending-team-data">{member.skills || 'N/A'}</div>
                     <div className="pending-team-label">Project Interests</div>
                     <div className="pending-team-data">{member.interests || 'N/A'}</div>
+                    <div className="pending-team-label">Personality</div>
+                    <div className="pending-team-data">{member.personality || 'N/A'}</div>
                   </div>
                 </div>
               </div>
@@ -147,4 +150,4 @@ const PendingTeamModal = ({ isOpen, onClose, projectId }) => {
   );
 };
 
-export default PendingTeamModal; 
+export default PendingTeamModal;

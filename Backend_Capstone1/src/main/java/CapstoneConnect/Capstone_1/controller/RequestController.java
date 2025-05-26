@@ -45,4 +45,26 @@ public class RequestController {
         requestService.cancelRequest(requestId, senderId);
         return ResponseEntity.ok().build();
     }
+
+    // Get all incoming requests for a user (DTO version for frontend)
+    @GetMapping("/incoming-dto/{receiverId}")
+    public ResponseEntity<List<SentRequestDTO>> getIncomingRequestsDTO(@PathVariable Long receiverId) {
+        List<RequestEntity> requests = requestService.getIncomingRequests(receiverId);
+        List<SentRequestDTO> dtos = requests.stream()
+            .filter(req -> req.getStatus().equals("SENT"))
+            .map(req -> {
+                SentRequestDTO dto = new SentRequestDTO(req, req.getSender()); // Use sender info
+                dto.setEmail(req.getSender().getEmail()); // Explicitly set sender's email
+                return dto;
+            })
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    // Reject an incoming request as receiver
+    @PostMapping("/reject/{requestId}")
+    public ResponseEntity<Void> rejectIncomingRequest(@PathVariable Long requestId, @RequestParam Long receiverId) {
+        requestService.rejectIncomingRequest(requestId, receiverId);
+        return ResponseEntity.ok().build();
+    }
 }

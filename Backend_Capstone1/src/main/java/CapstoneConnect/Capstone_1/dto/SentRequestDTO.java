@@ -13,6 +13,8 @@ public class SentRequestDTO {
     private String skills;
     private String interests;
     private String status;
+    private String email; // Add this field
+    private String personality;
 
 public SentRequestDTO(RequestEntity req, UserEntity receiver) {
         this(req, receiver, req.getMatchScore());
@@ -51,7 +53,16 @@ public SentRequestDTO(RequestEntity req, UserEntity receiver, Double matchScore)
         this.interests = "";
     }
 
+    // Add personality
+    if (receiver.getProfile() != null && receiver.getProfile().getSurvey() != null
+            && receiver.getProfile().getSurvey().getPersonality() != null) {
+        this.personality = receiver.getProfile().getSurvey().getPersonality();
+    } else {
+        this.personality = "";
+    }
+
     this.status = req.getStatus();
+    this.email = receiver.getEmail(); // Add this line to set the email
 }
 
     // Getters and setters
@@ -73,4 +84,8 @@ public SentRequestDTO(RequestEntity req, UserEntity receiver, Double matchScore)
     public void setInterests(String interests) { this.interests = interests; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPersonality() { return personality; }
+    public void setPersonality(String personality) { this.personality = personality; }
 }
