@@ -102,7 +102,7 @@ def add_user_profile(profile_embedding, personality_embedding, user_info):
         logger.error(f"Error adding profile: {str(e)}")
         return False
 
-def get_top_matches(query_embedding, personality_embedding, k=3, exclude_email=None):
+def get_top_matches(query_embedding, personality_embedding, exclude_email=None):
     if len(user_profiles) == 0:
         logger.warning("No user profiles available for matching")
         return []
@@ -117,15 +117,15 @@ def get_top_matches(query_embedding, personality_embedding, k=3, exclude_email=N
         # Ensure personality_embedding is a numpy array
         personality_embedding_np = np.array(personality_embedding).astype("float32")
             
-        # Limit k to the number of actual profiles
-        effective_k = min(k + 1, len(user_profiles))
+        # Search all available profiles (no limit)
+        search_k = len(user_profiles)
         
-        # If we have too few profiles, just return what we have
-        if effective_k <= 0:
-            logger.warning(f"Not enough profiles to perform matching (requested {k}, have {len(user_profiles)})")
+        # If we have no profiles, return empty
+        if search_k <= 0:
+            logger.warning(f"No profiles available for matching")
             return []
             
-        distances, indices = index.search(np.array([query_embedding_np]).astype("float32"), effective_k)
+        distances, indices = index.search(np.array([query_embedding_np]).astype("float32"), search_k)
 
         matches = []
         for i, dist in zip(indices[0], distances[0]):
@@ -153,15 +153,15 @@ def get_top_matches(query_embedding, personality_embedding, k=3, exclude_email=N
                     "preferredRoles": user.get("preferredRoles", []),
                     "projectInterests": user.get("projectInterests", []),
                     "personality": user.get("personality", ""),
-                    "skillScore": round(skill_score, 2), #if i want to show the score
-                    "personalityScore": round(personality_score, 2), #if i want to show the personaity score
+                    "skillScore": round(skill_score, 2),
+                    "personalityScore": round(personality_score, 2),
                     "overallScore": overall_score
                 })
 
-            if len(matches) == k:
-                break
+        # Sort matches by overall score (highest first)
+        matches.sort(key=lambda x: x["overallScore"], reverse=True)
 
-        logger.info(f"Found {len(matches)} matches out of {k} requested")
+        logger.info(f"Found {len(matches)} matches from {len(user_profiles)} total profiles")
         return matches
     except Exception as e:
         logger.error(f"Error in get_top_matches: {str(e)}")

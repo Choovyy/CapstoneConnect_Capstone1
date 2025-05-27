@@ -9,6 +9,8 @@ import logging
 # Step 2: ayaw kalimot install sa dependencies // pip install -r requirements.txt
 # Step 3: uvicorn app:app --reload // to run the server
 
+# if it doesn't work delete the venv folder and create a new one // python -m venv venv
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
