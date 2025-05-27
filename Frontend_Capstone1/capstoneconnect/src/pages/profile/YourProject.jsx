@@ -185,7 +185,7 @@ const YourProject = () => {
     delete payload.projectDescription;
     try {
       await updateProject(selectedProject.id, payload);
-      setIsEditModalOpen(false);
+      setSearchParams({}); // Close the modal by clearing the URL param
       fetchUserProjects();
     } catch (err) {
       alert('Failed to update project: ' + err.message);

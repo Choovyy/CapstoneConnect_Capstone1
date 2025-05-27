@@ -22,6 +22,7 @@ const Project = () => {
   const [flippedCardId, setFlippedCardId] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
   const tooltipRef = useRef(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -88,7 +89,10 @@ const Project = () => {
     const token = sessionStorage.getItem('jwtToken');
     if (token) {
       setIsAuthenticated(true);
-      fetchProjects();
+      getUserId().then(({ userId }) => {
+        setCurrentUserId(userId);
+        fetchProjects();
+      });
     }
     
     const scrollContainer = scrollContainerRef.current;
@@ -247,6 +251,11 @@ const Project = () => {
     return <NotSignedIn onSignIn={handleSignIn} />;
   }
 
+  // Filter out projects where the current user is the creator
+  const filteredProjects = currentUserId
+    ? projects.filter(p => (p.user && p.user.id !== currentUserId))
+    : projects;
+
   return (
     <div>
       <div>
@@ -267,7 +276,7 @@ const Project = () => {
       <main className="pj-main">
         <div className="pj-scroll-container" ref={scrollContainerRef}>
           <div className="pj-grid">
-            {loading ? <div>Loading...</div> : error ? <div>{error}</div> : projects.map(renderCard)}
+            {loading ? <div>Loading...</div> : error ? <div>{error}</div> : filteredProjects.map(renderCard)}
           </div>
         </div>
       </main>

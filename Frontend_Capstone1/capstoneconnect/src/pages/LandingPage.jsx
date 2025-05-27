@@ -67,10 +67,6 @@ const LandingPage = () => {
               />
               <span className="ms-microsoft-text">Continue with Microsoft</span>
             </button>
-            <div className="ms-alternative-options">
-              Don't have an account? 
-              <span className="ms-alternative-link">Sign up</span>
-            </div>
           </div>
         </div>
       </div>
