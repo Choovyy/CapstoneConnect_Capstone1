@@ -167,7 +167,6 @@ const PersonalityQuiz = ({ onComplete }) => {
       <div className="pq-container">
         <div className="pq-header">
           <h2>Personality Quiz</h2>
-          <p>Discover how you can best contribute to a project team</p>
         </div>
         
         <div className="pq-result-container">
@@ -199,7 +198,6 @@ const PersonalityQuiz = ({ onComplete }) => {
     <div className="pq-container">
       <div className="pq-header">
         <h2>Personality Quiz</h2>
-        <p>Discover how you can best contribute to a project team</p>
       </div>
 
       <div className="pq-progress">
@@ -210,9 +208,6 @@ const PersonalityQuiz = ({ onComplete }) => {
       </div>
 
       <div className="pq-question">
-        <div className="pq-question-number">
-          Question {currentQuestionIndex + 1} of {questions.length}
-        </div>
         <h3>{currentQuestion.questionText}</h3>
         
         <div className="pq-options-container">
