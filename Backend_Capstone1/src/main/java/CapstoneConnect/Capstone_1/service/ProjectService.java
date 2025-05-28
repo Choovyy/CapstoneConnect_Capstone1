@@ -1,6 +1,7 @@
 package CapstoneConnect.Capstone_1.service;
 
 
+import CapstoneConnect.Capstone_1.dto.ProjectDTO;
 import CapstoneConnect.Capstone_1.entity.ProjectEntity;
 import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.repository.ProjectRepository;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -41,9 +43,30 @@ public class ProjectService {
     }
 
 
-    public List<ProjectEntity> getAllProjects() {
-        return projectRepository.findAll();
+    private ProjectDTO convertToDTO(ProjectEntity project) {
+        ProjectDTO dto = new ProjectDTO();
+        dto.setId(project.getId());
+        dto.setName(project.getName());
+        dto.setDescription(project.getDescription());
+        dto.setRolesNeeded(project.getRolesNeeded());
+        dto.setSkillsRequired(project.getSkillsRequired());
+        dto.setProjectInterests(project.getProjectInterests());
+
+        if (project.getUser() != null) {
+            dto.setUserId(project.getUser().getId());
+            dto.setUsername(project.getUser().getName()); // Assuming UserEntity has getName()
+        }
+
+        return dto;
     }
+
+    public List<ProjectDTO> getAllProjects() {
+        return projectRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 
     public Optional<ProjectEntity> getProjectById(Long id) {
         return projectRepository.findById(id);

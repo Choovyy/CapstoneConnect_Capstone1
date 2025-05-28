@@ -89,10 +89,19 @@ const Project = () => {
     const token = sessionStorage.getItem('jwtToken');
     if (token) {
       setIsAuthenticated(true);
-      getUserId().then(({ userId }) => {
-        setCurrentUserId(userId);
-        fetchProjects();
-      });
+      getUserId()
+        .then(({ userId }) => {
+          console.log('Setting current user ID:', userId);
+          setCurrentUserId(userId);
+          // Fetch projects after setting current user ID
+          return fetchProjectsForUser(userId);
+        })
+        .catch(err => {
+          console.error('Error getting user ID:', err);
+          setError('Failed to get user information');
+        });
+    } else {
+      setLoading(false);
     }
     
     const scrollContainer = scrollContainerRef.current;
@@ -164,12 +173,34 @@ const Project = () => {
     }
   }, []);
 
-  async function fetchProjects() {
+  async function fetchProjectsForUser(userId) {
     setLoading(true);
     try {
       const data = await getAllProjects();
-      setProjects(data);
+      console.log('All projects:', data);
+      console.log('Current user ID:', userId);
+      
+      // Filter out projects created by the current user
+      const filteredData = data.filter(project => {
+        // Handle different possible user data structures
+        const projectUserId = project.user?.id || project.userId || project.createdBy?.id || project.createdById || project.creator?.id;
+        console.log('Project:', project.name, 'Project User ID:', projectUserId, 'Type:', typeof projectUserId);
+        console.log('Current User ID:', userId, 'Type:', typeof userId);
+        
+        // Convert both to strings for comparison to handle type mismatches
+        const projectUserIdStr = String(projectUserId);
+        const currentUserIdStr = String(userId);
+        
+        const shouldShow = projectUserIdStr !== currentUserIdStr && projectUserId != null;
+        console.log('Should show project:', project.name, '?', shouldShow);
+        
+        return shouldShow;
+      });
+      
+      console.log('Filtered projects:', filteredData);
+      setProjects(filteredData);
     } catch (err) {
+      console.error('Error fetching projects:', err);
       setError('Failed to load projects');
     } finally {
       setLoading(false);
@@ -202,8 +233,8 @@ const Project = () => {
     try {
       const { userId } = await getUserId();
       const payload = {
-        name: formData.projectName, // map to backend field
-        description: formData.projectDescription, // map to backend field
+        name: formData.projectName,
+        description: formData.projectDescription,
         rolesNeeded: formData.rolesNeeded,
         skillsRequired: formData.skillsRequired,
         projectInterests: formData.projectInterests,
@@ -211,7 +242,10 @@ const Project = () => {
       };
       await createProject(payload);
       setSearchParams({});
-      fetchProjects();
+      // Use the stored currentUserId instead of fetching again
+      if (currentUserId) {
+        fetchProjectsForUser(currentUserId);
+      }
     } catch (err) {
       alert('Failed to create project: ' + err.message);
     }
@@ -251,11 +285,6 @@ const Project = () => {
     return <NotSignedIn onSignIn={handleSignIn} />;
   }
 
-  // Filter out projects where the current user is the creator
-  const filteredProjects = currentUserId
-    ? projects.filter(p => (p.user && p.user.id !== currentUserId))
-    : projects;
-
   return (
     <div>
       <div>
@@ -276,7 +305,7 @@ const Project = () => {
       <main className="pj-main">
         <div className="pj-scroll-container" ref={scrollContainerRef}>
           <div className="pj-grid">
-            {loading ? <div>Loading...</div> : error ? <div>{error}</div> : filteredProjects.map(renderCard)}
+            {loading ? <div>Loading...</div> : error ? <div>{error}</div> : projects.map(renderCard)}
           </div>
         </div>
       </main>

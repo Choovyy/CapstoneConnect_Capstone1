@@ -1,6 +1,7 @@
 package CapstoneConnect.Capstone_1.controller;
 
 import CapstoneConnect.Capstone_1.dto.ProfileDTO;
+import CapstoneConnect.Capstone_1.dto.ProjectDTO;
 import CapstoneConnect.Capstone_1.entity.ProjectEntity;
 import CapstoneConnect.Capstone_1.entity.UserEntity;
 import CapstoneConnect.Capstone_1.service.ProjectService;
@@ -29,10 +30,10 @@ public class ProjectController {
 
     // GET /api/projects/getall
     @GetMapping("/getall")
-    public ResponseEntity<List<ProjectEntity>> getAllProjects() {
-        List<ProjectEntity> projects = projectService.getAllProjects();
-        return ResponseEntity.ok(projects);
+    public List<ProjectDTO> getAllProjects() {
+        return projectService.getAllProjects();
     }
+
 
     // GET /api/projects/{id}
     @GetMapping("/{id}")

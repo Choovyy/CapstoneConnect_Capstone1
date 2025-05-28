@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5493e2b1-4a60-4192-928a-3bfffbb9aafb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/Capstone1Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/Capstone1Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/entity/UserEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/jwt/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/jwt/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/jwt/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/jwt/JwtUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_Capstone1/src/main/java/CapstoneConnect/Capstone_1/service/UserService.java" afterDir="false" />
-    </list>
+    <list default="true" id="5493e2b1-4a60-4192-928a-3bfffbb9aafb" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,9 +10,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2x4sjXq7kDnKwAiiZZK3BkprUf1" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -30,7 +22,11 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Harold E. Destura/Documents/CapstoneConnect/CapstoneConnect_Capstone1/Backend_Capstone1"
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Harold E. Destura/Documents/CapstoneConnect/CapstoneConnect_Capstone1",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
