@@ -7,6 +7,7 @@ import CreateProjectModal from '../modals/CreateProjectModal';
 import ApplyProjectModal from '../modals/ApplyProjectModal';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
+import Toast from '../Toast';
 import { getAllProjects, createProject, applyToProject, getUserId } from '../../api';
 
 const Project = () => {
@@ -23,6 +24,7 @@ const Project = () => {
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
   const tooltipRef = useRef(null);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'error' });
   
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -222,10 +224,18 @@ const Project = () => {
     try {
       const { userId } = await getUserId();
       await applyToProject(selectedProject.id, userId);
-      alert('Applied successfully!');
+      setToast({
+        visible: true,
+        message: 'Applied successfully!',
+        type: 'success'
+      });
       setSearchParams({});
     } catch (err) {
-      alert('Failed to apply: ' + err.message);
+      setToast({
+        visible: true,
+        message: 'Cannot apply twice to the same project. Wait for approval.',
+        type: 'error'
+      });
     }
   };
 
@@ -241,14 +251,27 @@ const Project = () => {
         user: { id: userId }
       };
       await createProject(payload);
+      setToast({
+        visible: true,
+        message: 'Project created successfully!',
+        type: 'success'
+      });
       setSearchParams({});
       // Use the stored currentUserId instead of fetching again
       if (currentUserId) {
         fetchProjectsForUser(currentUserId);
       }
     } catch (err) {
-      alert('Failed to create project: ' + err.message);
+      setToast({
+        visible: true,
+        message: 'Failed to create project',
+        type: 'error'
+      });
     }
+  };
+
+  const handleCloseToast = () => {
+    setToast({ ...toast, visible: false });
   };
 
   const renderCard = (project, index) => (
@@ -335,6 +358,16 @@ const Project = () => {
 
       {/* Logout Modal */}
       {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
+      
+      {/* Toast Notification */}
+      {toast.visible && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={handleCloseToast} 
+          duration={3000} 
+        />
+      )}
     </div>
   );
 };
