@@ -222,6 +222,15 @@ const Project = () => {
 
   const handleApplyConfirm = async () => {
     try {
+      // Check if the selected project is already full (5 members)
+      if (selectedProject && selectedProject.teamMembers && selectedProject.teamMembers.length >= 5) {
+        setToast({
+          visible: true,
+          message: 'This project is full (5 members already).',
+          type: 'error'
+        });
+        return;
+      }
       const { userId } = await getUserId();
       await applyToProject(selectedProject.id, userId);
       setToast({

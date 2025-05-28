@@ -183,11 +183,56 @@ const Team = () => {
     console.log('Current userId:', currentUserId);
   }, [teamMembers, currentUserId]);
 
+  // Helper: localStorage keys for join/kick dates
+  const JOINED_KEY = 'teamMemberJoinedDates';
+  const KICKED_KEY = 'teamMemberKickedDates';
+
+  // Helper: get/set join date
+  function getJoinedDates() {
+    try {
+      return JSON.parse(localStorage.getItem(JOINED_KEY) || '{}');
+    } catch {
+      return {};
+    }
+  }
+  function setJoinedDate(memberId, date) {
+    const data = getJoinedDates();
+    if (!data[memberId]) {
+      data[memberId] = date;
+      localStorage.setItem(JOINED_KEY, JSON.stringify(data));
+    }
+  }
+  function getJoinedDate(memberId) {
+    const data = getJoinedDates();
+    return data[memberId] || null;
+  }
+
+  // Helper: get/set kicked date
+  function getKickedDates() {
+    try {
+      return JSON.parse(localStorage.getItem(KICKED_KEY) || '{}');
+    } catch {
+      return {};
+    }
+  }
+  function setKickedDate(memberId, date) {
+    const data = getKickedDates();
+    data[memberId] = date;
+    localStorage.setItem(KICKED_KEY, JSON.stringify(data));
+  }
+  function getKickedDate(memberId) {
+    const data = getKickedDates();
+    return data[memberId] || null;
+  }
+
   // Helper to get join date for a member (if available)
   const getMemberJoinDate = (member) => {
-    // If your backend provides a join date, use it here. Otherwise, fallback to a placeholder or null.
-    // Example: return member.joinedAt ? new Date(member.joinedAt).toLocaleString() : null;
-    return member.joinedAt ? new Date(member.joinedAt).toLocaleString('en-US', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) : null;
+    // Use localStorage if backend does not provide joinedAt
+    if (member.joinedAt) {
+      return new Date(member.joinedAt).toLocaleString('en-US', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+    const localDate = getJoinedDate(member.id);
+    return localDate ? new Date(localDate).toLocaleString('en-US', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) : null;
   };
 
   // Helper to get project creation date (if available)
@@ -211,12 +256,18 @@ const Team = () => {
         });
       }
       // Add join notifications for all current members (except leader)
-      const joinNotifs = teamMembers.slice(1).map((m, idx) => ({
-        id: `member-joined-${m.id}`,
-        message: `${m.name} joined team`,
-        date: getMemberJoinDate(m) || 'Unknown',
-        color: '#FF9933'
-      }));
+      const joinNotifs = teamMembers.slice(1).map((m, idx) => {
+        // Set join date in localStorage if not present
+        if (!getJoinedDate(m.id)) {
+          setJoinedDate(m.id, new Date().toISOString());
+        }
+        return {
+          id: `member-joined-${m.id}`,
+          message: `${m.name} joined team`,
+          date: getMemberJoinDate(m) || 'Unknown',
+          color: '#FF9933'
+        };
+      });
       setNotifications([...joinNotifs, ...initialNotifs]);
       return;
     }
@@ -228,20 +279,30 @@ const Team = () => {
     const removedMembers = prevTeamMembersRef.current.filter(m => !currentIds.has(m.id));
     let newNotifs = [];
     if (newMembers.length > 0) {
-      newNotifs = newNotifs.concat(newMembers.map(m => ({
-        id: Date.now() + Math.random(),
-        message: `${m.name} joined team`,
-        date: getMemberJoinDate(m) || new Date().toLocaleString('en-US', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
-        color: '#FF9933'
-      })));
+      newNotifs = newNotifs.concat(newMembers.map(m => {
+        // Set join date in localStorage if not present
+        if (!getJoinedDate(m.id)) {
+          setJoinedDate(m.id, new Date().toISOString());
+        }
+        return {
+          id: Date.now() + Math.random(),
+          message: `${m.name} joined team`,
+          date: getMemberJoinDate(m) || new Date().toLocaleString('en-US', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+          color: '#FF9933'
+        };
+      }));
     }
     if (removedMembers.length > 0) {
-      newNotifs = newNotifs.concat(removedMembers.map(m => ({
-        id: Date.now() + Math.random(),
-        message: `${m.name} was kicked from the team`,
-        date: new Date().toLocaleString('en-US', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
-        color: '#CC3333'
-      })));
+      newNotifs = newNotifs.concat(removedMembers.map(m => {
+        // Set kicked date in localStorage
+        setKickedDate(m.id, new Date().toISOString());
+        return {
+          id: Date.now() + Math.random(),
+          message: `${m.name} was kicked from the team`,
+          date: new Date().toLocaleString('en-US', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+          color: '#CC3333'
+        };
+      }));
     }
     if (newNotifs.length > 0) {
       setNotifications(prev => [...newNotifs, ...prev]);
@@ -334,9 +395,11 @@ const Team = () => {
   // Render role percentage labels
   const renderRolePercentages = () => {
     const distribution = getRoleDistribution();
+    // Only show up to 5 roles (since only 5 members allowed)
+    const entries = Object.entries(distribution).slice(0, 5);
     const total = teamMembers.length;
     if (!total) return null;
-    return Object.entries(distribution).map(([role, count], index) => {
+    return entries.map(([role, count], index) => {
       const percent = ((count / total) * 100).toFixed(0);
       return (
         <div className="tc-role-percentage" key={index}>
@@ -368,7 +431,7 @@ const Team = () => {
     if (!total) return 'conic-gradient(#eee 0% 100%)';
     let gradient = 'conic-gradient(';
     let current = 0;
-    const roles = Object.keys(distribution);
+    const roles = Object.keys(distribution).slice(0, 5);
     roles.forEach((role, idx) => {
       const percent = (distribution[role] / total) * 100;
       const color = roleColors[role] || '#ddd';
@@ -413,9 +476,13 @@ const Team = () => {
         </div>
         <h3 className="tc-member-name">{member.name}</h3>
         <p className="tc-member-role">{isLeader ? 'Leader' : (member.preferredRoles?.[0] || 'Member')}</p>
+        {/* Joined date removed as per request */}
       </div>
     );
   };
+
+  // Team member limit
+  const TEAM_MEMBER_LIMIT = 5;
 
   if (!isAuthenticated) {
     return <NotSignedIn onSignIn={handleSignIn} />;
@@ -511,7 +578,7 @@ const Team = () => {
               <button className="tc-view-all" onClick={handleViewAllNotifications}>View All</button>
             </div>
             <div className="tc-notification-list">
-              {notifications.map(renderNotification)}
+              {notifications.slice(0, 3).map(renderNotification)}
             </div>
           </div>
 
@@ -543,7 +610,7 @@ const Team = () => {
                 You are not part of any team yet. Create or join a project to see your team here.
               </div>
             ) : (
-              teamMembers.map((member, idx) => renderTeamMember(member, idx))
+              teamMembers.slice(0, TEAM_MEMBER_LIMIT).map((member, idx) => renderTeamMember(member, idx))
             )}
           </div>
         </div>
