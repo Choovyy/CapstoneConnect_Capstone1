@@ -245,52 +245,49 @@ const SuggestedTeam = () => {
         <section className="suggested-team-filter">
           <h1 className="suggested-team-title">Suggested Teammates</h1>
           <div className="suggested-team-filters">
-            <div className="suggested-team-filter-group">
-              <label htmlFor="roles">Preferred Roles</label>              <select 
+            <div className="suggested-team-filter-group">              <label htmlFor="roles">Preferred Roles</label>              <select 
                 id="roles" 
                 className="suggested-team-filter-select"
                 value={selectedFilters.role}
                 onChange={handleFilterChange}
               >
                 <option value="">All Roles</option>
-                <option value="ui-ux-designer">UI/UX Designer</option>
-                <option value="frontend-developer">Frontend Developer</option>
-                <option value="backend-developer">Backend Developer</option>
-                <option value="game-developer">Game Developer</option>
-                <option value="team-leader">Team Leader</option>
-                <option value="technical-writer">Technical Writer</option>
+                <option value="UI/UX Designer">UI/UX Designer</option>
+                <option value="Frontend Developer">Frontend Developer</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="Game Developer">Game Developer</option>
+                <option value="Team Leader">Team Leader</option>
+                <option value="Technical Writer">Technical Writer</option>
               </select>
             </div>
-            <div className="suggested-team-filter-group">
-              <label htmlFor="skills">Technical Skills:</label>              <select 
+            <div className="suggested-team-filter-group">              <label htmlFor="skills">Technical Skills:</label>              <select 
                 id="skills" 
                 className="suggested-team-filter-select"
                 value={selectedFilters.skill}
                 onChange={handleFilterChange}
               >
                 <option value="">All Skills</option>
-                <option value="c-language">C Language</option>
-                <option value="html-css">HTML and CSS</option>
-                <option value="java">Java</option>
-                <option value="php">PHP</option>
-                <option value="javascript">JavaScript</option>
-                <option value="python">Python</option>
+                <option value="C Language">C Language</option>
+                <option value="HTML and CSS">HTML and CSS</option>
+                <option value="Java">Java</option>
+                <option value="PHP">PHP</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="Python">Python</option>
               </select>
             </div>
-            <div className="suggested-team-filter-group">
-              <label htmlFor="preferences">Project Interests:</label>              <select 
+            <div className="suggested-team-filter-group">              <label htmlFor="preferences">Project Interests:</label>              <select 
                 id="preferences" 
                 className="suggested-team-filter-select"
                 value={selectedFilters.preference}
                 onChange={handleFilterChange}
               >
                 <option value="">All Project Interests</option>
-                <option value="web-app-dev">Web App Development</option>
-                <option value="mobile-app-dev">Mobile App Development</option>
-                <option value="task-management-systems">Task Management Systems</option>
-                <option value="e-commerce-systems">E-Commerce Systems</option>
-                <option value="game-dev">Game Development</option>
-                <option value="ai-dev">AI Development</option>
+                <option value="Web App Development">Web App Development</option>
+                <option value="Mobile App Development">Mobile App Development</option>
+                <option value="Task Management Systems">Task Management Systems</option>
+                <option value="E-Commerce Systems">E-Commerce Systems</option>
+                <option value="Game Development">Game Development</option>
+                <option value="AI Development">AI Development</option>
               </select>
             </div>
             <div className="suggested-team-filter-apply">

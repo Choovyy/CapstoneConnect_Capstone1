@@ -102,7 +102,7 @@ def add_user_profile(profile_embedding, personality_embedding, user_info):
         logger.error(f"Error adding profile: {str(e)}")
         return False
 
-def get_top_matches(query_embedding, personality_embedding, exclude_email=None):
+def get_top_matches(query_embedding, personality_embedding, exclude_email=None, query_project_interests=None):
     if len(user_profiles) == 0:
         logger.warning("No user profiles available for matching")
         return []
@@ -137,16 +137,42 @@ def get_top_matches(query_embedding, personality_embedding, exclude_email=None):
                 if exclude_email is not None and user.get("email") == exclude_email:
                     continue
 
-                skill_score = float(100 / (1 + dist))
-
-                # compute personality score - safely convert to numpy array
+                skill_score = float(100 / (1 + dist))                # compute personality score - safely convert to numpy array
                 target_p = np.array(profile["personality_embedding"]).astype("float32")
                 dist_p = np.linalg.norm(personality_embedding_np - target_p)
-                personality_score = float(100 / (1 + dist_p))
+                personality_score = float(100 / (1 + dist_p))                # Calculate project interests score based on matching interests
+                user_interests = user.get("projectInterests", [])
+                
+                # Use the provided project interests if available, otherwise fallback to lookup method
+                provided_interests = query_project_interests if query_project_interests else []
+                
+                # If we have provided interests, use those directly
+                if provided_interests:
+                    query_interests = provided_interests
+                # Otherwise try to find by email
+                elif exclude_email is not None:
+                    query_interests = []
+                    # Find the query user's info to compare project interests
+                    for p in user_profiles:
+                        if p["info"].get("email") == exclude_email:
+                            query_interests = p["info"].get("projectInterests", [])
+                            break
+                else:
+                    query_interests = []
+                
+                # Only proceed with scoring if we have interests to compare
+                if query_interests and user_interests:
+                    matching_interests = len(set(user_interests).intersection(set(query_interests)))
+                    total_interests = max(1, len(set(user_interests).union(set(query_interests))))
+                    project_interest_score = 100 * (matching_interests / total_interests)
+                else:
+                    # No interests to compare
+                    project_interest_score = 0
+                    
+                logger.info(f"Project interests score: {project_interest_score} (matching: {len(set(user_interests).intersection(set(query_interests)))} out of {len(set(user_interests).union(set(query_interests)))})")
 
-                # combine scores
-                overall_score = round((skill_score * 0.6 + personality_score * 0.4), 2)
-
+                # combine scores 50% skill, 30% personality, project interests 20%
+                overall_score = round((skill_score * 0.5 + personality_score * 0.3 + project_interest_score * 0.2), 2)         
                 matches.append({
                     "name": user.get("name", ""),
                     "technicalSkills": user.get("technicalSkills", []),
@@ -155,6 +181,7 @@ def get_top_matches(query_embedding, personality_embedding, exclude_email=None):
                     "personality": user.get("personality", ""),
                     "skillScore": round(skill_score, 2),
                     "personalityScore": round(personality_score, 2),
+                    "projectInterestScore": round(project_interest_score, 2),
                     "overallScore": overall_score
                 })
 

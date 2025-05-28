@@ -7,6 +7,13 @@ import { getUserId, getProfile, updateProfile, uploadProfilePicture } from '../.
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
 
+const BACKEND_URL = "http://localhost:8080";
+function getProfilePictureUrl(pic) {
+  if (!pic) return vyn;
+  if (pic.startsWith("http")) return pic;
+  return BACKEND_URL + pic;
+}
+
 // Match survey page options
 const technicalSkillOptions = [
   { key: 'cLanguage', label: 'C Language' },
@@ -79,9 +86,7 @@ const ProfileEdit = () => {
       fetchData();
     } else {
       setLoading(false);
-    }
-
-    async function fetchData() {
+    }    async function fetchData() {
       try {
         const { userId } = await getUserId();
         setUserId(userId);
@@ -94,6 +99,7 @@ const ProfileEdit = () => {
           projectInterests: profile.projectInterests || [],
           otherSkill: profile.otherSkill || '',
           otherInterest: profile.otherInterest || '',
+          profilePicture: profile.profilePicture || ''
         });
       } catch (err) {
         setError('Failed to load profile');
@@ -135,7 +141,6 @@ const ProfileEdit = () => {
       setProfilePicError('Please select a valid image file.');
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userId) return;
@@ -188,10 +193,9 @@ const ProfileEdit = () => {
 
       {/* Main Profile Section */}
       <main className="profile-edit-container">
-        {/* Sidebar */}
-        <aside className="profile-edit-sidebar" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '40px' }}>
+        {/* Sidebar */}        <aside className="profile-edit-sidebar" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '40px' }}>
           <label htmlFor="profilePicUpload" style={{ cursor: 'pointer', display: 'block' }}>
-            <img src={form.profilePicture || vyn} alt="Profile Picture" style={{ width: '168px', height: '168px', borderRadius: '50%', border: '3px solid var(--primary-color)', objectFit: 'cover', display: 'block', margin: '0 auto' }} />
+            <img src={form.profilePicture ? getProfilePictureUrl(form.profilePicture) : vyn} alt="Profile Picture" style={{ width: '168px', height: '168px', borderRadius: '50%', border: '3px solid var(--primary-color)', objectFit: 'cover', display: 'block', margin: '0 auto' }} />
             <input
               type="file"
               id="profilePicUpload"

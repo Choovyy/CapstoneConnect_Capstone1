@@ -112,28 +112,33 @@ async def match_profile(request: Request):
                 elif isinstance(data[field], list):
                     data[field] = []
                 else:
-                    data[field] = ""
-
-        # Additional validation for personality
+                    data[field] = ""        # Additional validation for personality
         if not data['personality'] or data['personality'].strip() == "":
             logger.warning(f"Empty personality for matching request, using 'Unknown'")
             data['personality'] = "Unknown"
-
+            
         query_text = f"{data['technicalSkills']} {data['preferredRoles']} {data['projectInterests']}"
         personality_text = data["personality"]
 
         logger.info(f"Generating embedding for query: {query_text[:100]}...")
         logger.info(f"Generating embedding for personality: {personality_text}")
-
+        
         query_embedding = generate_embedding(query_text)
         personality_embedding = generate_embedding(personality_text)
 
         # Check if embedding generation was successful
         if query_embedding is None or personality_embedding is None:
             logger.error("Embedding generation failed")
-            raise HTTPException(status_code=500, detail="Embedding generation failed")
-
-        matches = get_top_matches(query_embedding, personality_embedding, exclude_email=data.get("email"))
+            raise HTTPException(status_code=500, detail="Embedding generation failed")        # Pass the full data to get_top_matches so it has access to the projectInterests
+        project_interests = data.get("projectInterests", [])
+        logger.info(f"Project interests from request: {project_interests}")
+        
+        matches = get_top_matches(
+            query_embedding, 
+            personality_embedding, 
+            exclude_email=data.get("email"),
+            query_project_interests=project_interests
+        )
 
         logger.info(f"Found {len(matches)} matches")
         return {"matches": matches}
