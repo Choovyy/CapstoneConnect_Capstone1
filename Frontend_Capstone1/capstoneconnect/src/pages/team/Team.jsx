@@ -9,6 +9,16 @@ import PendingTeamModal from '../modals/PendingTeamModal';
 import NotSignedIn from '../NotSignedIn';
 import { getProjectTeam, makeLeader, kickMember, getUserId, getProjectsByUser } from '../../api';
 import { getProjectById } from '../../api';
+import defaultProfilePic from '../../assets/vyn.jpg';
+
+const placeholderImg = "https://placehold.co/144x142";
+const BACKEND_URL = "http://localhost:8080";
+
+function getProfilePictureUrl(pic) {
+  if (!pic) return placeholderImg;
+  if (pic.startsWith("http")) return pic;
+  return BACKEND_URL + pic;
+}
 
 const Team = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -396,7 +406,7 @@ const Team = () => {
         )}
         <div className="tc-member-avatar" style={{ backgroundColor: '#eee', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img
-            src={member.profilePicture || require('../../assets/vyn.jpg')}
+            src={getProfilePictureUrl(member.profilePicture)}
             alt={member.name}
             style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover' }}
           />

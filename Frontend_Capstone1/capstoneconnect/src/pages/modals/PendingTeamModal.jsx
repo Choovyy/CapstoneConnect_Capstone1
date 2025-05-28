@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import '../../css/PendingTeam.css';
 import { getPendingApplicants, acceptApplicant, rejectApplicant, getUserId, getProjectsByUser, getProfile } from '../../api';
 
+const placeholderImg = "https://placehold.co/144x142";
+const BACKEND_URL = "http://localhost:8080";
+function getProfilePictureUrl(pic) {
+  if (!pic) return placeholderImg;
+  if (pic.startsWith("http")) return pic;
+  return BACKEND_URL + pic;
+}
+
 const PendingTeamModal = ({ isOpen, onClose, projectId }) => {
   const [pendingMembers, setPendingMembers] = useState([]);
   const [flipped, setFlipped] = useState([]);
@@ -42,6 +50,8 @@ const PendingTeamModal = ({ isOpen, onClose, projectId }) => {
           const profile = await getProfile(user.id);
           return {
             ...user,
+            profilePicture: profile.profilePicture || user.profilePicture || '',
+            name: profile.name || profile.fullName || user.name || user.fullName || '',
             skills: Array.isArray(profile.technicalSkills) ? profile.technicalSkills.join(', ') : 'N/A',
             interests: Array.isArray(profile.projectInterests) ? profile.projectInterests.join(', ') : 'N/A',
             personality: profile.personality || 'N/A',
@@ -110,8 +120,8 @@ const PendingTeamModal = ({ isOpen, onClose, projectId }) => {
                 <div className="pending-team-card-flip-inner">
                   {/* Front Side */}
                   <div className="pending-team-card pending-team-card-front">
-                    <img src={member.img || 'https://placehold.co/144x142'} alt="Profile" />
-                    <h2>{member.name || member.email}</h2>
+                    <img src={getProfilePictureUrl(member.profilePicture)} alt="Profile" />
+                    <h2>{member.name || member.fullName || member.email}</h2>
                     <p>{member.role || 'Applicant'}</p>
                     <div className="pending-team-actions">
                       <button

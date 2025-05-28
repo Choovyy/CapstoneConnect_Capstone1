@@ -11,7 +11,7 @@ const ApplyProjectModal = ({ isOpen, onClose, onConfirm, projectCreator }) => {
           <div className="apm-apply-content">
             <h3 className="apm-apply-title">Apply for Project</h3>
             <p className="apm-apply-message">
-              This project is made by {projectCreator || "Project Creator"}
+              Are you sure you want to apply for this project?
             </p>
             <div className="apm-modal-buttons">
               <button 
