@@ -9,6 +9,13 @@ import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
 import SentRequestCards from '../profile/SentRequestCards';
 
+const BACKEND_URL = "http://localhost:8080";
+function getProfilePictureUrl(pic) {
+  if (!pic) return vyn;
+  if (pic.startsWith("http")) return pic;
+  return BACKEND_URL + pic;
+}
+
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,7 +85,7 @@ const Profile = () => {
         <main className="profile-container">
           <div className="profile-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px' }}>
             <div className="profile-pic" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: '0 0 auto' }}>
-              <img src={profile.profilePictureUrl || vyn} alt="Profile" />
+              <img src={getProfilePictureUrl(profile.profilePicture)} alt="Profile" />
             </div>
             <div className="profile-info">
               <div className="profile-actions">

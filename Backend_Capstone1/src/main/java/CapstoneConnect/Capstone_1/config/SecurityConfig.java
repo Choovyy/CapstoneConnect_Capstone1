@@ -54,6 +54,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/api/projects/**").authenticated()  // catch-all for others (like get by id)                        .requestMatchers("/api/projects/*/apply/*").authenticated()
                         .requestMatchers("/api/projects/*/applicants").authenticated()
                         .requestMatchers("/api/survey/**").authenticated()
+                        .requestMatchers("/api/files/upload/profile-picture").permitAll()
+                        .requestMatchers("/api/files/download/**").permitAll()
+                        .requestMatchers("/api/files/**").authenticated()
                         
                         // Personality Quiz endpoints - initialize and questions should be permitAll
                         .requestMatchers("/api/personality-quiz/initialize").permitAll()

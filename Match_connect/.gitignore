@@ -3,6 +3,6 @@ venv/
 __pycache__/
 *.pyc
 
-#ignore ai data
-data/faiss.index
-data/profiles.json
+
+data/
+uploads/

@@ -6,6 +6,13 @@ import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
 import { getUserId, getIncomingRequestsDTO, rejectIncomingRequest } from '../../api';
 
+const BACKEND_URL = "http://localhost:8080";
+function getProfilePictureUrl(pic) {
+  if (!pic) return "https://placehold.co/144x142";
+  if (pic.startsWith("http")) return pic;
+  return BACKEND_URL + pic;
+}
+
 const Matching = () => {
   const [requests, setRequests] = useState([]);
   const [flipped, setFlipped] = useState([]);
@@ -62,6 +69,13 @@ const Matching = () => {
   if (!isAuthenticated) {
     return <NotSignedIn onSignIn={handleSignIn} />;
   }
+
+  // When mapping requests, use member.profilePicture if available and fix the URL
+  const requestsWithImg = requests.map(req => ({
+    ...req,
+    img: getProfilePictureUrl(req.profilePicture)
+  }));
+
   return (
     <>
       <div>
@@ -81,7 +95,7 @@ const Matching = () => {
           </div>
         ) : (
           <div className="matching-cards">
-            {requests.map((member, idx) => (
+            {requestsWithImg.map((member, idx) => (
               <div
                 key={member.id}
                 className={`matching-card-flip${flipped[idx] ? ' flipped' : ''}`}

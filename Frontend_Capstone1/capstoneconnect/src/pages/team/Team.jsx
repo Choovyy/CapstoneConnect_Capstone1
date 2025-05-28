@@ -394,7 +394,13 @@ const Team = () => {
             )}
           </div>
         )}
-        <div className="tc-member-avatar" style={{ backgroundColor: '#eee' }}></div>
+        <div className="tc-member-avatar" style={{ backgroundColor: '#eee', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src={member.profilePicture || require('../../assets/vyn.jpg')}
+            alt={member.name}
+            style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover' }}
+          />
+        </div>
         <h3 className="tc-member-name">{member.name}</h3>
         <p className="tc-member-role">{isLeader ? 'Leader' : (member.preferredRoles?.[0] || 'Member')}</p>
       </div>

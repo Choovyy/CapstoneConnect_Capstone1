@@ -3,13 +3,13 @@ package CapstoneConnect.Capstone_1.dto;
 import CapstoneConnect.Capstone_1.entity.RequestEntity;
 import CapstoneConnect.Capstone_1.entity.UserEntity;
 
-public class SentRequestDTO {
-    private Long id;
+public class SentRequestDTO {    private Long id;
     private String name;
     private String role;
     private int compatibility;
     private Double matchScore; // Add this field
     private String img;
+    private String profilePicture; // Add this field
     private String skills;
     private String interests;
     private String status;
@@ -31,11 +31,16 @@ public SentRequestDTO(RequestEntity req, UserEntity receiver, Double matchScore)
         this.role = receiver.getProfile().getSurvey().getPreferredRoles().get(0);
     } else {
         this.role = "";
-    }
-
-    this.compatibility = matchScore != null ? matchScore.intValue() : 0;
+    }    this.compatibility = matchScore != null ? matchScore.intValue() : 0;
     this.matchScore = matchScore;
     this.img = "https://placehold.co/144x142";
+    
+    // Set profile picture if available
+    if (receiver.getProfile() != null && receiver.getProfile().getProfilePicture() != null) {
+        this.profilePicture = receiver.getProfile().getProfilePicture();
+    } else {
+        this.profilePicture = null;
+    }
 
     // Safely join technical skills
     if (receiver.getProfile() != null && receiver.getProfile().getSurvey() != null
@@ -75,9 +80,10 @@ public SentRequestDTO(RequestEntity req, UserEntity receiver, Double matchScore)
     public int getCompatibility() { return compatibility; }
     public void setCompatibility(int compatibility) { this.compatibility = compatibility; }
     public Double getMatchScore() { return matchScore; }
-    public void setMatchScore(Double matchScore) { this.matchScore = matchScore; }
-    public String getImg() { return img; }
+    public void setMatchScore(Double matchScore) { this.matchScore = matchScore; }    public String getImg() { return img; }
     public void setImg(String img) { this.img = img; }
+    public String getProfilePicture() { return profilePicture; }
+    public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
     public String getSkills() { return skills; }
     public void setSkills(String skills) { this.skills = skills; }
     public String getInterests() { return interests; }

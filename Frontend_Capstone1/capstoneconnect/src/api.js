@@ -345,3 +345,14 @@ export async function rejectIncomingRequest(requestId, receiverId) {
   if (!res.ok) throw new Error('Failed to reject request');
   return res.text();
 }
+
+export async function uploadProfilePicture(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${BASE_URL}/api/files/upload/profile-picture`, {
+    method: 'POST',
+    body: formData
+  });
+  if (!res.ok) throw new Error('Failed to upload profile picture');
+  return res.json();
+}

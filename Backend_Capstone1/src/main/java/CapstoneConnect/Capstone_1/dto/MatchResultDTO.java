@@ -11,10 +11,11 @@ public class MatchResultDTO {
     private double overallScore;  // compatibility score
     private double skillScore;    // score based on technical skills
     private double personalityScore; // score based on personality
+    private String profilePicture; // URL of the user's profile picture
 
     public MatchResultDTO() {}    public MatchResultDTO(String name, List<String> technicalSkills, List<String> preferredRoles,
                       List<String> projectInterests, String personality, double overallScore, 
-                      double skillScore, double personalityScore) {
+                      double skillScore, double personalityScore, String profilePicture) {
         this.name = name;
         this.technicalSkills = technicalSkills;
         this.preferredRoles = preferredRoles;
@@ -23,6 +24,7 @@ public class MatchResultDTO {
         this.overallScore = overallScore;
         this.skillScore = skillScore;
         this.personalityScore = personalityScore;
+        this.profilePicture = profilePicture;
     }
 
     // Getters and Setters
@@ -86,5 +88,13 @@ public class MatchResultDTO {
 
     public void setPersonalityScore(double personalityScore) {
         this.personalityScore = personalityScore;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

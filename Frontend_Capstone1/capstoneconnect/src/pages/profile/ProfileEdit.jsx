@@ -3,7 +3,7 @@ import '../../css/ProfileEdit.css';
 import '../../css/Navigation.css';
 import vyn from '../../assets/vyn.jpg';
 import Navigation from '../Navigation';
-import { getUserId, getProfile, updateProfile } from '../../api';
+import { getUserId, getProfile, updateProfile, uploadProfilePicture } from '../../api';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
 
@@ -146,12 +146,24 @@ const ProfileEdit = () => {
       return;
     }
     try {
+      // If a new profile picture file is selected, upload it first
+      let profilePictureUrl = form.profilePicture;
+      if (profilePicFile && profilePicFile.type.startsWith('image/')) {
+        try {
+          const data = await uploadProfilePicture(profilePicFile);
+          profilePictureUrl = data.fileDownloadUri;
+        } catch (uploadErr) {
+          setProfilePicError('Failed to upload profile picture.');
+          return;
+        }
+      }
       await updateProfile(userId, {
         name: form.name,
         github: githubUrl,
         preferredRoles: form.preferredRole ? [form.preferredRole] : [],
         technicalSkills: form.technicalSkills.concat(form.otherSkill ? [form.otherSkill] : []),
         projectInterests: form.projectInterests.concat(form.otherInterest ? [form.otherInterest] : []),
+        profilePicture: profilePictureUrl
       });
       window.location.href = '/profile';
     } catch (err) {

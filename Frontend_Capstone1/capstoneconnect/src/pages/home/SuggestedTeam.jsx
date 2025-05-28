@@ -9,6 +9,13 @@ import NotSignedIn from '../NotSignedIn';
 import { getMatchesFromSurvey, getSurvey, getProfile, getUserId, sendRequest } from '../../api';
 
 const placeholderImg = "https://placehold.co/144x142";
+const BACKEND_URL = "http://localhost:8080";
+
+function getProfilePictureUrl(pic) {
+  if (!pic) return placeholderImg;
+  if (pic.startsWith("http")) return pic;
+  return BACKEND_URL + pic;
+}
 
 const SuggestedTeam = () => {  
   const [showModal, setShowModal] = useState(false);
@@ -76,6 +83,7 @@ const SuggestedTeam = () => {
       console.log('Filtered matches:', filteredMatches);
       
       // Transform matches data to match our component's expected format
+      // joben dont change this part
       const formattedMatches = filteredMatches.map((match, index) => ({
         id: index + 1,
         name: match.name || 'No Name',
@@ -85,7 +93,7 @@ const SuggestedTeam = () => {
         preference: match.projectInterests ? match.projectInterests.join(', ') : 'No Preferences',
         personality: match.personality || 'No Personality',
         score: match.overallScore,
-        img: placeholderImg
+        img: getProfilePictureUrl(match.profilePicture)
       }));
       
       setSuggestedTeammates(formattedMatches);
@@ -164,6 +172,7 @@ const SuggestedTeam = () => {
       // Apply filters to the survey data
       // This is a simplified approach - in a real implementation,
       // you might want to send the filters to the backend
+      //dont change this part joben and chicken lord
       const filteredSurvey = {
         ...surveyData,
         preferredRoles: selectedFilters.role ? [selectedFilters.role] : surveyData.preferredRoles,
@@ -178,6 +187,7 @@ const SuggestedTeam = () => {
       const filteredMatches = matches.filter(match => match.name !== profile.name);
       
       // Transform matches data to match our component's expected format
+      // joben dont change this part
       const formattedMatches = filteredMatches.map((match, index) => ({
         id: index + 1,
         name: match.name || 'No Name',
@@ -186,8 +196,8 @@ const SuggestedTeam = () => {
         preference: match.projectInterests ? match.projectInterests.join(', ') : 'No Preferences',
         personality: match.personality || 'No Personality',
         score: match.overallScore,
-        img: placeholderImg,
-        userId: match.userId || match.id // Ensure userId is always present in filtered matches
+        userId: match.userId || match.id, // Ensure userId is always present in filtered matches
+        img: getProfilePictureUrl(match.profilePicture)
       }));
       
       setSuggestedTeammates(formattedMatches);

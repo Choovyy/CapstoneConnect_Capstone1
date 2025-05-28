@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import '../../css/SentRequest.css';
 import { getUserId, getSentRequestsDTO, cancelRequest } from '../../api';
 
+const BACKEND_URL = "http://localhost:8080";
+function getProfilePictureUrl(pic) {
+  if (!pic) return "https://placehold.co/144x142";
+  if (pic.startsWith("http")) return pic;
+  return BACKEND_URL + pic;
+}
+
 const SentRequestCards = () => {
   const [requests, setRequests] = useState([]);
   const [flipped, setFlipped] = useState([]);
@@ -10,12 +17,12 @@ const SentRequestCards = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchRequests() {
-      try {
+    async function fetchRequests() {      try {
         setLoading(true);
         setError(null);
         const { userId } = await getUserId();
         const data = await getSentRequestsDTO(userId);
+        console.log("Sent requests data:", data); // Debug the response data
         setRequests(data);
         setFlipped(Array(data.length).fill(false));
       } catch (err) {
@@ -50,7 +57,10 @@ const SentRequestCards = () => {
     }
   };
 
-  const visibleRequests = requests.slice(startIdx, startIdx + 2);
+  const visibleRequests = requests.slice(startIdx, startIdx + 2).map(req => ({
+    ...req,
+    img: getProfilePictureUrl(req.profilePicture)
+  }));
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;

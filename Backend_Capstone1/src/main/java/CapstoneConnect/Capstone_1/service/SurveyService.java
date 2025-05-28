@@ -229,7 +229,32 @@ public class SurveyService {    @Autowired
             if (matches == null) {
                 return new ArrayList<>(); // Return empty list instead of null
             }
-            
+            // Enrich matches with profile picture
+            for (MatchResultDTO match : matches) {
+                // Try to find the profile by user name
+                ProfileEntity profile = profileRepository.findAll().stream()
+                    .filter(p -> p.getUser() != null && p.getUser().getName() != null && p.getUser().getName().equals(match.getName()))
+                    .findFirst()
+                    .orElse(null);
+                if (profile != null) {
+                    match.setProfilePicture(profile.getProfilePicture());
+                } else {
+                    match.setProfilePicture(null); // or set a default/placeholder if you want
+                }
+            }
+            // Enrich matches with profile picture using user name
+            for (MatchResultDTO match : matches) {
+                // Try to find the profile by user name
+                ProfileEntity profile = profileRepository.findAll().stream()
+                    .filter(p -> p.getUser() != null && p.getUser().getName() != null && p.getUser().getName().equals(match.getName()))
+                    .findFirst()
+                    .orElse(null);
+                if (profile != null) {
+                    match.setProfilePicture(profile.getProfilePicture());
+                } else {
+                    match.setProfilePicture(null); // or set a default/placeholder if you want
+                }
+            }
             return matches;
         } catch (Exception e) {
             System.err.println("❌ Error parsing response from matching service: " + e.getMessage());

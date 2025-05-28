@@ -8,8 +8,9 @@ import CapstoneConnect.Capstone_1.repository.ProfileRepository;
 import CapstoneConnect.Capstone_1.repository.SurveyRepository;
 import CapstoneConnect.Capstone_1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
+//import CapstoneConnect.Capstone_1.dto.ProfileDTO;
 @Service
 public class ProfileService {
 
@@ -55,5 +56,15 @@ public class ProfileService {
 
         return profileRepository.save(profileEntity);
     }
+
+    public ProfileDTO updateProfilePicture(Long profileId, String profilePictureUrl) {
+    ProfileEntity profile = profileRepository.findById(profileId)
+            .orElseThrow(() -> new RuntimeException("Profile not found with id: " + profileId));
+    
+    profile.setProfilePicture(profilePictureUrl);
+    ProfileEntity savedProfile = profileRepository.save(profile);
+    
+    return savedProfile.toDTO();
+}
 
 }
