@@ -7,23 +7,30 @@ public class MatchResultDTO {
     private List<String> technicalSkills;
     private List<String> preferredRoles;
     private List<String> projectInterests;
-    private String personality;    private double overallScore;  // compatibility score
+    private String personality;    
+    private double overallScore;  // compatibility score
     private double skillScore;    // score based on technical skills
     private double personalityScore; // score based on personality
     private double projectInterestScore; // score based on matching project interests
+    private double preferredRolesScore; // score based on matching preferred roles
     private String profilePicture; // URL of the user's profile picture
 
-    public MatchResultDTO() {}    public MatchResultDTO(String name, List<String> technicalSkills, List<String> preferredRoles,
+    public MatchResultDTO() {}    
+    
+    public MatchResultDTO(String name, List<String> technicalSkills, List<String> preferredRoles,
                       List<String> projectInterests, String personality, double overallScore, 
-                      double skillScore, double personalityScore, double projectInterestScore, String profilePicture) {
+                      double skillScore, double personalityScore, double projectInterestScore, 
+                      double preferredRolesScore, String profilePicture) {
         this.name = name;
         this.technicalSkills = technicalSkills;
         this.preferredRoles = preferredRoles;
-        this.projectInterests = projectInterests;        this.personality = personality;
+        this.projectInterests = projectInterests;        
+        this.personality = personality;
         this.overallScore = overallScore;
         this.skillScore = skillScore;
         this.personalityScore = personalityScore;
         this.projectInterestScore = projectInterestScore;
+        this.preferredRolesScore = preferredRolesScore;
         this.profilePicture = profilePicture;
     }
 
@@ -90,10 +97,16 @@ public class MatchResultDTO {
     
     public double getProjectInterestScore() {
         return projectInterestScore;
+    }    public void setProjectInterestScore(double projectInterestScore) {
+        this.projectInterestScore = projectInterestScore;
+    }
+    
+    public double getPreferredRolesScore() {
+        return preferredRolesScore;
     }
 
-    public void setProjectInterestScore(double projectInterestScore) {
-        this.projectInterestScore = projectInterestScore;
+    public void setPreferredRolesScore(double preferredRolesScore) {
+        this.preferredRolesScore = preferredRolesScore;
     }
 
     public String getProfilePicture() {

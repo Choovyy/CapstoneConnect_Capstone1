@@ -102,11 +102,16 @@ def add_user_profile(profile_embedding, personality_embedding, user_info):
         logger.error(f"Error adding profile: {str(e)}")
         return False
 
-def get_top_matches(query_embedding, personality_embedding, exclude_email=None, query_project_interests=None):
+def get_top_matches(query_embedding, personality_embedding, exclude_email=None, query_project_interests=None, query_preferred_roles=None):
     if len(user_profiles) == 0:
         logger.warning("No user profiles available for matching")
         return []
         
+    # Log incoming parameters for debugging
+    logger.info(f"get_top_matches called with exclude_email: {exclude_email}")
+    logger.info(f"get_top_matches called with query_project_interests: {query_project_interests}")
+    logger.info(f"get_top_matches called with query_preferred_roles: {query_preferred_roles}")
+    
     try:
         # Convert to numpy array and verify shape
         query_embedding_np = np.array(query_embedding).astype("float32")
@@ -137,25 +142,28 @@ def get_top_matches(query_embedding, personality_embedding, exclude_email=None, 
                 if exclude_email is not None and user.get("email") == exclude_email:
                     continue
 
-                skill_score = float(100 / (1 + dist))                # compute personality score - safely convert to numpy array
+                skill_score = float(100 / (1 + dist))                
+                
+                # Compute personality score - safely convert to numpy array
                 target_p = np.array(profile["personality_embedding"]).astype("float32")
                 dist_p = np.linalg.norm(personality_embedding_np - target_p)
-                personality_score = float(100 / (1 + dist_p))                # Calculate project interests score based on matching interests
-                user_interests = user.get("projectInterests", [])
+                personality_score = float(100 / (1 + dist_p))                
+                  # Calculate project interests score based on matching interests with normalization
+                user_interests = [i.strip().lower() for i in user.get("projectInterests", []) if isinstance(i, str)]
                 
                 # Use the provided project interests if available, otherwise fallback to lookup method
                 provided_interests = query_project_interests if query_project_interests else []
                 
                 # If we have provided interests, use those directly
                 if provided_interests:
-                    query_interests = provided_interests
+                    query_interests = [i.strip().lower() for i in provided_interests if isinstance(i, str)]
                 # Otherwise try to find by email
                 elif exclude_email is not None:
                     query_interests = []
                     # Find the query user's info to compare project interests
                     for p in user_profiles:
                         if p["info"].get("email") == exclude_email:
-                            query_interests = p["info"].get("projectInterests", [])
+                            query_interests = [i.strip().lower() for i in p["info"].get("projectInterests", []) if isinstance(i, str)]
                             break
                 else:
                     query_interests = []
@@ -167,12 +175,51 @@ def get_top_matches(query_embedding, personality_embedding, exclude_email=None, 
                     project_interest_score = 100 * (matching_interests / total_interests)
                 else:
                     # No interests to compare
-                    project_interest_score = 0
+                    project_interest_score = 0                # Calculate preferred roles score with normalization
+                user_roles = [r.strip().lower() for r in user.get("preferredRoles", []) if isinstance(r, str)]
+                
+                # Use the provided preferred roles if available, otherwise fallback to lookup method
+                provided_roles = query_preferred_roles if query_preferred_roles else []
+                
+                # If we have provided roles, use those directly
+                if provided_roles:
+                    query_roles = [r.strip().lower() for r in provided_roles if isinstance(r, str)]
+                # Otherwise try to find by email
+                elif exclude_email is not None:
+                    query_roles = []
+                    # Find the query user's info to compare preferred roles
+                    for p in user_profiles:
+                        if p["info"].get("email") == exclude_email:
+                            query_roles = [r.strip().lower() for r in p["info"].get("preferredRoles", []) if isinstance(r, str)]
+                            break
+                else:
+                    query_roles = []
+                
+                # Debug logging to understand role data
+                logger.info(f"User roles (raw): {user.get('preferredRoles', [])}")
+                logger.info(f"User roles (normalized): {user_roles}")
+                logger.info(f"Query roles (normalized): {query_roles}")
+                
+                # Only proceed with scoring if we have roles to compare
+                if user_roles and query_roles:
+                    matching_roles = len(set(user_roles).intersection(set(query_roles)))
+                    total_roles = max(1, len(set(user_roles).union(set(query_roles))))
+                    preferred_roles_score = 100 * (matching_roles / total_roles)
+                else:
+                    # No roles to compare
+                    preferred_roles_score = 0
                     
                 logger.info(f"Project interests score: {project_interest_score} (matching: {len(set(user_interests).intersection(set(query_interests)))} out of {len(set(user_interests).union(set(query_interests)))})")
+                logger.info(f"Preferred roles score: {preferred_roles_score} (matching: {len(set(user_roles).intersection(set(query_roles)))} out of {len(set(user_roles).union(set(query_roles)))})")
 
-                # combine scores 50% skill, 30% personality, project interests 20%
-                overall_score = round((skill_score * 0.5 + personality_score * 0.3 + project_interest_score * 0.2), 2)         
+                # combine scores with new weighting: 35% skill, 25% preferred roles, 20% project interests, 20% personality
+                overall_score = round(
+                    skill_score * 0.50 +
+                    preferred_roles_score * 0.10 +
+                    project_interest_score * 0.10 +
+                    personality_score * 0.30,
+                    2
+                )       
                 matches.append({
                     "name": user.get("name", ""),
                     "technicalSkills": user.get("technicalSkills", []),
@@ -182,6 +229,7 @@ def get_top_matches(query_embedding, personality_embedding, exclude_email=None, 
                     "skillScore": round(skill_score, 2),
                     "personalityScore": round(personality_score, 2),
                     "projectInterestScore": round(project_interest_score, 2),
+                    "preferredRolesScore": round(preferred_roles_score, 2),
                     "overallScore": overall_score
                 })
 

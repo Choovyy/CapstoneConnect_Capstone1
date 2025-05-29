@@ -184,34 +184,23 @@ const handleCloseToast = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Get current user info
+
       const userIdResponse = await getUserId();
       const { userId } = userIdResponse;
       const profile = await getProfile(userId);
-      
-      // Get user's survey data
       const surveyData = await getSurvey(profile.id);
-      
-      // Apply filters to the survey data
-      // This is a simplified approach - in a real implementation,
-      // you might want to send the filters to the backend
-      //dont change this part joben and chicken lord
-      const filteredSurvey = {
-        ...surveyData,
-        preferredRoles: selectedFilters.role ? [selectedFilters.role] : surveyData.preferredRoles,
-        technicalSkills: selectedFilters.skill ? [selectedFilters.skill] : surveyData.technicalSkills,
-        projectInterests: selectedFilters.preference ? [selectedFilters.preference] : surveyData.projectInterests
-      };
-      
-      // Get matches based on the filtered survey
-      const matches = await getMatchesFromSurvey(filteredSurvey);
-      
-      // Filter out the current user from matches based on name
-      const filteredMatches = matches.filter(match => match.name !== profile.name);
-      
-      // Transform matches data to match our component's expected format
-      // joben dont change this part
+
+      const matches = await getMatchesFromSurvey(surveyData);
+
+      const filteredMatches = matches
+        .filter(match => match.name !== profile.name)
+        .filter(match => {
+          const matchRole = match.preferredRoles?.includes(selectedFilters.role) || !selectedFilters.role;
+          const matchSkill = match.technicalSkills?.includes(selectedFilters.skill) || !selectedFilters.skill;
+          const matchPref = match.projectInterests?.includes(selectedFilters.preference) || !selectedFilters.preference;
+          return matchRole && matchSkill && matchPref;
+        });
+
       const formattedMatches = filteredMatches.map((match, index) => ({
         id: index + 1,
         name: match.name || 'No Name',
@@ -220,17 +209,16 @@ const handleCloseToast = () => {
         preference: match.projectInterests ? match.projectInterests.join(', ') : 'No Preferences',
         personality: match.personality || 'No Personality',
         score: match.overallScore,
-        userId: match.userId || match.id, // Ensure userId is always present in filtered matches
+        userId: match.userId || match.id,
         img: getProfilePictureUrl(match.profilePicture)
       }));
-      
+
       setSuggestedTeammates(formattedMatches);
       setFlipped(Array(formattedMatches.length).fill(false));
       setLoading(false);
     } catch (err) {
       console.error('Error applying filters:', err);
       if (err.message === 'Not authenticated' || err.message === 'User ID not found') {
-        // Clear token and set not authenticated if the token is invalid
         sessionStorage.removeItem('jwtToken');
         setIsAuthenticated(false);
         setError('Your session has expired. Please sign in again.');

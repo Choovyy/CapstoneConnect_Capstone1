@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 model = SentenceTransformer("all-MiniLM-L6-v2")  # Fast and compact
+#AI Type: Natural Language Processing (NLP) model
 
 def generate_embedding(text: str):
     try:

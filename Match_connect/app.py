@@ -131,13 +131,16 @@ async def match_profile(request: Request):
             logger.error("Embedding generation failed")
             raise HTTPException(status_code=500, detail="Embedding generation failed")        # Pass the full data to get_top_matches so it has access to the projectInterests
         project_interests = data.get("projectInterests", [])
+        preferred_roles = data.get("preferredRoles", [])
         logger.info(f"Project interests from request: {project_interests}")
+        logger.info(f"Preferred roles from request: {preferred_roles}")
         
         matches = get_top_matches(
             query_embedding, 
             personality_embedding, 
             exclude_email=data.get("email"),
-            query_project_interests=project_interests
+            query_project_interests=project_interests,
+            query_preferred_roles=preferred_roles
         )
 
         logger.info(f"Found {len(matches)} matches")
