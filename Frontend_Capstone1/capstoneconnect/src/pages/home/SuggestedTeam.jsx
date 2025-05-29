@@ -6,6 +6,7 @@ import Navigation from '../Navigation';
 import SuggestedTeamModal from '../modals/SuggestedTeamModal';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
+import Toast from '../Toast';
 import { getMatchesFromSurvey, getSurvey, getProfile, getUserId, sendRequest } from '../../api';
 
 const placeholderImg = "https://placehold.co/144x142";
@@ -30,6 +31,8 @@ const SuggestedTeam = () => {
   const [flipped, setFlipped] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'error' });
+  
 
   const location = useLocation();
   useEffect(() => {
@@ -116,17 +119,38 @@ const SuggestedTeam = () => {
   // Send request to backend when user clicks Send Request
   const handleSendRequest = async (receiver) => {
     try {
-      const { userId: senderId } = await getUserId();
-      if (!receiver.name) {
-        alert('Receiver name not found.');
+      const user = await getUserId(); // make sure getUserId returns an object with userId key
+      const senderId = user?.userId;
+
+      if (!receiver.name || !receiver.score) {
+        setToast({
+          visible: true,
+          message: 'Receiver name or match score missing.',
+          type: 'error'
+        });
         return;
       }
-      await sendRequest(senderId, receiver.name, receiver.score); // Pass match score
-      alert('Request sent!');
+
+      await sendRequest(senderId, receiver.name, receiver.score); // Keep as-is
+
+      setToast({
+        visible: true,
+        message: 'Request sent successfully!',
+        type: 'success'
+      });
     } catch (err) {
-      alert('Failed to send request: ' + err.message);
+      setToast({
+        visible: true,
+        message: 'Failed to send request: ' + err.message,
+        type: 'error'
+      });
     }
   };
+
+const handleCloseToast = () => {
+    setToast({ ...toast, visible: false });
+  };
+
   
   const handleConfirm = () => {
     setShowModal(false);
@@ -352,6 +376,15 @@ const SuggestedTeam = () => {
       </main>
       {showModal && <SuggestedTeamModal onConfirm={handleConfirm} onCancel={handleCancel} />}
       {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
+        {/* Toast Notification */}
+      {toast.visible && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={handleCloseToast} 
+          duration={3000} 
+        />
+      )}
     </div>
   );
 };

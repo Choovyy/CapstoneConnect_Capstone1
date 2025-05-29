@@ -9,12 +9,14 @@ function getProfilePictureUrl(pic) {
   return BACKEND_URL + pic;
 }
 
-const SentRequestCards = () => {
+const SentRequestCards = ({ showToast }) => {
   const [requests, setRequests] = useState([]);
   const [flipped, setFlipped] = useState([]);
   const [startIdx, setStartIdx] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+
 
   useEffect(() => {
     async function fetchRequests() {      try {
@@ -47,15 +49,27 @@ const SentRequestCards = () => {
   };
 
   const handleCancel = async (requestId, idx) => {
-    try {
-      const { userId } = await getUserId();
-      await cancelRequest(requestId, userId);
-      setRequests(prev => prev.filter(r => r.id !== requestId));
-      setFlipped(prev => prev.filter((_, i) => i !== idx));
-    } catch (err) {
-      alert('Failed to cancel request');
+  try {
+    const { userId } = await getUserId();
+    await cancelRequest(requestId, userId);
+
+    // Update state after successful cancellation
+    setRequests(prev => prev.filter(r => r.id !== requestId));
+    setFlipped(prev => prev.filter((_, i) => i !== idx));
+
+    // Use the passed showToast function instead of setToast
+    if (showToast) {
+      showToast('Request canceled successfully.', 'success');
     }
-  };
+  } catch (err) {
+    // Use the passed showToast function instead of setToast
+    if (showToast) {
+      showToast('Failed to cancel request: ' + err.message, 'error');
+    }
+  }
+};
+
+
 
   const visibleRequests = requests.slice(startIdx, startIdx + 2).map(req => ({
     ...req,
@@ -87,6 +101,7 @@ const SentRequestCards = () => {
             opacity: startIdx === 0 ? 0.3 : 1,
           }}
         >
+          
           &#8592;
         </button>
         <div className="sentrequest-cards" style={{ overflow: 'hidden', width: 640 }}>
@@ -151,7 +166,9 @@ const SentRequestCards = () => {
           &#8594;
         </button>
       </div>
+        
     </div>
+    
   );
 };
 

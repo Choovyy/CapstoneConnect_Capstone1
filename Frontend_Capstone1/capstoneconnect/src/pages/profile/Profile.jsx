@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
 import SentRequestCards from '../profile/SentRequestCards';
+import Toast from '../Toast'; // Add this import
 
 const BACKEND_URL = "http://localhost:8080";
 function getProfilePictureUrl(pic) {
@@ -23,6 +24,7 @@ const Profile = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'error' });
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -41,6 +43,18 @@ const Profile = () => {
 
   const handleSignIn = () => {
     window.location.href = '/';
+  };
+
+  const showToast = (message, type = 'error') => {
+    setToast({
+      visible: true,
+      message,
+      type
+    });
+  };
+
+  const handleCloseToast = () => {
+    setToast({ ...toast, visible: false });
   };
 
   useEffect(() => {
@@ -131,9 +145,17 @@ const Profile = () => {
 
         {/* Sent Requests Section */}
         <main className="profile-container" style={{ marginTop: '32px' }}>
-          <SentRequestCards />
+         <SentRequestCards showToast={showToast} />
         </main>
       </div>
+      {toast.visible && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={handleCloseToast} 
+          duration={3000} 
+        />
+      )}
       
       {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
     </>

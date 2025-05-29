@@ -4,6 +4,7 @@ import '../../css/Matching.css';
 import Navigation from '../Navigation';
 import LogoutModal from '../LogoutModal';
 import NotSignedIn from '../NotSignedIn';
+import Toast from '../Toast';
 import { getUserId, getIncomingRequestsDTO, rejectIncomingRequest } from '../../api';
 
 const BACKEND_URL = "http://localhost:8080";
@@ -20,6 +21,8 @@ const Matching = () => {
   const [error, setError] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'error' });
+
 
   useEffect(() => {
     async function fetchRequests() {
@@ -46,16 +49,35 @@ const Matching = () => {
     setFlipped(prev => prev.map((f, i) => (i === idx ? !f : f)));
   };
 
-  const handleReject = async (requestId, idx) => {
-    try {
-      const { userId } = await getUserId();
-      await rejectIncomingRequest(requestId, userId);
-      setRequests(prev => prev.filter(r => r.id !== requestId));
-      setFlipped(prev => prev.filter((_, i) => i !== idx));
-    } catch (err) {
-      alert('Failed to reject request');
-    }
+ const handleReject = async (requestId, idx) => {
+  try {
+    const { userId } = await getUserId();
+    await rejectIncomingRequest(requestId, userId);
+
+    setRequests(prev => prev.filter(r => r.id !== requestId));
+    setFlipped(prev => prev.filter((_, i) => i !== idx));
+
+    // Show success toast
+    setToast({
+      visible: true,
+      message: 'Request rejected successfully.',
+      type: 'success'
+    });
+  } catch (err) {
+    // Show error toast
+    setToast({
+      visible: true,
+      message: 'Failed to reject request: ' + err.message,
+      type: 'error'
+    });
+  }
+};
+
+
+    const handleCloseToast = () => {
+    setToast({ ...toast, visible: false });
   };
+
 
   const handleLogout = () => setShowLogoutModal(true);
   const handleLogoutConfirm = () => {
@@ -146,6 +168,16 @@ const Matching = () => {
         )}
       </div>
       {showLogoutModal && <LogoutModal onConfirm={handleLogoutConfirm} onCancel={handleLogoutCancel} />}
+      {toast.visible && (
+  <Toast
+    message={toast.message}
+    type={toast.type}
+    onClose={handleCloseToast}
+    duration={3000}
+  />
+)}
+
+      
     </>
   );
 };
